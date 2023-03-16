@@ -1,0 +1,10 @@
+.navbar {
+  display: flex;
+  padding: 1.5rem;
+  background-color: #3b82f6;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+}
