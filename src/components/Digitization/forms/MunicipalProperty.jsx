@@ -4,7 +4,7 @@ import axios from "axios";
 import Spinner from "../../../assets/Spinner";
 import Tick from "../../../assets/Tick";
 
-const MuncipalProperty = () => {
+const MunicipalProperty = () => {
   //data members
   const WardOptions = [
     { value: "", text: "Select a ward" },
@@ -99,7 +99,11 @@ const MuncipalProperty = () => {
 
   return (
     <>
-      <h1 className=" font-bold text-xl mb-2">MUNCIPAL PROPERTY RECORDS</h1>
+      <h1
+      // className=" font-bold text-xl mb-2"
+      >
+        MUNICIPAL PROPERTY RECORDS
+      </h1>
       <form
         className="w-full"
         onSubmit={handleSubmit}
@@ -162,8 +166,8 @@ const MuncipalProperty = () => {
           onChange={handleFileChange}
           required
         />
-        {isLoading && <Spinner />}
-        {isInserted && <Tick />}
+        {/* {isLoading && <Spinner />}
+        {isInserted && <Tick />} */}
         <div className="flex flex-row justify-center space-x-52 w-2/3 mt-14">
           <input
             type="submit"
@@ -182,4 +186,4 @@ const MuncipalProperty = () => {
   );
 };
 
-export default MuncipalProperty;
+export default MunicipalProperty;

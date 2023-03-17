@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import MuncipalProperty from "../../components/Digitization/forms/MuncipalProperty";
+import MunicipalProperty from "../../components/Digitization/forms/MunicipalProperty";
 import HouseTax from "../../components/Digitization/forms/HouseTax";
 import ConLisc from "../../components/Digitization/forms/ConstructionLicense";
 import BirthRecords from "../../components/Digitization/forms/BirthRecords";
@@ -20,8 +20,13 @@ const Add = () => {
 
   return (
     <>
-      <Layout>
-        <Sider theme="light">
+      <Layout
+        style={{
+          "margin-top": "2.5rem",
+          // "flex-direction": "row",
+        }}
+      >
+        <Sider theme="light" style={{ margin: "0 20px" }}>
           <button
             key="1"
             onClick={(e) => handleClick(e, 1)}
@@ -56,8 +61,11 @@ const Add = () => {
             BIRTH RECORDS
           </button>
         </Sider>
-        <Content>
-          {documentType == "Properties" && <MuncipalProperty />}
+        <Content
+          // theme="light"
+          style={{ margin: "20px 1.25rem", padding: "0 20px" }}
+        >
+          {documentType == "Properties" && <MunicipalProperty />}
           {documentType == "HouseTax" && <HouseTax />}
           {documentType == "ConLisc" && <ConLisc />}
           {documentType == "BirthRecords" && <BirthRecords />}
