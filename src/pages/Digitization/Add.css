@@ -1,0 +1,16 @@
+.btn {
+  padding-left: 1rem;
+  margin: 0.5rem;
+  background-color: #93c5fd;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: left;
+  width: 12rem;
+  height: 5rem;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.btn-selected {
+  background-color: #3b82f6;
+}
