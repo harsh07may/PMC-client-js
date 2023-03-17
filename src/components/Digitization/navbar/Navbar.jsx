@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "../../assets/logo.png";
+import Logo from "../../../assets/logo.png";
 import { NavLink, Outlet } from "react-router-dom";
 import "./Navbar.css";
 const Navbar = () => {
