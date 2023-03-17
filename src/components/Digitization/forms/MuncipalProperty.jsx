@@ -106,7 +106,7 @@ const MuncipalProperty = () => {
         encType="multipart/form-data"
       >
         <div className="flex flex-row space-x-52 w-2/3">
-          <select
+          {/* <select
             value={data.ward}
             onChange={handleChange}
             name="ward"
@@ -117,7 +117,16 @@ const MuncipalProperty = () => {
                 {option.text}
               </option>
             ))}
-          </select>
+          </select> */}
+          <input
+            type="text"
+            placeholder="Ward No."
+            name="ward"
+            value={data.ward}
+            className="shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
+            onChange={handleChange}
+            required
+          />
           <input
             type="text"
             placeholder="Sub Div No."

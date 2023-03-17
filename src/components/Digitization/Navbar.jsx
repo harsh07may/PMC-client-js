@@ -1,6 +1,7 @@
 import React from "react";
-import Logo from "../../assets/pmc_logo.png";
-import { NavLink } from "react-router-dom";
+import Logo from "../../assets/logo.png";
+import { NavLink, Outlet } from "react-router-dom";
+import "./Navbar.css";
 const Navbar = () => {
   const navLinkStyles = ({ isActive }) => {
     return {
@@ -10,38 +11,41 @@ const Navbar = () => {
     };
   };
   return (
-    <nav className="navbar">
-      {/*Child 1: Logo Text*/}
-      <div className=".navbar">
-        <img src={Logo} alt="logo" className="h-50 w-55 mr-2" />
-        <h2 className="font-bold text-4xl">Ponda Muncip al Council</h2>
-      </div>
+    <>
+      <nav className="navbar">
+        {/*Child 1: Logo Text*/}
+        <div className="nav-items">
+          <img src={Logo} alt="logo" className="logo" />
+          <h2 className="heading-text">Ponda Muncipal Council</h2>
+        </div>
 
-      <div className="flex text-white text-2xl">
-        <NavLink
-          style={navLinkStyles}
-          className="inline-block p-3"
-          to="/digitization/search"
-          end
-        >
-          Search
-        </NavLink>
-        <NavLink
-          style={navLinkStyles}
-          className="inline-block p-3"
-          to="/digitization/add"
-        >
-          Add
-        </NavLink>
-        <NavLink
-          style={navLinkStyles}
-          className="inline-block p-3"
-          to="/digitization/help"
-        >
-          Help
-        </NavLink>
-      </div>
-    </nav>
+        <div className="nav-links">
+          <NavLink
+            style={navLinkStyles}
+            className="nav-link"
+            to="/digitization/search"
+            end
+          >
+            Search
+          </NavLink>
+          <NavLink
+            style={navLinkStyles}
+            className="nav-link"
+            to="/digitization/add"
+          >
+            Add
+          </NavLink>
+          <NavLink
+            style={navLinkStyles}
+            className="nav-link"
+            to="/digitization/help"
+          >
+            Help
+          </NavLink>
+        </div>
+      </nav>
+      <Outlet />
+    </>
   );
 };
 
