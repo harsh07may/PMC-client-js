@@ -5,8 +5,6 @@ import { Form, Input, Row, Col, Button, Upload } from "antd";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 
 import "./styles/MunicipalProperty.css";
-import Spinner from "../../../assets/Spinner";
-import Tick from "../../../assets/Tick";
 
 const MunicipalProperty = () => {
   //data members
