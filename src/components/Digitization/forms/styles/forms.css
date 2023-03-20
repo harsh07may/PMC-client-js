@@ -1,0 +1,9 @@
+.form-div {
+  width: 600px;
+  display: flex;
+  margin: auto;
+}
+.form-btn {
+  display: "flex";
+  justify-content: center;
+}
