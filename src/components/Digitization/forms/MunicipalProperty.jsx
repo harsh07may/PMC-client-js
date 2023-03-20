@@ -1,15 +1,88 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import { Form, Input, Row, Col, Button, Upload } from "antd";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import { Form, Input, Row, Col, Button, Upload, message } from "antd";
+const { Dragger } = Upload;
+
+//import Global vars
+import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
 
 import "./styles/MunicipalProperty.css";
-import Spinner from "../../../assets/Spinner";
-import Tick from "../../../assets/Tick";
 
 const MunicipalProperty = () => {
-  //data members
+  const dummyRequest = async ({ file, onSuccess }) => {
+    console.log(file);
+    console.log("in dummy");
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
+
+  //! Test
+  const props = {
+    name: "file", //
+    maxCount: 1, //
+
+    // customRequest: dummyRequest, //!
+
+    beforeUpload(file) {
+      //check file type
+      console.log(file);
+      console.log("checking file");
+      const isPdf = file.type === "application/pdf";
+
+      if (!isPdf) {
+        message.error(`${file.name} is not a PDF file`);
+      }
+
+      const isLessThanUploadLimit =
+        file.size / 1024 / 1024 < FILE_UPLOAD_SIZE_LIMIT;
+
+      if (!isLessThanUploadLimit) {
+        message.error(`File must smaller than ${FILE_UPLOAD_SIZE_LIMIT}MB!`);
+      }
+
+      return (isPdf && isLessThanUploadLimit) || Upload.LIST_IGNORE;
+    },
+
+    onRemove(file) {
+      //? Change setPdfInViewer prop to null & unrender viewer
+      // props.id ? setImage(originalImage) : setImage(RoomImage);
+      // setIsDefaultImage(true);
+    },
+
+    onChange(info) {
+      console.log("in onchange");
+      console.log(info);
+
+      const { status } = info.file;
+
+      /*converting to base 64*/
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+        // setIsDefaultImage(false);
+        // getBase64(info.file.originFileObj);
+        //* const file = info.file.originFileObj;
+
+        // let data = new FormData();
+        // data.append("fileName", file.name);
+        // data.append("file", file);
+
+        //! setPdfFile and create url
+        // setImageFile(file);
+        // setImage(URL.createObjectURL(file));
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+
+      console.log(`leaving onchange. status = ${status}`);
+    },
+
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
 
   //States
   const [data, setData] = useState({
@@ -55,6 +128,7 @@ const MunicipalProperty = () => {
     let formData = new FormData();
     formData.append("file", data.file);
     setIsLoading(true);
+
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -92,90 +166,7 @@ const MunicipalProperty = () => {
 
   return (
     <>
-      <h1
-      // className=" font-bold text-xl mb-2"
-      >
-        MUNICIPAL PROPERTY RECORDS
-      </h1>
-      {/* <form
-        className="w-full"
-        onSubmit={handleSubmit}
-        encType="multipart/form-data"
-      >
-        <div className="flex flex-row space-x-52 w-2/3">
-          <input
-            type="text"
-            placeholder="Ward No."
-            name="ward"
-            value={data.ward}
-            className="shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Sub Div No."
-            name="subdiv"
-            value={data.subdiv}
-            className="shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <input
-          type="text"
-          placeholder="Title"
-          name="title"
-          value={data.title}
-          className="block w-2/3 shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-          onChange={handleChange}
-          required
-        />
-
-        <label
-          className="block ml-2 text-blue-500 mt-5 font-bold"
-          htmlFor="File"
-        >
-          Upload file:
-        </label>
-        <input
-          className=" text-blue-500 file:mr-5 file:py-2 file:px-6 file:rounded file:border-0 file:text-sm file:font-bold
-            file:bg-blue-500 file:text-blue-50
-            hover:file:cursor-pointer m-4"
-          type="file"
-          name="file"
-          onChange={handleFileChange}
-          required
-        />
-        <div className="flex flex-row justify-center space-x-52 w-2/3 mt-14">
-          <input
-            type="submit"
-            value="Submit"
-            className="inline-block m-4 px-8 py-2 text-white font-bold bg-blue-500 rounded hover:bg-blue-300"
-          />
-          <input
-            type="reset"
-            value="Reset"
-            className="inline-block m-4 px-8 py-2 text-blue-500 font-bold border-2 border-blue-500 rounded hover:bg-blue-300 hover:text-white"
-            onClick={resetFields}
-          />
-        </div>
-      </form> */}
-      {/* <Form>
-        <div style={{ display: "flex" }}>
-          <Form.Item label={false} name="wardNo">
-            <Input placeholder="Ward No." />
-          </Form.Item>
-
-          <Form.Item label={false} name="houseNo">
-            <Input placeholder="House no." />
-          </Form.Item>
-        </div>
-
-        <Form.Item label={false} name="Title">
-          <Input placeholder="Title" />
-        </Form.Item>
-      </Form> */}
+      <h1>MUNICIPAL PROPERTY RECORDS</h1>
       <Form style={{ marginTop: "10px" }}>
         <Row gutter={30}>
           <Col span={6}>
@@ -215,10 +206,11 @@ const MunicipalProperty = () => {
             <Form.Item
               name="dragger"
               valuePropName="fileList"
-              // getValueFromEvent={normFile}
+              getValueFromEvent={normFile}
               noStyle
             >
-              <Upload.Dragger name="files" action="/upload.do">
+              {/* <Dragger {...uploadDraggerProps}> */}
+              {/* <Dragger {...props}>
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>
@@ -226,9 +218,16 @@ const MunicipalProperty = () => {
                   Click or drag file to this area to upload
                 </p>
                 <p className="ant-upload-hint">
-                  Support for a single or bulk upload.
+                  Support for a single or bulk upload. Strictly prohibited from
+                  uploading company data or other banned files.
                 </p>
-              </Upload.Dragger>
+              </Dragger> */}
+              <Upload
+                {...props}
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              >
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
             </Form.Item>
           </Form.Item>
           <Button type="primary" htmlType="submit">

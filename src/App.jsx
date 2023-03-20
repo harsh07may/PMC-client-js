@@ -6,6 +6,7 @@ import Help from "./pages/Digitization/Help";
 import Login from "./pages/Login";
 import AppGallery from "./pages/AppGallery";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { FILE_UPLOAD_SIZE_LIMIT } from "./GLOBAL_VARS";
 
 function App() {
   return (
