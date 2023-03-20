@@ -22,7 +22,7 @@ const Add = () => {
     <>
       <Layout
         style={{
-          "margin-top": "2.5rem",
+          marginTop: "2.5rem",
           // "flex-direction": "row",
         }}
       >

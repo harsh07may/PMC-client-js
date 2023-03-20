@@ -1,23 +1,15 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
+import { Form, Input, Row, Col, Button, Upload } from "antd";
+import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+
+import "./styles/MunicipalProperty.css";
 import Spinner from "../../../assets/Spinner";
 import Tick from "../../../assets/Tick";
 
 const MunicipalProperty = () => {
   //data members
-  const WardOptions = [
-    { value: "", text: "Select a ward" },
-    { value: "1", text: "1" },
-    { value: "2", text: "2" },
-    { value: "3", text: "3" },
-    { value: "4", text: "4" },
-    { value: "5", text: "5" },
-    { value: "6", text: "6" },
-    { value: "7", text: "7" },
-    { value: "8", text: "8" },
-    { value: "9", text: "9" },
-  ];
 
   //States
   const [data, setData] = useState({
@@ -38,6 +30,7 @@ const MunicipalProperty = () => {
     });
     setIsInserted(false);
   };
+
   //functions
   const handleFileChange = (event) => {
     const dataObjFile = event.target.files[0];
@@ -104,24 +97,12 @@ const MunicipalProperty = () => {
       >
         MUNICIPAL PROPERTY RECORDS
       </h1>
-      <form
+      {/* <form
         className="w-full"
         onSubmit={handleSubmit}
         encType="multipart/form-data"
       >
         <div className="flex flex-row space-x-52 w-2/3">
-          {/* <select
-            value={data.ward}
-            onChange={handleChange}
-            name="ward"
-            className="h-1/2  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          >
-            {WardOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.text}
-              </option>
-            ))}
-          </select> */}
           <input
             type="text"
             placeholder="Ward No."
@@ -166,8 +147,6 @@ const MunicipalProperty = () => {
           onChange={handleFileChange}
           required
         />
-        {/* {isLoading && <Spinner />}
-        {isInserted && <Tick />} */}
         <div className="flex flex-row justify-center space-x-52 w-2/3 mt-14">
           <input
             type="submit"
@@ -181,7 +160,82 @@ const MunicipalProperty = () => {
             onClick={resetFields}
           />
         </div>
-      </form>
+      </form> */}
+      {/* <Form>
+        <div style={{ display: "flex" }}>
+          <Form.Item label={false} name="wardNo">
+            <Input placeholder="Ward No." />
+          </Form.Item>
+
+          <Form.Item label={false} name="houseNo">
+            <Input placeholder="House no." />
+          </Form.Item>
+        </div>
+
+        <Form.Item label={false} name="Title">
+          <Input placeholder="Title" />
+        </Form.Item>
+      </Form> */}
+      <Form style={{ marginTop: "10px" }}>
+        <Row gutter={30}>
+          <Col span={6}>
+            <Form.Item name="wardNo">
+              <Input
+                size="large"
+                placeholder="Ward No."
+                className="form-input-styles"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item name="houseNo">
+              <Input
+                size="large"
+                placeholder="House No."
+                className="form-input-styles"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Form.Item name="Title" required wrapperCol={{ span: 16 }}>
+          <Input
+            status=""
+            size="large"
+            placeholder="Title"
+            className="form-input-styles"
+          />
+        </Form.Item>
+        <Form.Item
+          wrapperCol={{
+            span: 12,
+            offset: 6,
+          }}
+        >
+          <Form.Item label="Dragger" required>
+            <Form.Item
+              name="dragger"
+              valuePropName="fileList"
+              // getValueFromEvent={normFile}
+              noStyle
+            >
+              <Upload.Dragger name="files" action="/upload.do">
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Support for a single or bulk upload.
+                </p>
+              </Upload.Dragger>
+            </Form.Item>
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </>
   );
 };

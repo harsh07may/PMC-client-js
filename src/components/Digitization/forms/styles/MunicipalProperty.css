@@ -1,0 +1,24 @@
+:root {
+  --input-blue-placeholder: #3b82f6;
+}
+
+.form-input-styles::placeholder {
+  color: var(--input-blue-placeholder);
+}
+.form-input-styles::-moz-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.form-input-styles::-ms-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.form-input-styles::-webkit-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+
+.form-input-styles {
+  /* appearance: none; */
+  /* color: aqua; */
+  border-radius: 0.25rem;
+  border-width: 2px;
+  border-color: black;
+}
