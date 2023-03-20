@@ -1,9 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-// import Spinner from "../../assets/Spinner";
-import Spinner from "../../../assets/Spinner";
-import Tick from "../../../assets/Tick";
 
 const HouseTax = () => {
   //data members

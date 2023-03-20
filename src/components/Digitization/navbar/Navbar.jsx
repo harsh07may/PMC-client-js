@@ -1,7 +1,8 @@
 import React from "react";
 import Logo from "../../../assets/logo.png";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import { useAuth } from "../../../utils/auth";
 const Navbar = () => {
   const navLinkStyles = ({ isActive }) => {
     return {
@@ -9,6 +10,12 @@ const Navbar = () => {
       textDecoration: isActive ? "underline" : "none",
       textUnderlineOffset: isActive ? "10px" : "none",
     };
+  };
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    auth.logout();
+    navigate("/");
   };
   return (
     <>
@@ -42,6 +49,7 @@ const Navbar = () => {
           >
             Help
           </NavLink>
+          <button onClick={handleLogout}>Logout</button>
         </div>
       </nav>
       <Outlet />

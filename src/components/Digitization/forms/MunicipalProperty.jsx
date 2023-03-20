@@ -5,7 +5,6 @@ import { Form, Input, Row, Col, Button, Upload } from "antd";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 
 import "./styles/MunicipalProperty.css";
-
 const MunicipalProperty = () => {
   //data members
 

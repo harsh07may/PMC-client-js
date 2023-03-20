@@ -1,12 +1,34 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, notification, Form, Input, message } from "antd";
 import "./Login.css";
+import axios from "axios";
+import { useAuth } from "../utils/auth";
+
 export default function Login() {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const openNotification = () => {
+    notification.open({
+      message: "Unsuccessful Login",
+      description: "Try again",
+    });
+  };
   const onFinish = (values) => {
-    console.log("Success:", values);
-    navigate("/digitization");
+    axios({
+      method: "post",
+      url: "http://localhost:5000/api/v1/user/login",
+      data: values,
+    })
+      .then((res) => {
+        const { accesstoken } = res.data;
+        localStorage.setItem("token", accesstoken);
+        auth.login(accesstoken);
+        navigate("/digitization");
+      })
+      .catch((err) => {
+        openNotification();
+      });
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
