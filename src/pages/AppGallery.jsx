@@ -1,5 +1,11 @@
 import React from "react";
+import { Button } from "antd";
 
 export default function AppGallery() {
-  return <div>AppGallery</div>;
+  return (
+    <>
+      AppGallery
+      <Button>Logout</Button>
+    </>
+  );
 }

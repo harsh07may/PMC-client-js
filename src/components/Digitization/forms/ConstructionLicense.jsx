@@ -1,8 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import Spinner from "../../../assets/Spinner";
-import Tick from "../../../assets/Tick";
+
 const ConsLisc = () => {
   //data members
   const WardOptions = [

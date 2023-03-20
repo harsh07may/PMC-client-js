@@ -1,0 +1,32 @@
+.main-container,
+.second-container,
+.form-container {
+  display: flex;
+}
+.main-container {
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: #c8effc;
+}
+.second-container {
+  border-radius: 20px 0 0 20px;
+  background-color: #00b2ff;
+  width: 400px;
+  height: 500px;
+  box-shadow: 5px 6px 12px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 5px 6px 12px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 5px 6px 12px 0px rgba(0, 0, 0, 0.75);
+}
+.form-container {
+  flex-direction: column;
+  justify-content: center;
+  width: 600px;
+  height: 500px;
+  font-weight: 500;
+  background-color: #fff;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 5px 6px 12px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 5px 6px 12px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 5px 6px 12px 0px rgba(0, 0, 0, 0.75);
+}
