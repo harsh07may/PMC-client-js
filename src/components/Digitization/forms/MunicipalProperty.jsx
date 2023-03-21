@@ -206,7 +206,7 @@ const MunicipalProperty = () => {
             <Form.Item
               name="dragger"
               valuePropName="fileList"
-              getValueFromEvent={normFile}
+              // getValueFromEvent={normFile}
               noStyle
             >
               {/* <Dragger {...uploadDraggerProps}> */}

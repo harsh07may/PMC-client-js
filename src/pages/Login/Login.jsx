@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, notification, Form, Input, message } from "antd";
 import "./Login.css";
 import axios from "axios";
-import { useAuth } from "../utils/auth";
+import { useAuth } from "../../utils/auth";
 
 export default function Login() {
   const navigate = useNavigate();

@@ -1,8 +1,11 @@
 import React from "react";
-import Logo from "../../../assets/logo.png";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import "./Navbar.css";
 import { useAuth } from "../../../utils/auth";
+
+import "./Navbar.css";
+
+import Logo from "../../../assets/logo.png";
+
 const Navbar = () => {
   const navLinkStyles = ({ isActive }) => {
     return {

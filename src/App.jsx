@@ -3,8 +3,8 @@ import Navbar from "./components/Digitization/navbar/Navbar";
 import Add from "./pages/Digitization/Add";
 import Search from "./pages/Digitization/Search";
 import Help from "./pages/Digitization/Help";
-import Login from "./pages/Login";
-import AppGallery from "./pages/AppGallery";
+import Login from "./pages/Login/Login";
+import AppGallery from "./pages/AppGallery/AppGallery";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
@@ -22,9 +22,9 @@ function App() {
           <Route
             path="/digitization/*"
             element={
-              <RequireAuth>
-                <Navbar />
-              </RequireAuth>
+              //<RequireAuth>
+              <Navbar />
+              //</RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />
