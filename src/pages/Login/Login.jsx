@@ -22,9 +22,8 @@ export default function Login() {
     })
       .then((res) => {
         const { accesstoken } = res.data;
-        localStorage.setItem("token", accesstoken);
         auth.login(accesstoken);
-        navigate("/digitization");
+        navigate("/digitization", { replace: true });
       })
       .catch((err) => {
         openNotification();
