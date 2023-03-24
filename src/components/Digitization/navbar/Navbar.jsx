@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
 
 import "./Navbar.css";
@@ -25,8 +25,10 @@ const Navbar = () => {
       <nav className="navbar">
         {/*Child 1: Logo Text*/}
         <div className="nav-items">
-          <img src={Logo} alt="logo" className="logo" />
-          <h2 className="heading-text">Ponda Muncipal Council</h2>
+          <Link to="/">
+            <img src={Logo} alt="logo" className="logo" />
+          </Link>
+          <h2 className="heading-text">Ponda Municipal Council</h2>
         </div>
 
         <div className="nav-links">

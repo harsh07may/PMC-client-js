@@ -18,7 +18,9 @@
   color: #ffffff;
   align-items: center;
 }
-
+.heading-text {
+  user-select: none;
+}
 .logo {
   margin-right: 0.5rem;
   height: 100px;

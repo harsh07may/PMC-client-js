@@ -34,86 +34,89 @@ export default function Login() {
       });
   };
   const onFinishFailed = (errorInfo) => {
+    //!
     console.log("Failed:", errorInfo);
   };
   return (
     <>
-      <div className="main-container">
-        <div className="logo-container">
-          <img className="login-logo" src={logo} alt="logo" />
-          <h3 className="logo-items">PONDA MUNCIPAL COUNCIL</h3>
-          <h4 className="logo-items">DIGITIZATION APPLICATION</h4>
-        </div>
-        <Form
-          className="login-form"
-          name="login"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-          labelCol={{
-            span: 10,
-          }}
-          wrapperCol={{
-            span: 26,
-          }}
-        >
-          {/* <h2 style={{ margin: "0 auto" }}>L O G I N</h2> */}
-          <h2>W E L C O M E</h2>
-          <Form.Item
-            name="username"
-            style={{ marginTop: "30px" }}
-            rules={[
-              {
-                required: true,
-                message: "Please enter your username!",
-              },
-            ]}
+      <div className="login-container">
+        <div className="main-container">
+          <div className="logo-container">
+            <img className="login-logo" src={logo} alt="logo" />
+            <h3 className="logo-items">PONDA MUNCIPAL COUNCIL</h3>
+            <h4 className="logo-items">DIGITIZATION APPLICATION</h4>
+          </div>
+          <Form
+            className="login-form"
+            name="login"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+            labelCol={{
+              span: 10,
+            }}
+            wrapperCol={{
+              span: 26,
+            }}
           >
-            <Input
-              className="login-form-input"
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder="Username"
-            />
-          </Form.Item>
+            {/* <h2 style={{ margin: "0 auto" }}>L O G I N</h2> */}
+            <h2>W E L C O M E</h2>
+            <Form.Item
+              name="username"
+              style={{ marginTop: "30px" }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter your username!",
+                },
+              ]}
+            >
+              <Input
+                className="login-form-input"
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="Username"
+              />
+            </Form.Item>
 
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Please enter your password!",
-              },
-            ]}
-          >
-            <Input.Password
-              className="login-form-input"
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter your password!",
+                },
+              ]}
+            >
+              <Input.Password
+                className="login-form-input"
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
 
-          {/* <Form.Item
+            {/* <Form.Item
             wrapperCol={{
               offset: 8,
               span: 16,
             }}
-          >
+            >
             <Button type="primary" htmlType="submit">
-              Submit
+            Submit
             </Button>
           </Form.Item> */}
-          <Form.Item style={{ marginTop: "10px" }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="login-form-button"
-            >
-              Log in
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item style={{ marginTop: "10px" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="login-form-button"
+              >
+                Log in
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
     </>
   );

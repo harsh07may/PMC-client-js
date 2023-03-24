@@ -25,6 +25,12 @@
   font-size: 25px;
 }
 
+.expand-card .ant-card-meta-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .gallery .expand-card {
   overflow: hidden; /* otherwise header image won't respect rounded corners */
   transition: all 0.5s ease;

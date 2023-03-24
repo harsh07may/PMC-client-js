@@ -5,6 +5,8 @@ import Search from "./pages/Digitization/Search";
 import Help from "./pages/Digitization/Help";
 import Login from "./pages/Login/Login";
 import AppGallery from "./pages/AppGallery/AppGallery";
+import PreviewLocalFile from "./components/Digitization/display/PreviewLocalFile";
+
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
@@ -14,6 +16,7 @@ function App() {
   const auth = useAuth();
   return (
     <>
+      {/* <PreviewLocalFile></PreviewLocalFile> */}
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Login />} />

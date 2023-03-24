@@ -36,7 +36,7 @@
   font-family: "Poppins", sans-serif;
 }
 body {
-  background-color: #c8effc;
+  /* background-color: #c8effc; */
 }
 .main-container,
 .logo-container,
@@ -44,14 +44,26 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  -webkit-box-shadow: 10px 10px 12px -11px rgba(0, 0, 0, 0.75);
+  /* -webkit-box-shadow: 10px 10px 12px -11px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 10px 10px 12px -11px rgba(0, 0, 0, 0.75);
-  box-shadow: 10px 10px 12px -11px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 12px -11px rgba(0, 0, 0, 0.75); */
 }
 
-.main-container {
+.login-container {
   height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-direction: row;
+  margin: 0;
+  background-color: #a2d2ff;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.main-container {
+  flex-direction: row;
+  border: 1px solid rgb(192, 192, 192);
+  border-radius: 10px;
 }
 .logo-container {
   flex-direction: column;
@@ -87,6 +99,7 @@ body {
   height: 40px;
   font-size: 18px;
   font-weight: 400;
+  background-color: #4096ff;
 }
 
 @media screen and (max-width: 600px) {

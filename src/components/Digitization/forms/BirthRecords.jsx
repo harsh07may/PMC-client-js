@@ -96,6 +96,7 @@ const BirthRecords = () => {
   };
 
   return (
+    // ! change value prop for all inputs
     <>
       <h1 className=" font-bold text-xl mb-2">BIRTH RECORDS</h1>
       <form

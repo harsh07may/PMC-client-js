@@ -3,7 +3,7 @@ import { PoweroffOutlined } from "@ant-design/icons";
 import { Card, Button } from "antd";
 const { Meta } = Card;
 
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, redirect } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
 
 import "./AppGallery.css";
@@ -40,7 +40,7 @@ export default function AppGallery() {
         <div className="gallery">
           <Card
             className="expand-card"
-            onClick={() => console.log("1")}
+            onClick={() => redirect("/login")}
             hoverable
             style={{ width: 220 }}
             cover={<img src={documentLogo} style={{ height: 200 }} />}

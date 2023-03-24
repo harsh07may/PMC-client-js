@@ -11,79 +11,6 @@ import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
 import "./styles/MunicipalProperty.css";
 
 const MunicipalProperty = () => {
-  const dummyRequest = async ({ file, onSuccess }) => {
-    console.log(file);
-    console.log("in dummy");
-    setTimeout(() => {
-      onSuccess("ok");
-    }, 0);
-  };
-
-  //! Test
-  const props = {
-    name: "file", //
-    maxCount: 1, //
-
-    // customRequest: dummyRequest, //!
-
-    beforeUpload(file) {
-      //check file type
-      console.log(file);
-      console.log("checking file");
-      const isPdf = file.type === "application/pdf";
-
-      if (!isPdf) {
-        message.error(`${file.name} is not a PDF file`);
-      }
-
-      const isLessThanUploadLimit =
-        file.size / 1024 / 1024 < FILE_UPLOAD_SIZE_LIMIT;
-
-      if (!isLessThanUploadLimit) {
-        message.error(`File must smaller than ${FILE_UPLOAD_SIZE_LIMIT}MB!`);
-      }
-
-      return (isPdf && isLessThanUploadLimit) || Upload.LIST_IGNORE;
-    },
-
-    onRemove(file) {
-      //? Change setPdfInViewer prop to null & unrender viewer
-      // props.id ? setImage(originalImage) : setImage(RoomImage);
-      // setIsDefaultImage(true);
-    },
-
-    onChange(info) {
-      console.log("in onchange");
-      console.log(info);
-
-      const { status } = info.file;
-
-      /*converting to base 64*/
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-        // setIsDefaultImage(false);
-        // getBase64(info.file.originFileObj);
-        //* const file = info.file.originFileObj;
-
-        // let data = new FormData();
-        // data.append("fileName", file.name);
-        // data.append("file", file);
-
-        //! setPdfFile and create url
-        // setImageFile(file);
-        // setImage(URL.createObjectURL(file));
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-
-      console.log(`leaving onchange. status = ${status}`);
-    },
-
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
-    },
-  };
-
   //States
   const [data, setData] = useState({
     title: "",
@@ -91,65 +18,53 @@ const MunicipalProperty = () => {
     subdiv: "",
     file: null,
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInserted, setIsInserted] = useState(false);
-  //Reset Form
-  const resetFields = () => {
-    setData({
-      title: "",
-      ward: "",
-      subdiv: "",
-      file: null,
-    });
-    setIsInserted(false);
-  };
+  const [file, setFile] = useState(null);
 
   //functions
-  const handleFileChange = (event) => {
-    const dataObjFile = event.target.files[0];
+  const handleFileChange = (e) => {
+    const dataObjFile = e.target.files[0];
     const reader = new FileReader();
     reader.readAsText(dataObjFile);
+
     if (dataObjFile.type === "application/pdf") {
-      console.log(dataObjFile);
+      // console.log(dataObjFile);
       setData({ ...data, file: dataObjFile });
-    } else console.log("File not pdf");
+
+      //for preview button
+      const files = e.target.files;
+      files.length > 0 && setFile(URL.createObjectURL(files[0]));
+    } else {
+      e.target.value = "";
+      setFile(null);
+      message.warning("File is not a PDF", 1.5);
+    }
   };
 
-  const handleChange = (event) => {
-    const dataObj = event.target.value;
-    setData({
-      ...data,
-      [event.target.name]: dataObj,
-    });
-  };
   //API Calls
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let formData = new FormData();
-    formData.append("file", data.file);
-    setIsLoading(true);
+  const onFinish = async (values) => {
+    values = { ...values, file: data.file, type: "municipal_record" };
 
     await axios
-      .post("http://localhost:5000/api/v1/digitization/upload", formData, {
+      .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
         if (res.status == 200) {
-          console.log("File Uploaded");
-          console.log(res.data.storageLink);
-          insertData(res.data.storageLink);
+          insertData(values, res.data.fileLink);
         }
       })
       .catch((error) => {
         console.log(error);
       })
-      .finally(() => setIsLoading(false));
+      .finally();
   };
-  const insertData = async (fileLink) => {
+
+  const insertData = async (formValues, fileLink) => {
+    // console.log({ formValues: formValues });
     let jsonObject = {
-      WardNo: data.ward,
-      SubDivNo: data.subdiv,
-      Title: data.title,
+      WardNo: formValues.wardNo,
+      SubDivNo: formValues.subDivNo,
+      Title: formValues.title,
       FileLink: fileLink,
     };
 
@@ -157,8 +72,8 @@ const MunicipalProperty = () => {
       .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
       .then((res) => {
         if (res.status == 200) {
-          console.log("Data Inserted Successfully");
-          setIsInserted(true);
+          // console.log({ jsonobj: jsonObject });
+          message.success("File Uploaded Successfully", 1.5);
         }
       })
       .catch((error) => console.log(error));
@@ -167,11 +82,16 @@ const MunicipalProperty = () => {
   return (
     <>
       <h1>MUNICIPAL PROPERTY RECORDS</h1>
-      <Form style={{ marginTop: "10px" }}>
+      <Form
+        style={{ marginTop: "10px" }}
+        onFinish={onFinish}
+        onFinishFailed={() => console.log("failed")}
+      >
         <Row gutter={30}>
           <Col span={6}>
-            <Form.Item name="wardNo">
+            <Form.Item name="wardNo" required>
               <Input
+                required
                 size="large"
                 placeholder="Ward No."
                 className="form-input-styles"
@@ -179,17 +99,19 @@ const MunicipalProperty = () => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item name="houseNo">
+            <Form.Item name="subDivNo" required>
               <Input
+                required
                 size="large"
-                placeholder="House No."
+                placeholder="Sub Division No."
                 className="form-input-styles"
               />
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="Title" required wrapperCol={{ span: 16 }}>
+        <Form.Item name="title" required wrapperCol={{ span: 16 }}>
           <Input
+            required
             status=""
             size="large"
             placeholder="Title"
@@ -202,34 +124,30 @@ const MunicipalProperty = () => {
             offset: 6,
           }}
         >
-          <Form.Item label="Dragger" required>
-            <Form.Item
-              name="dragger"
-              valuePropName="fileList"
-              // getValueFromEvent={normFile}
-              noStyle
-            >
-              {/* <Dragger {...uploadDraggerProps}> */}
-              {/* <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Support for a single or bulk upload. Strictly prohibited from
-                  uploading company data or other banned files.
-                </p>
-              </Dragger> */}
-              <Upload
-                {...props}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              >
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
-            </Form.Item>
+          <Form.Item required>
+            {/* <Button icon={<UploadOutlined />}>Click to Upload</Button> */}
+            <input
+              type="file"
+              accept="application/pdf, .pdf"
+              onChange={handleFileChange}
+              required
+            />
           </Form.Item>
+          {file ? (
+            <>
+              <Button
+                type="primary"
+                onClick={() => {
+                  window.open(file);
+                }}
+              >
+                Preview File
+              </Button>
+            </>
+          ) : (
+            <div></div>
+          )}
+
           <Button type="primary" htmlType="submit">
             Submit
           </Button>

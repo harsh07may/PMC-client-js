@@ -63,7 +63,11 @@ const Add = () => {
         </Sider>
         <Content
           // theme="light"
-          style={{ margin: "20px 1.25rem", padding: "0 20px" }}
+          style={{
+            margin: "0 20px 0 0",
+            padding: "20px 20px",
+            // border: "1px dashed gray",
+          }}
         >
           {documentType == "Properties" && <MunicipalProperty />}
           {documentType == "HouseTax" && <HouseTax />}
