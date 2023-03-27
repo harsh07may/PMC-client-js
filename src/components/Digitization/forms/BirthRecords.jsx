@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message } from "antd";
 
+import { formInputStyles } from "./styles/AddForm.module.css";
+
 const BirthRecords = () => {
   //States
   const [form] = Form.useForm();
@@ -45,7 +47,8 @@ const BirthRecords = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
       })
       .finally();
   };
@@ -70,7 +73,10 @@ const BirthRecords = () => {
           form.resetFields();
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
+      });
   };
 
   return (
@@ -90,7 +96,7 @@ const BirthRecords = () => {
                 required
                 size="large"
                 placeholder="Month"
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -101,7 +107,7 @@ const BirthRecords = () => {
                 required
                 size="large"
                 placeholder="Year"
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -112,7 +118,7 @@ const BirthRecords = () => {
             status=""
             size="large"
             placeholder="Title"
-            className="form-input-styles"
+            className={formInputStyles}
           />
         </Form.Item> */}
         <Form.Item

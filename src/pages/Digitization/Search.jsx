@@ -20,14 +20,18 @@ const Search = () => {
 
   return (
     <>
-      <Layout>
-        <Sider theme="light">
+      <Layout
+        style={{
+          marginTop: "2.5rem",
+          // "flex-direction": "row",
+        }}
+      >
+        <Sider theme="light" style={{ margin: "0 20px" }}>
           <button
             key="1"
             onClick={(e) => handleClick(e, 1)}
             value="Properties"
-            //   className="bg-slate-400 rounded-lg m-2 p-6"
-            className={selectedButtonId == "1" ? "btn" : "btn btn-selected"}
+            className={selectedButtonId == "1" ? "btn btn-selected" : "btn"}
           >
             MUNCIPALITY PROPERTY RECORDS
           </button>
@@ -35,7 +39,7 @@ const Search = () => {
             key="2"
             onClick={(e) => handleClick(e, 2)}
             value="HouseTax"
-            className={selectedButtonId == "2" ? "btn" : "btn btn-selected"}
+            className={selectedButtonId == "2" ? "btn btn-selected" : "btn"}
           >
             HOUSE TAX RECORDS
           </button>
@@ -43,7 +47,7 @@ const Search = () => {
             key="3"
             onClick={(e) => handleClick(e, 3)}
             value="ConLisc"
-            className={selectedButtonId == "3" ? "btn" : "btn btn-selected"}
+            className={selectedButtonId == "3" ? "btn btn-selected" : "btn"}
           >
             CONSTRUCTION LICENSES
           </button>
@@ -51,7 +55,7 @@ const Search = () => {
             key="4"
             onClick={(e) => handleClick(e, 4)}
             value="BirthRecords"
-            className={selectedButtonId == "4" ? "btn" : "btn btn-selected"}
+            className={selectedButtonId == "4" ? "btn btn-selected" : "btn"}
           >
             BIRTH RECORDS
           </button>
