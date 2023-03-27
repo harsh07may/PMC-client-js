@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import MunicipalProperty from "../../components/Digitization/forms/MunicipalProperty";
 import HouseTax from "../../components/Digitization/forms/HouseTax";
-import ConLisc from "../../components/Digitization/forms/ConstructionLicense";
+import AddConstuctionLicense from "../../components/Digitization/forms/ConstructionLicense";
 import BirthRecords from "../../components/Digitization/forms/BirthRecords";
 import "./Add.css";
 import { Layout } from "antd";
@@ -70,7 +70,7 @@ const Add = () => {
         >
           {documentType == "Properties" && <MunicipalProperty />}
           {documentType == "HouseTax" && <HouseTax />}
-          {documentType == "ConLisc" && <ConLisc />}
+          {documentType == "ConLisc" && <AddConstuctionLicense />}
           {documentType == "BirthRecords" && <BirthRecords />}
         </Content>
       </Layout>

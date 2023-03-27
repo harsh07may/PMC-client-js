@@ -5,9 +5,6 @@ import { Form, Input, Row, Col, Button, message } from "antd";
 const BirthRecords = () => {
   //States
   const [data, setData] = useState({
-    title: "",
-    ward: "",
-    subdiv: "",
     file: null,
   });
   const [file, setFile] = useState(null);
@@ -34,6 +31,9 @@ const BirthRecords = () => {
 
   //API Calls
   const onFinish = async (values) => {
+    values = { ...values, file: data.file, type: "birth_record" };
+
+    console.log(values);
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -84,6 +84,7 @@ const BirthRecords = () => {
           <Col span={6}>
             <Form.Item name="month" required>
               <Input
+                autocomplete="off"
                 required
                 size="large"
                 placeholder="Month"
@@ -94,6 +95,7 @@ const BirthRecords = () => {
           <Col span={6}>
             <Form.Item name="year" required>
               <Input
+                autocomplete="off"
                 required
                 size="large"
                 placeholder="Year"
@@ -120,6 +122,7 @@ const BirthRecords = () => {
           <Form.Item required>
             {/* <Button icon={<UploadOutlined />}>Click to Upload</Button> */}
             <input
+              autocomplete="off"
               type="file"
               accept="application/pdf, .pdf"
               onChange={handleFileChange}

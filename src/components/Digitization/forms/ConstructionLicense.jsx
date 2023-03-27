@@ -1,179 +1,172 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { Form, Input, Row, Col, Button, message } from "antd";
 
-const ConsLisc = () => {
-  //data members
-  const WardOptions = [
-    { value: "", text: "--Select a Ward--" },
-    { value: "1", text: "1" },
-    { value: "2", text: "2" },
-    { value: "3", text: "3" },
-    { value: "4", text: "4" },
-    { value: "5", text: "5" },
-    { value: "6", text: "6" },
-    { value: "7", text: "7" },
-    { value: "8", text: "8" },
-    { value: "9", text: "9" },
-  ];
-
+const AddConstuctionLicense = () => {
   //States
   const [data, setData] = useState({
-    title: "",
-    ward: "",
-    subdiv: "",
     file: null,
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInserted, setIsInserted] = useState(false);
-  //Reset Form
-  const resetFields = () => {
-    setData({
-      title: "",
-      ward: "",
-      subdiv: "",
-      file: null,
-    });
-    setIsInserted(false);
-  };
+  const [file, setFile] = useState(null);
+
   //functions
-  const handleFileChange = (event) => {
-    const dataObjFile = event.target.files[0];
+  const handleFileChange = (e) => {
+    const dataObjFile = e.target.files[0];
     const reader = new FileReader();
     reader.readAsText(dataObjFile);
+
     if (dataObjFile.type === "application/pdf") {
-      console.log(dataObjFile);
+      // console.log(dataObjFile);
       setData({ ...data, file: dataObjFile });
-    } else console.log("File not pdf");
+
+      //for preview button
+      const files = e.target.files;
+      files.length > 0 && setFile(URL.createObjectURL(files[0]));
+    } else {
+      e.target.value = "";
+      setFile(null);
+      message.warning("File is not a PDF", 1.5);
+    }
   };
 
-  const handleChange = (event) => {
-    const dataObj = event.target.value;
-    setData({
-      ...data,
-      [event.target.name]: dataObj,
-    });
-  };
   //API Calls
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let formData = new FormData();
-    formData.append("file", data.file);
-    //setIsLoading(true);
-    // await axios
-    //   .post("http://13.235.241.41:3002/uploadfile", formData, {
-    //     headers: { "Content-Type": "multipart/form-data" },
-    //   })
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       console.log("File Uploaded");
-    //       console.log(res.data.storageLink);
-    //       insertData(res.data.storageLink);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   })
-    //   .finally(() => setIsLoading(false));
+  const onFinish = async (values) => {
+    values = { ...values, file: data.file, type: "constuction_license_record" };
+    await axios
+      .post("http://localhost:5000/api/v1/digitization/upload", values, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          insertData(values, res.data.fileLink);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally();
   };
-  const insertData = async (fileLink) => {
+
+  const insertData = async (formValues, fileLink) => {
+    // console.log({ formValues: formValues });
     let jsonObject = {
-      WardNo: data.ward,
-      SubDivNo: data.subdiv,
-      Title: data.title,
+      LicenseNo: formValues.licenseNo,
+      SubDivNo: formValues.subDivNo,
+      Name: formValues.name,
+      Year: formValues.year,
       FileLink: fileLink,
     };
 
     await axios
-      .post("http://13.235.241.41:3002/insertdb", jsonObject)
+      .post(
+        "http://localhost:5000/api/v1/digitization/insert?type=constuction_license_record",
+        jsonObject
+      )
       .then((res) => {
         if (res.status == 200) {
-          console.log("Data Inserted Successfully");
-          setIsInserted(true);
+          // console.log({ jsonobj: jsonObject });
+          message.success("File Uploaded Successfully", 1.5);
         }
       })
       .catch((error) => console.log(error));
   };
 
   return (
+    // TODO change value prop for all inputs
     <>
-      <h1 className=" font-bold text-xl mb-2">CONSTRUCTION LICENCES</h1>
-      <form
-        className="w-full"
-        onSubmit={handleSubmit}
-        encType="multipart/form-data"
+      <h1>CONSTRUCTION LICENSE RECORDS</h1>
+      <Form
+        style={{ marginTop: "10px" }}
+        onFinish={onFinish}
+        onFinishFailed={() => console.log("failed")}
       >
-        <div className="flex flex-row space-x-52 w-2/3">
-          <input
-            type="text"
-            placeholder="Year"
-            name="subdiv"
-            value={data.subdiv}
-            className="shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Ward No."
-            name="subdiv"
-            value={data.subdiv}
-            className="shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <input
-          type="text"
-          placeholder="Sub Div No."
-          name="title"
-          value={data.title}
-          className="block w-80 shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Ref No."
-          name="title"
-          value={data.title}
-          className="block w-80 shadow appearance-none border-2 border-gray-500 placeholder-blue-500 rounded py-3 px-3 m-4 leading-tight"
-          onChange={handleChange}
-          required
-        />
-        <label
-          className="block ml-2 text-blue-500 mt-5 font-bold"
-          htmlFor="File"
+        <Row gutter={30}>
+          <Col span={6}>
+            <Form.Item name="licenseNo" required>
+              <Input
+                autocomplete="off"
+                required
+                size="large"
+                placeholder="License No."
+                className="form-input-styles"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item name="subDivNo" required>
+              <Input
+                autocomplete="off"
+                required
+                size="large"
+                placeholder="Sub Division No."
+                className="form-input-styles"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item name="year" required>
+              <Input
+                autocomplete="off"
+                required
+                size="large"
+                placeholder="Year"
+                className="form-input-styles"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item name="name" required wrapperCol={{ span: 16 }}>
+              <Input
+                autocomplete="off"
+                required
+                status=""
+                size="large"
+                placeholder="Name"
+                className="form-input-styles"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Form.Item
+          wrapperCol={{
+            span: 12,
+            offset: 6,
+          }}
         >
-          Upload file:
-        </label>
-        <input
-          className=" text-blue-500 file:mr-5 file:py-2 file:px-6 file:rounded file:border-0 file:text-sm file:font-bold
-            file:bg-blue-500 file:text-blue-50
-            hover:file:cursor-pointer m-4"
-          type="file"
-          name="file"
-          onChange={handleFileChange}
-          required
-        />
-        {isLoading && <Spinner />}
-        {isInserted && <Tick />}
-        <div className="flex flex-row justify-center space-x-52 w-2/3 mt-14">
-          <input
-            type="submit"
-            value="Submit"
-            className="inline-block m-4 px-8 py-2 text-white font-bold bg-blue-500 rounded hover:bg-blue-300"
-          />
-          <input
-            type="reset"
-            value="Reset"
-            className="inline-block m-4 px-8 py-2 text-blue-500 font-bold border-2 border-blue-500 rounded hover:bg-blue-300 hover:text-white"
-            onClick={resetFields}
-          />
-        </div>
-      </form>
+          <Form.Item required>
+            {/* <Button icon={<UploadOutlined />}>Click to Upload</Button> */}
+            <input
+              type="file"
+              accept="application/pdf, .pdf"
+              onChange={handleFileChange}
+              required
+              style={{ maxWidth: "230px" }}
+            />
+          </Form.Item>
+          {file ? (
+            <>
+              <Button
+                type="primary"
+                onClick={() => {
+                  window.open(file);
+                }}
+              >
+                Preview File
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </>
   );
 };
 
-export default ConsLisc;
+export default AddConstuctionLicense;
