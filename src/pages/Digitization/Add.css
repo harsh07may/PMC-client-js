@@ -1,7 +1,7 @@
 .btn {
   padding-left: 1rem;
   margin: 0.5rem;
-  background-color: #93c5fd;
+  background-color: #3b82f6;
   color: #ffffff;
   font-weight: 700;
   text-align: left;
@@ -12,7 +12,7 @@
 }
 
 .btn-selected {
-  background-color: #3b82f6;
+  background-color: #0750a6;
 }
 
 .ant-layout {

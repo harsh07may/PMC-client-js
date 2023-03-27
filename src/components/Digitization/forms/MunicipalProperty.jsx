@@ -1,9 +1,6 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { Form, Input, Row, Col, Button, Upload, message } from "antd";
-const { Dragger } = Upload;
+import { Form, Input, Row, Col, Button, message } from "antd";
 
 //import Global vars
 import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
@@ -42,19 +39,20 @@ const MunicipalProperty = () => {
 
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "municipal_record" };
+    values = { ...values, file: data.file, type: "municipal_property_record" };
 
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
+        // console.log({ respose: res });
         if (res.status == 200) {
           insertData(values, res.data.fileLink);
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.log("error");
       })
       .finally();
   };
@@ -65,6 +63,7 @@ const MunicipalProperty = () => {
       WardNo: formValues.wardNo,
       SubDivNo: formValues.subDivNo,
       Title: formValues.title,
+      type: "municipal_property_record",
       FileLink: fileLink,
     };
 
@@ -131,6 +130,7 @@ const MunicipalProperty = () => {
               accept="application/pdf, .pdf"
               onChange={handleFileChange}
               required
+              style={{ maxWidth: "230px" }}
             />
           </Form.Item>
           {file ? (
@@ -145,10 +145,10 @@ const MunicipalProperty = () => {
               </Button>
             </>
           ) : (
-            <div></div>
+            <></>
           )}
 
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
             Submit
           </Button>
         </Form.Item>
