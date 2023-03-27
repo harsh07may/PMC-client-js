@@ -11,9 +11,6 @@ const MunicipalProperty = () => {
   //States
   const [form] = Form.useForm();
   const [data, setData] = useState({
-    title: "",
-    ward: "",
-    subdiv: "",
     file: null,
   });
   const [file, setFile] = useState(null);
@@ -94,6 +91,7 @@ const MunicipalProperty = () => {
           <Col span={6}>
             <Form.Item name="wardNo" required>
               <Input
+                autocomplete="off"
                 required
                 size="large"
                 placeholder="Ward No."
@@ -104,6 +102,7 @@ const MunicipalProperty = () => {
           <Col span={6}>
             <Form.Item name="subDivNo" required>
               <Input
+                autocomplete="off"
                 required
                 size="large"
                 placeholder="Sub Division No."
@@ -114,6 +113,7 @@ const MunicipalProperty = () => {
         </Row>
         <Form.Item name="title" required wrapperCol={{ span: 16 }}>
           <Input
+            autocomplete="off"
             required
             status=""
             size="large"
@@ -130,6 +130,7 @@ const MunicipalProperty = () => {
           <Form.Item required>
             {/* <Button icon={<UploadOutlined />}>Click to Upload</Button> */}
             <input
+              autocomplete="off"
               type="file"
               accept="application/pdf, .pdf"
               onChange={handleFileChange}
