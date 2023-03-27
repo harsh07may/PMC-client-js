@@ -4,6 +4,7 @@ import { Form, Input, Row, Col, Button, message } from "antd";
 
 const BirthRecords = () => {
   //States
+  const [form] = Form.useForm();
   const [data, setData] = useState({
     file: null,
   });
@@ -66,19 +67,20 @@ const BirthRecords = () => {
         if (res.status == 200) {
           // console.log({ jsonobj: jsonObject });
           message.success("File Uploaded Successfully", 1.5);
+          form.resetFields();
         }
       })
       .catch((error) => console.log(error));
   };
 
   return (
-    // TODO change value prop for all inputs
     <>
       <h1>BIRTH RECORDS</h1>
       <Form
         style={{ marginTop: "10px" }}
         onFinish={onFinish}
         onFinishFailed={() => console.log("failed")}
+        form={form}
       >
         <Row gutter={30}>
           <Col span={6}>

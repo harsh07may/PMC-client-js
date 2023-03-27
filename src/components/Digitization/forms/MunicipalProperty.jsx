@@ -45,12 +45,13 @@ const MunicipalProperty = () => {
       })
       .then((res) => {
         // console.log({ respose: res });
-        form.resetFields();
+        // form.resetFields();
         if (res.status == 200) {
           insertData(values, res.data.fileLink);
         }
       })
       .catch((error) => {
+        // TODO add fail message
         console.log("error");
       })
       .finally();
@@ -70,12 +71,14 @@ const MunicipalProperty = () => {
       .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
       .then((res) => {
         if (res.status == 200) {
-          // console.log({ jsonobj: jsonObject });
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        //TODO add fail message
+        console.log(error);
+      });
   };
 
   return (
