@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message } from "antd";
 
+import { formInputStyles } from "./styles/AddForm.module.css";
+
 const HouseTax = () => {
   //States
   const [form] = Form.useForm();
@@ -43,7 +45,8 @@ const HouseTax = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
       })
       .finally();
   };
@@ -69,7 +72,10 @@ const HouseTax = () => {
           form.resetFields();
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
+      });
   };
 
   return (
@@ -89,7 +95,7 @@ const HouseTax = () => {
                 required
                 size="large"
                 placeholder="Ward No."
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -100,7 +106,7 @@ const HouseTax = () => {
                 required
                 size="large"
                 placeholder="House No."
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -114,7 +120,7 @@ const HouseTax = () => {
             status=""
             size="large"
             placeholder="Name"
-            className="form-input-styles"
+            className={formInputStyles}
           />
         </Form.Item>
         {/* </Col> */}

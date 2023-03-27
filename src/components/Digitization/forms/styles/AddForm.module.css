@@ -2,22 +2,20 @@
   --input-blue-placeholder: #3b82f6;
 }
 
-.form-input-styles::placeholder {
+.formInputStyles::placeholder {
   color: var(--input-blue-placeholder);
 }
-.form-input-styles::-moz-placeholder {
+.formInputStyles::-moz-placeholder {
   color: var(--input-blue-placeholder);
 }
-.form-input-styles::-ms-input-placeholder {
+.formInputStyles::-ms-input-placeholder {
   color: var(--input-blue-placeholder);
 }
-.form-input-styles::-webkit-input-placeholder {
+.formInputStyles::-webkit-input-placeholder {
   color: var(--input-blue-placeholder);
 }
 
-.form-input-styles {
-  /* appearance: none; */
-  /* color: aqua; */
+.formInputStyles {
   border-radius: 0.25rem;
   border-width: 2px;
   border-color: black;

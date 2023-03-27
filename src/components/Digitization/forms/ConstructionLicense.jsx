@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message } from "antd";
 
+import { formInputStyles } from "./styles/AddForm.module.css";
+
 const AddConstuctionLicense = () => {
   //States
   const [form] = Form.useForm();
@@ -43,7 +45,8 @@ const AddConstuctionLicense = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
       })
       .finally();
   };
@@ -70,7 +73,10 @@ const AddConstuctionLicense = () => {
           form.resetFields();
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
+      });
   };
 
   return (
@@ -90,7 +96,7 @@ const AddConstuctionLicense = () => {
                 required
                 size="large"
                 placeholder="License No."
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -101,7 +107,7 @@ const AddConstuctionLicense = () => {
                 required
                 size="large"
                 placeholder="Sub Division No."
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -112,7 +118,7 @@ const AddConstuctionLicense = () => {
                 required
                 size="large"
                 placeholder="Year"
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -126,7 +132,7 @@ const AddConstuctionLicense = () => {
                 status=""
                 size="large"
                 placeholder="Name"
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>

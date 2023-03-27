@@ -5,7 +5,7 @@ import { Form, Input, Row, Col, Button, message } from "antd";
 //import Global vars
 import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
 
-import "./styles/MunicipalProperty.css";
+import { formInputStyles } from "./styles/AddForm.module.css";
 
 const MunicipalProperty = () => {
   //States
@@ -51,8 +51,8 @@ const MunicipalProperty = () => {
         }
       })
       .catch((error) => {
-        // TODO add fail message
-        console.log("error");
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
       })
       .finally();
   };
@@ -76,8 +76,8 @@ const MunicipalProperty = () => {
         }
       })
       .catch((error) => {
-        //TODO add fail message
-        console.log(error);
+        message.error("File Uploaded Failed", 1.5);
+        // console.log(error)
       });
   };
 
@@ -98,7 +98,7 @@ const MunicipalProperty = () => {
                 required
                 size="large"
                 placeholder="Ward No."
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -109,7 +109,7 @@ const MunicipalProperty = () => {
                 required
                 size="large"
                 placeholder="Sub Division No."
-                className="form-input-styles"
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -121,7 +121,7 @@ const MunicipalProperty = () => {
             status=""
             size="large"
             placeholder="Title"
-            className="form-input-styles"
+            className={formInputStyles}
           />
         </Form.Item>
         <Form.Item
