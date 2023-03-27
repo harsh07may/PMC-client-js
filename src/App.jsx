@@ -23,9 +23,9 @@ function App() {
           <Route
             path="/digitization/*"
             element={
-              //<RequireAuth>
-              <Navbar />
-              //</RequireAuth>
+              <RequireAuth>
+                <Navbar />
+              </RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />

@@ -1,10 +1,5 @@
 import React from "react";
 import { useState } from "react";
-<<<<<<< HEAD
-import ConLisc from "../../components/Digitization/forms/ConstructionLicense";
-import BirthRecords from "../../components/Digitization/forms/BirthRecords";
-=======
->>>>>>> 93acd09fe33bf926b6b95372d6c5c5370eecab64
 import { Layout } from "antd";
 
 import MunicipalPropertySearch from "../../components/Digitization/search/MunicipalPropertySearch";
