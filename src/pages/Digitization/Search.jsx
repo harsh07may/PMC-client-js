@@ -1,9 +1,16 @@
 import React from "react";
 import { useState } from "react";
+<<<<<<< HEAD
 import ConLisc from "../../components/Digitization/forms/ConstructionLicense";
 import BirthRecords from "../../components/Digitization/forms/BirthRecords";
+=======
+>>>>>>> 93acd09fe33bf926b6b95372d6c5c5370eecab64
 import { Layout } from "antd";
-import HouseTaxSearch from "../../components/Digitization/display/HouseTaxSearch";
+
+import MunicipalPropertySearch from "../../components/Digitization/search/MunicipalPropertySearch";
+import HouseTaxSearch from "../../components/Digitization/search/HouseTaxSearch";
+import ConstructionLicenseSearch from "../../components/Digitization/search/ConstructionLicenseSearch";
+import BirthRecordsSearch from "../../components/Digitization/search/BirthRecordsSearch";
 
 const { Content, Sider } = Layout;
 
@@ -55,10 +62,10 @@ const Search = () => {
           </button>
         </Sider>
         <Content>
-          {documentType == "Properties" && <MuncipalPropertySearch />}
+          {documentType == "Properties" && <MunicipalPropertySearch />}
           {documentType == "HouseTax" && <HouseTaxSearch />}
-          {documentType == "ConLisc" && <ConLisc />}
-          {documentType == "BirthRecords" && <BirthRecords />}
+          {documentType == "ConLisc" && <ConstructionLicenseSearch />}
+          {documentType == "BirthRecords" && <BirthRecordsSearch />}
         </Content>
       </Layout>
     </>
