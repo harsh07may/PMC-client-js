@@ -9,6 +9,7 @@ import "./styles/MunicipalProperty.css";
 
 const MunicipalProperty = () => {
   //States
+  const [form] = Form.useForm();
   const [data, setData] = useState({
     title: "",
     ward: "",
@@ -47,6 +48,7 @@ const MunicipalProperty = () => {
       })
       .then((res) => {
         // console.log({ respose: res });
+        form.resetFields();
         if (res.status == 200) {
           insertData(values, res.data.fileLink);
         }
@@ -73,6 +75,7 @@ const MunicipalProperty = () => {
         if (res.status == 200) {
           // console.log({ jsonobj: jsonObject });
           message.success("File Uploaded Successfully", 1.5);
+          form.resetFields();
         }
       })
       .catch((error) => console.log(error));
@@ -85,6 +88,7 @@ const MunicipalProperty = () => {
         style={{ marginTop: "10px" }}
         onFinish={onFinish}
         onFinishFailed={() => console.log("failed")}
+        form={form}
       >
         <Row gutter={30}>
           <Col span={6}>

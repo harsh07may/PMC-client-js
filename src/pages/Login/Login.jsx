@@ -26,6 +26,7 @@ export default function Login() {
     })
       .then((res) => {
         const { accesstoken } = res.data;
+        console.log(res.data.IPv4);
         auth.login(accesstoken);
         navigate("/digitization", { replace: true });
       })
