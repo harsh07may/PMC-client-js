@@ -13,7 +13,7 @@ const Add = () => {
   const [selectedButtonId, setSelectedButtonId] = useState("1");
 
   const handleClick = (e, key) => {
-    console.log(documentType + " " + selectedButtonId);
+    // console.log(documentType + " " + selectedButtonId);
     setDocumentType(e.target.value);
     setSelectedButtonId(key);
   };
