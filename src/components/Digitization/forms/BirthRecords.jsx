@@ -123,13 +123,11 @@ const BirthRecords = () => {
       Month: formValues.month,
       Year: formValues.year,
       FileLink: fileLink,
+      type: "birth_record",
     };
 
     await axios
-      .post(
-        "http://localhost:5000/api/v1/digitization/insert?type=birth_record",
-        jsonObject
-      )
+      .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
       .then((res) => {
         if (res.status == 200) {
           // console.log({ jsonobj: jsonObject });
