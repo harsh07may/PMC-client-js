@@ -29,10 +29,11 @@ export default function Login() {
       method: "post",
       url: "http://localhost:5000/api/v1/user/login",
       data: values,
+      withCredentials: true,
     })
       .then((res) => {
         const { accesstoken } = res.data;
-        console.log(res.data.IPv4);
+        // console.log(res.data);
         auth.login(accesstoken);
         navigate("/digitization", { replace: true });
       })
