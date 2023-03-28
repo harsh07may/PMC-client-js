@@ -92,7 +92,7 @@ const BirthRecords = () => {
           <Col span={6}>
             <Form.Item name="month" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="Month"
@@ -103,7 +103,7 @@ const BirthRecords = () => {
           <Col span={6}>
             <Form.Item name="year" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="Year"
@@ -130,7 +130,7 @@ const BirthRecords = () => {
           <Form.Item required>
             {/* <Button icon={<UploadOutlined />}>Click to Upload</Button> */}
             <input
-              autocomplete="off"
+              autoComplete="off"
               type="file"
               accept="application/pdf, .pdf"
               onChange={handleFileChange}

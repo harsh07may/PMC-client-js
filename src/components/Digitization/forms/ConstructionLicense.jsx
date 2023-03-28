@@ -92,7 +92,7 @@ const AddConstuctionLicense = () => {
           <Col span={6}>
             <Form.Item name="licenseNo" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="License No."
@@ -103,7 +103,7 @@ const AddConstuctionLicense = () => {
           <Col span={6}>
             <Form.Item name="subDivNo" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="Sub Division No."
@@ -114,7 +114,7 @@ const AddConstuctionLicense = () => {
           <Col span={6}>
             <Form.Item name="year" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="Year"
@@ -127,7 +127,7 @@ const AddConstuctionLicense = () => {
           <Col span={24}>
             <Form.Item name="name" required wrapperCol={{ span: 16 }}>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 status=""
                 size="large"

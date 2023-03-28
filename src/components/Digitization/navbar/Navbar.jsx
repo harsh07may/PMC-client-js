@@ -25,7 +25,7 @@ const Navbar = () => {
       <nav className="navbar">
         {/*Child 1: Logo Text*/}
         <div className="nav-items">
-          <Link to="/">
+          <Link to="/AppGallery">
             <img src={Logo} alt="logo" className="logo" />
           </Link>
           <h2 className="heading-text">Ponda Municipal Council</h2>

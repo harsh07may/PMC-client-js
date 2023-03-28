@@ -91,7 +91,7 @@ const HouseTax = () => {
           <Col span={6}>
             <Form.Item name="wardNo" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="Ward No."
@@ -102,7 +102,7 @@ const HouseTax = () => {
           <Col span={6}>
             <Form.Item name="houseNo" required>
               <Input
-                autocomplete="off"
+                autoComplete="off"
                 required
                 size="large"
                 placeholder="House No."
@@ -115,7 +115,7 @@ const HouseTax = () => {
         {/* <Col span={18}> */}
         <Form.Item name="name" required wrapperCol={{ span: 16 }}>
           <Input
-            autocomplete="off"
+            autoComplete="off"
             required
             status=""
             size="large"

@@ -8,7 +8,7 @@ function HouseTaxSearch() {
   const handleclick = () => {
     axios({
       method: "get",
-      url: "http://localhost:5000/api/v1/digitization/file-download?doc_name=ThisDocument",
+      url: "http://localhost:5000/api/v1/digitization/file-download?doc_name=123",
       headers: {
         Authorization: `Bearer ${auth.user}`,
       },
