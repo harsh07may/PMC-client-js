@@ -46,7 +46,7 @@ const MunicipalPropertySearch = () => {
 
   return (
     <>
-      <h1 className=" font-bold text-xl mb-2">MUNCIPAL PROPERTY RECORDS</h1>
+      <h1>MUNCIPAL PROPERTY RECORDS</h1>
       <form className="w-full" onSubmit={getData} encType="multipart/form-data">
         <div className="flex flex-row space-x-52 w-2/3">
           <label

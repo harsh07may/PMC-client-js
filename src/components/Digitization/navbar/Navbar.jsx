@@ -1,10 +1,13 @@
 import React from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
+import { Button, Tooltip } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
 
 import "./Navbar.css";
 
 import Logo from "../../../assets/logo.png";
+import Logout from "../../../assets/logout.svg";
 
 const Navbar = () => {
   const navLinkStyles = ({ isActive }) => {
@@ -54,7 +57,17 @@ const Navbar = () => {
           >
             Help
           </NavLink>
-          <button onClick={handleLogout}>Logout</button>
+          <img
+            src={Logout}
+            style={{
+              height: "32px",
+              margin: "5px",
+              padding: "7px",
+              cursor: "pointer",
+            }}
+            onClick={handleLogout}
+          />
+          {/* <button onClick={handleLogout}>Logout</button> */}
         </div>
       </nav>
       <Outlet />

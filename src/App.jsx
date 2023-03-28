@@ -11,6 +11,8 @@ import { AuthProvider, useAuth } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
 import { FILE_UPLOAD_SIZE_LIMIT } from "./GLOBAL_VARS";
 
+// Icons taken from https://www.svgrepo.com
+
 function App() {
   const auth = useAuth();
   return (
@@ -23,9 +25,9 @@ function App() {
           <Route
             path="/digitization/*"
             element={
-              <RequireAuth>
-                <Navbar />
-              </RequireAuth>
+              // <RequireAuth>
+              <Navbar />
+              // </RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />
