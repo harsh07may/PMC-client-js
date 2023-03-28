@@ -5,7 +5,6 @@ import { Form, Input, Row, Col, Button, message } from "antd";
 import { formInputStyles } from "./styles/AddForm.module.css";
 
 //! test imports (start)
-// ?  test imports for upload
 import { UploadOutlined } from "@ant-design/icons";
 import {
   // Button,
@@ -29,7 +28,7 @@ const BirthRecords = () => {
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
-  //* Old lStates
+  //* Old States
 
   //! test functions (start)
   function onRemove(file) {
@@ -94,7 +93,7 @@ const BirthRecords = () => {
     values = { ...values, file: data.file, type: "birth_record" };
 
     //! test area
-
+    setUploading(true);
     //! test area
 
     console.log(values);
@@ -109,6 +108,9 @@ const BirthRecords = () => {
       })
       .catch((error) => {
         message.error("File Uploaded Failed", 1.5);
+        //! test
+        setUploading(false);
+        //! test
         // console.log(error)
       })
       .finally();
@@ -133,6 +135,7 @@ const BirthRecords = () => {
         }
       })
       .catch((error) => {
+        setUploading(false);
         message.error("File Uploaded Failed", 1.5);
         // console.log(error)
       });
@@ -183,7 +186,7 @@ const BirthRecords = () => {
         <Form.Item
           wrapperCol={{
             span: 12,
-            offset: 6,
+            // offset: 6,
           }}
         >
           {/* <Form.Item required>
@@ -196,15 +199,8 @@ const BirthRecords = () => {
               style={{ maxWidth: "230px" }}
             />
           </Form.Item> */}
-          //! test upload
-          <Form.Item
-            required
-            name="upload"
-            // label="Upload"
-            valuePropName="fileList"
-            // getValueFromEvent={normFile}
-            // extra="longgggggggggggggggggggggggggggggggggg"
-          >
+          {/* //! test upload (start) */}
+          <Form.Item required name="upload" valuePropName="fileList">
             <>
               <Upload
                 accept="application/pdf, .pdf"
@@ -216,7 +212,7 @@ const BirthRecords = () => {
               </Upload>
             </>
           </Form.Item>
-          //! test upload
+          {/* //! test upload (end) */}
           {pdfFile ? (
             <>
               <Button
