@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Button, notification, Form, Input, message } from "antd";
@@ -9,8 +9,14 @@ import "./Login.css";
 import logo from "../../assets/pmc_logo.png";
 
 export default function Login() {
-  const navigate = useNavigate();
   const auth = useAuth();
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      auth.logout();
+    }
+  }, []);
 
   const openNotification = () => {
     notification.open({
@@ -44,7 +50,7 @@ export default function Login() {
         <div className="main-container">
           <div className="logo-container">
             <img className="login-logo" src={logo} alt="logo" />
-            <h3 className="logo-items">PONDA MUNCIPAL COUNCIL</h3>
+            <h3 className="logo-items">PONDA MUNICIPAL COUNCIL</h3>
             <h4 className="logo-items">DIGITIZATION APPLICATION</h4>
           </div>
           <Form
@@ -79,7 +85,6 @@ export default function Login() {
                 placeholder="Username"
               />
             </Form.Item>
-
             <Form.Item
               name="password"
               rules={[

@@ -21,9 +21,6 @@ const BirthRecords = () => {
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    console.log(fileList);
-  }, [fileList]);
   //! test states (end)
 
   //* Old States
