@@ -114,6 +114,7 @@ const MunicipalProperty = () => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setUploading(false);
         }
       })
       .catch((error) => {

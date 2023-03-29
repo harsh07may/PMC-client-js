@@ -150,7 +150,7 @@ const MunicipalPropertySearch = () => {
   const [reqSent, setReqSent] = useState(false);
   const [searching, setSearching] = useState(false);
   const [data, setData] = useState(null);
-  const [tableData, setTableData] = useState(null);
+  const [tableData, setTableData] = useState([]);
 
   //* Make a UE call after data state updates to format the data for the Table.
   useEffect(() => {
@@ -196,6 +196,7 @@ const MunicipalPropertySearch = () => {
         setSearching(false);
       })
       .catch((err) => {
+        message.error("File not found", 2);
         setData(null);
         setSearching(false);
         // message.error(err, 1.4);
