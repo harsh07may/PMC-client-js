@@ -15,29 +15,6 @@ import axios from "axios";
 // Icons taken from https://www.svgrepo.com
 
 function App() {
-  const auth = useAuth();
-
-  useEffect(() => {
-    async function checkRefreshToken() {
-      axios
-        .post(
-          "http://localhost:5000/api/v1/user/refresh_token",
-          {},
-          {
-            credentials: "include",
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log("Error" + err);
-        });
-    }
-    checkRefreshToken();
-  }, []);
-
   return (
     <>
       <AuthProvider>
@@ -55,9 +32,9 @@ function App() {
           <Route
             path="/digitization/*"
             element={
-              <RequireAuth>
-                <Navbar />
-              </RequireAuth>
+              //<RequireAuth>
+              <Navbar />
+              //</RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />
