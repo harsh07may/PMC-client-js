@@ -40,7 +40,7 @@ export default function AppGallery() {
         <div className="gallery">
           <Card
             className="expand-card"
-            onClick={() => redirect("/login")}
+            onClick={() => navigate("/digitization")}
             hoverable
             style={{ width: 220 }}
             cover={<img src={documentLogo} style={{ height: 200 }} />}

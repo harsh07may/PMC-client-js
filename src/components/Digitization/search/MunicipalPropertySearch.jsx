@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { DownOutlined, UploadOutlined } from "@ant-design/icons";
+import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { formInputStyles } from "./searchForm.module.css";
 import {
   Badge,
   Dropdown,
@@ -34,25 +35,19 @@ const MunicipalPropertySearch = () => {
   //! test
   const auth = useAuth();
 
-  const handleclick = (title) => {
+  const handleclick = (recordid) => {
     axios({
       method: "get",
-      //! needs to be changed to full record
-      url: `http://localhost:5000/api/v1/digitization/file-download?doc_name=${title}`,
+      url: `http://localhost:5000/api/v1/digitization/file-download?recordid=${recordid}&type=municipal_property_record`,
       headers: {
         Authorization: `Bearer ${auth.user}`,
       },
       responseType: "blob",
     })
       .then((res) => {
-        let fileSuffix = res.headers["content-disposition"]
+        const fileName = res.headers["content-disposition"]
           .split('filename="')[1]
-          .split(".")[0];
-        let extension = res.headers["content-disposition"]
-          .split(".")[1]
-          .split('"')[0];
-        const fileName = fileSuffix + "." + extension;
-        console.log(fileName);
+          .slice(0, -1);
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
@@ -79,15 +74,16 @@ const MunicipalPropertySearch = () => {
       title: "Action",
       key: "filelink",
       render: (_, record) => (
-        <button
+        <Button
+          size="small"
           onClick={() => {
             console.log("record");
             // console.log(record);
-            handleclick(record.title);
+            handleclick(record.recordid);
           }}
         >
           Download
-        </button>
+        </Button>
       ),
     },
   ];
@@ -220,7 +216,7 @@ const MunicipalPropertySearch = () => {
                 autoComplete="off"
                 size="large"
                 placeholder="Ward No."
-                // className={formInputStyles}
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -230,7 +226,7 @@ const MunicipalPropertySearch = () => {
                 autoComplete="off"
                 size="large"
                 placeholder="Sub Division No."
-                // className={formInputStyles}
+                className={formInputStyles}
               />
             </Form.Item>
           </Col>
@@ -241,7 +237,7 @@ const MunicipalPropertySearch = () => {
             status=""
             size="large"
             placeholder="Title"
-            // className={formInputStyles}
+            className={formInputStyles}
           />
         </Form.Item>
         <Form.Item
@@ -251,7 +247,8 @@ const MunicipalPropertySearch = () => {
           }}
         >
           <Button
-            type="primary"
+            // type="primary"
+            icon={<SearchOutlined />}
             htmlType="submit"
             style={{ marginLeft: 10 }}
             loading={searching}

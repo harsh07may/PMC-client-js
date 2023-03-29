@@ -35,7 +35,7 @@ export default function Login() {
         const { accesstoken } = res.data;
         // console.log(res.data);
         auth.login(accesstoken);
-        navigate("/digitization", { replace: true });
+        navigate("/AppGallery", { replace: true });
       })
       .catch((err) => {
         openNotification();
