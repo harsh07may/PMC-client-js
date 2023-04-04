@@ -150,16 +150,10 @@ const MunicipalPropertySearch = () => {
 
   //* Make a UE call after data state updates to format the data for the Table.
   useEffect(() => {
-    console.log("data modified");
     if (data !== null) {
-      console.log(data);
       handleDataChange();
-    } else console.log("data null");
+    }
   }, [data]);
-
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
 
   //functions
   const handleDataChange = async () => {

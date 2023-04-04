@@ -26,7 +26,7 @@ const Search = () => {
           // "flex-direction": "row",
         }}
       >
-        <Sider theme="light" style={{ margin: "0 20px" }}>
+        <Sider theme="light" style={{ margin: "0 20px", position: "fixed" }}>
           <button
             key="1"
             onClick={(e) => handleClick(e, 1)}
@@ -61,12 +61,14 @@ const Search = () => {
           </button>
         </Sider>
         <Content
+          // theme="light"
           style={{
-            margin: "0 20px 0 0",
+            margin: "0 20px 0 20%",
             padding: "8px 20px",
             // border: "1px dashed gray",
           }}
         >
+          {/* //! Flickering */}
           {documentType == "Properties" && <MunicipalPropertySearch />}
           {documentType == "HouseTax" && <HouseTaxSearch />}
           {documentType == "ConLisc" && <ConstructionLicenseSearch />}

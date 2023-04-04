@@ -7,34 +7,39 @@ import Login from "./pages/Login/Login";
 import AppGallery from "./pages/AppGallery/AppGallery";
 
 import { Route, Routes, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./utils/auth";
+import { AuthProvider } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
 import { FILE_UPLOAD_SIZE_LIMIT } from "./GLOBAL_VARS";
 
 import axios from "axios";
 // Icons taken from https://www.svgrepo.com
 
+const NotFound = () => {
+  return <>Page Not found</>;
+};
+
 function App() {
   return (
     <>
       <AuthProvider>
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Login />} />
           <Route
             path="/AppGallery"
             element={
-              //<RequireAuth>
-              <AppGallery />
-              //</RequireAuth>
+              <RequireAuth>
+                <AppGallery />
+              </RequireAuth>
             }
           />
 
           <Route
             path="/digitization/*"
             element={
-              //<RequireAuth>
-              <Navbar />
-              //</RequireAuth>
+              <RequireAuth>
+                <Navbar />
+              </RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />

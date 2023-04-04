@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "./auth";
+import { Navigate } from "react-router-dom";
 
 export default function ({ children }) {
   const auth = useAuth();
 
-  if (!auth.user) {
-    console.log("token unset");
-    return <Navigate to="/" />;
+  if (auth.loading) {
+    return <LoadingSpinner />;
   }
-  return children;
+  return auth.user ? children : <Navigate to="/" />;
 }
