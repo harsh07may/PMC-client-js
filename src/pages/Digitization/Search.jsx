@@ -71,12 +71,14 @@ const Search = () => {
           </button>
         </Sider>
         <Content
+          // theme="light"
           style={{
             margin: "0 20px 0 20%",
             padding: "8px 20px",
             // border: "1px dashed gray",
           }}
         >
+          {/* //! Flickering */}
           {documentType == "Properties" && <MunicipalPropertySearch />}
           {documentType == "HouseTax" && <HouseTaxSearch />}
           {documentType == "ConLisc" && <ConstructionLicenseSearch />}

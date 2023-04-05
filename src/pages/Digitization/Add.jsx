@@ -6,7 +6,7 @@ import AddConstuctionLicense from "../../components/Digitization/forms/Construct
 import BirthRecords from "../../components/Digitization/forms/BirthRecords";
 import "./Add.css";
 import { Layout } from "antd";
-const { Content, Header, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 const Add = () => {
   const [documentType, setDocumentType] = useState("Properties");
@@ -26,7 +26,7 @@ const Add = () => {
           // "flex-direction": "row",
         }}
       >
-        <Sider theme="light" style={{ margin: "0 20px" }}>
+        <Sider theme="light" style={{ position: "fixed", margin: "0 20px" }}>
           <button
             key="1"
             onClick={(e) => handleClick(e, 1)}
@@ -63,11 +63,12 @@ const Add = () => {
         <Content
           // theme="light"
           style={{
-            margin: "0 20px 0 0",
+            margin: "0 20px 0 20%",
             padding: "8px 20px",
             // border: "1px dashed gray",
           }}
         >
+          {/* //! Flickering */}
           {documentType == "Properties" && <MunicipalProperty />}
           {documentType == "HouseTax" && <HouseTax />}
           {documentType == "ConLisc" && <AddConstuctionLicense />}

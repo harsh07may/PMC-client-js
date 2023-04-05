@@ -1,11 +1,15 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   useEffect(() => {
-    async function checkRefreshToken() {
+    const checkRefreshToken = () => {
       axios
         .post(
           "http://localhost:5000/api/v1/user/refresh_token",
@@ -16,16 +20,15 @@ export const AuthProvider = ({ children }) => {
           }
         )
         .then((res) => {
-          console.log("token set");
           setUser(res.data.accesstoken);
+          setLoading(false);
         })
         .catch((err) => {
           console.log("Error" + err);
         });
-    }
-    checkRefreshToken();
+    };
+    return checkRefreshToken;
   }, []);
-
   const login = (user) => {
     setUser(user);
   };
@@ -41,7 +44,7 @@ export const AuthProvider = ({ children }) => {
         }
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setUser(null);
       })
       .catch((err) => {
@@ -49,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       });
   };
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, setLoading }}>
       {children}
     </AuthContext.Provider>
   );

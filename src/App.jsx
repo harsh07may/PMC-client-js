@@ -1,36 +1,41 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { Suspense } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { AuthProvider } from "./utils/auth";
+import RequireAuth from "./utils/RequireAuth";
+
 // import Navbar from "./components/Digitization/navbar/Navbar";
+// import Add from "./pages/Digitization/Add";
+// import Search from "./pages/Digitization/Search";
+// import Help from "./pages/Digitization/Help";
+// import Login from "./pages/Login/Login";
+// import AppGallery from "./pages/AppGallery/AppGallery";
+
 const Navbar = React.lazy(() =>
   import("./components/Digitization/navbar/Navbar")
 );
-// import Add from "./pages/Digitization/Add";
 const Add = React.lazy(() => import("./pages/Digitization/Add"));
-// import Search from "./pages/Digitization/Search";
 const Search = React.lazy(() => import("./pages/Digitization/Search"));
-// import Help from "./pages/Digitization/Help";
 const Help = React.lazy(() => import("./pages/Digitization/Help"));
-// import Login from "./pages/Login/Login";
 const Login = React.lazy(() => import("./pages/Login/Login"));
-// import AppGallery from "./pages/AppGallery/AppGallery";
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
+import LoadingSpinner from "./components/LoadingSpinner";
 
-import { Route, Routes, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./utils/auth";
-import RequireAuth from "./utils/RequireAuth";
-import { FILE_UPLOAD_SIZE_LIMIT } from "./GLOBAL_VARS";
-
-import axios from "axios";
 // Icons taken from https://www.svgrepo.com
+
+const NotFound = () => {
+  return <h1>Page Not found</h1>;
+};
 
 function App() {
   return (
     <>
       <AuthProvider>
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route
             path="/"
             element={
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<LoadingSpinner />}>
                 <Login />
               </Suspense>
             }
@@ -38,22 +43,22 @@ function App() {
           <Route
             path="/AppGallery"
             element={
-              //<RequireAuth>
-              <Suspense fallback={<div>Loading...</div>}>
-                <AppGallery />
-              </Suspense>
-              //</RequireAuth>
+              <RequireAuth>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AppGallery />
+                </Suspense>
+              </RequireAuth>
             }
           />
 
           <Route
             path="/digitization/*"
             element={
-              //<RequireAuth>
-              <Suspense fallback={<div>Loading...</div>}>
-                <Navbar />
-              </Suspense>
-              //</RequireAuth>
+              <RequireAuth>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Navbar />
+                </Suspense>
+              </RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />
@@ -61,7 +66,7 @@ function App() {
             <Route
               path="search"
               element={
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<LoadingSpinner />}>
                   <Search />
                 </Suspense>
               }
@@ -70,7 +75,7 @@ function App() {
               path="add"
               element={
                 // <Help />
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<LoadingSpinner />}>
                   <Add />
                 </Suspense>
               }
@@ -78,7 +83,7 @@ function App() {
             <Route
               path="help"
               element={
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<LoadingSpinner />}>
                   <Help />
                 </Suspense>
               }
