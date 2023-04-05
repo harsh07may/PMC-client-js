@@ -1,10 +1,18 @@
-import { useState, useEffect } from "react";
-import Navbar from "./components/Digitization/navbar/Navbar";
-import Add from "./pages/Digitization/Add";
-import Search from "./pages/Digitization/Search";
-import Help from "./pages/Digitization/Help";
-import Login from "./pages/Login/Login";
-import AppGallery from "./pages/AppGallery/AppGallery";
+import React, { useState, useEffect, Suspense } from "react";
+// import Navbar from "./components/Digitization/navbar/Navbar";
+const Navbar = React.lazy(() =>
+  import("./components/Digitization/navbar/Navbar")
+);
+// import Add from "./pages/Digitization/Add";
+const Add = React.lazy(() => import("./pages/Digitization/Add"));
+// import Search from "./pages/Digitization/Search";
+const Search = React.lazy(() => import("./pages/Digitization/Search"));
+// import Help from "./pages/Digitization/Help";
+const Help = React.lazy(() => import("./pages/Digitization/Help"));
+// import Login from "./pages/Login/Login";
+const Login = React.lazy(() => import("./pages/Login/Login"));
+// import AppGallery from "./pages/AppGallery/AppGallery";
+const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
 
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./utils/auth";
@@ -19,12 +27,21 @@ function App() {
     <>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Login />
+              </Suspense>
+            }
+          />
           <Route
             path="/AppGallery"
             element={
               //<RequireAuth>
-              <AppGallery />
+              <Suspense fallback={<div>Loading...</div>}>
+                <AppGallery />
+              </Suspense>
               //</RequireAuth>
             }
           />
@@ -33,15 +50,39 @@ function App() {
             path="/digitization/*"
             element={
               //<RequireAuth>
-              <Navbar />
+              <Suspense fallback={<div>Loading...</div>}>
+                <Navbar />
+              </Suspense>
               //</RequireAuth>
             }
           >
             <Route index element={<Navigate to="search" />} />
             <Route path="*" element={<Navigate to="search" />} />
-            <Route path="search" element={<Search />} />
-            <Route path="add" element={<Add />} />
-            <Route path="help" element={<Help />} />
+            <Route
+              path="search"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Search />
+                </Suspense>
+              }
+            />
+            <Route
+              path="add"
+              element={
+                // <Help />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Add />
+                </Suspense>
+              }
+            />
+            <Route
+              path="help"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Help />
+                </Suspense>
+              }
+            />
           </Route>
         </Routes>
       </AuthProvider>

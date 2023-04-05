@@ -7,6 +7,8 @@ import HouseTaxSearch from "../../components/Digitization/search/HouseTaxSearch"
 import ConstructionLicenseSearch from "../../components/Digitization/search/ConstructionLicenseSearch";
 import BirthRecordsSearch from "../../components/Digitization/search/BirthRecordsSearch";
 
+import "./Add.css";
+
 const { Content, Sider } = Layout;
 
 const Search = () => {
@@ -26,7 +28,15 @@ const Search = () => {
           // "flex-direction": "row",
         }}
       >
-        <Sider theme="light" style={{ margin: "0 20px" }}>
+        <Sider
+          theme="light"
+          style={{
+            //TODO edit sidebar css to stop Content reflow under Sider
+            //! added position fixed
+            position: "fixed",
+            margin: "0 20px",
+          }}
+        >
           <button
             key="1"
             onClick={(e) => handleClick(e, 1)}
@@ -62,7 +72,7 @@ const Search = () => {
         </Sider>
         <Content
           style={{
-            margin: "0 20px 0 0",
+            margin: "0 20px 0 20%",
             padding: "8px 20px",
             // border: "1px dashed gray",
           }}
