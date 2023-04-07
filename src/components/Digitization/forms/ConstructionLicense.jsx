@@ -152,7 +152,7 @@ const AddConstuctionLicense = () => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item name="year" required>
+            <Form.Item name="year" required wrapperCol={{ span: 16 }}>
               <Input
                 autoComplete="off"
                 required

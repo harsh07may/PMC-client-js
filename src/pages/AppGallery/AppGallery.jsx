@@ -6,7 +6,7 @@ const { Meta } = Card;
 import { NavLink, Outlet, useNavigate, redirect } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
 
-import "./AppGallery.css";
+import styles from "./AppGallery.module.css";
 
 // import documentLogo from "../assets/document.svg";
 import documentLogo from "../../assets/document2.svg";
@@ -23,7 +23,7 @@ export default function AppGallery() {
   };
   return (
     <>
-      <div className="appGalleryContainer">
+      <div className={styles.appGalleryContainer}>
         <Button
           onClick={handleLogout}
           type="primary"
@@ -33,13 +33,13 @@ export default function AppGallery() {
         >
           Logout
         </Button>
-        <div className="heading" style={{ color: "white" }}>
+        <div className={styles.heading} style={{ color: "white" }}>
           <h1>Select a Service</h1>
         </div>
 
-        <div className="gallery">
+        <div className={styles.gallery}>
           <Card
-            className="expand-card"
+            className={styles.expandCard}
             onClick={() => navigate("/digitization")}
             hoverable
             style={{ width: 220 }}
@@ -48,7 +48,7 @@ export default function AppGallery() {
             <Meta title="File Digitization" description="Digitize your files" />
           </Card>
           <Card
-            className="expand-card"
+            className={styles.expandCard}
             onClick={() => console.log("2")}
             hoverable
             style={{ width: 220 }}
@@ -57,7 +57,7 @@ export default function AppGallery() {
             <Meta title="Leave Management" description="Manage your leaves" />
           </Card>
           <Card
-            className="expand-card"
+            className={styles.expandCard}
             onClick={() => console.log("3")}
             hoverable
             style={{ width: 220 }}
@@ -70,7 +70,7 @@ export default function AppGallery() {
           </Card>
           <Card
             onClick={() => console.log("4")}
-            className="expand-card"
+            className={styles.expandCard}
             hoverable
             style={{ width: 220 }}
             cover={<img src={userLogo} style={{ height: 200 }} />}

@@ -17,19 +17,6 @@ import {
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
 
-//! test
-const items = [
-  {
-    key: "1",
-    label: "Action 1",
-  },
-  {
-    key: "2",
-    label: "Action 2",
-  },
-];
-//! test
-
 const MunicipalPropertySearch = () => {
   //data members
   //! test
@@ -59,19 +46,23 @@ const MunicipalPropertySearch = () => {
       title: "Ward No.",
       dataIndex: "wardno",
       key: "wardno",
+      width: "15%",
     },
     {
       title: "Sub Div No.",
       dataIndex: "subdivno",
       key: "subdivno",
+      width: "15%",
     },
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
+      align: "center",
     },
     {
       title: "Action",
+      width: "15%",
       key: "filelink",
       render: (_, record) => (
         <Button
@@ -87,6 +78,9 @@ const MunicipalPropertySearch = () => {
       ),
     },
   ];
+
+  //! EXPERIMENTAL
+  //TODO EMBEDED COLUMNS
   const embededData = [];
   for (let i = 0; i < 3; ++i) {
     embededData.push({
@@ -140,7 +134,7 @@ const MunicipalPropertySearch = () => {
     return <Table columns={columns} dataSource={dataSrc} pagination={false} />;
   };
 
-  //! test
+  //! EXPERIMENTAL
 
   //States
   const [reqSent, setReqSent] = useState(false);
