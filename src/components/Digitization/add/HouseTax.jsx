@@ -1,36 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { Form, Input, Row, Col, Button, message } from "antd";
+import { Form, Input, Row, Col, Button, message, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 
 import { formInputStyles } from "./styles/AddForm.module.css";
 
-//! test imports (start)
-import { UploadOutlined } from "@ant-design/icons";
-import {
-  // Button,
-  // Form,
-  // message,
-  Upload,
-} from "antd";
-//! test imports (end)
-
-const BirthRecords = () => {
-  //! test states (start)
-
+const HouseTax = () => {
+  //States
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
-
-  //! test states (end)
-
-  //* Old States
   const [form] = Form.useForm();
   const [data, setData] = useState({
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
-  //* Old States
 
-  //! test functions (start)
+  //functions
   function onRemove(file) {
     setFileList([]);
     console.log("on remove");
@@ -66,9 +51,7 @@ const BirthRecords = () => {
     }
     return false;
   }
-  //! test funcs (end)
 
-  //functions
   const handleFileChange = (e) => {
     const dataObjFile = e.target.files[0];
     const reader = new FileReader();
@@ -90,13 +73,9 @@ const BirthRecords = () => {
 
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "birth_record" };
-
-    //! test area
+    values = { ...values, file: data.file, type: "house_tax_record" };
     setUploading(true);
-    //! test area
 
-    console.log(values);
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -108,9 +87,7 @@ const BirthRecords = () => {
       })
       .catch((error) => {
         message.error("File Uploaded Failed", 1.5);
-        //! test
         setUploading(false);
-        //! test
         // console.log(error)
       })
       .finally();
@@ -122,7 +99,7 @@ const BirthRecords = () => {
       Month: formValues.month,
       Year: formValues.year,
       FileLink: fileLink,
-      type: "birth_record",
+      type: "house_tax_record",
     };
 
     await axios
@@ -143,7 +120,8 @@ const BirthRecords = () => {
 
   return (
     <>
-      <h1>BIRTH RECORDS</h1>
+      <h1>HOUSE TAX RECORDS</h1>
+      <br />
       <Form
         style={{ marginTop: "10px" }}
         onFinish={onFinish}
@@ -152,37 +130,40 @@ const BirthRecords = () => {
       >
         <Row gutter={30}>
           <Col span={6}>
-            <Form.Item name="month" required>
+            <Form.Item name="wardNo" required>
               <Input
                 autoComplete="off"
                 required
                 size="large"
-                placeholder="Month"
+                placeholder="Ward No."
                 className={formInputStyles}
               />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item name="year" required>
+            <Form.Item name="houseNo" required>
               <Input
                 autoComplete="off"
                 required
                 size="large"
-                placeholder="Year"
+                placeholder="House No."
                 className={formInputStyles}
               />
             </Form.Item>
           </Col>
         </Row>
-        {/* <Form.Item name="title" required wrapperCol={{ span: 16 }}>
+        {/* <Row> */}
+        {/* <Col span={18}> */}
+        <Form.Item name="name" required wrapperCol={{ span: 16 }}>
           <Input
+            autoComplete="off"
             required
             status=""
             size="large"
-            placeholder="Title"
+            placeholder="Name"
             className={formInputStyles}
           />
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item
           wrapperCol={{
             span: 12,
@@ -191,15 +172,31 @@ const BirthRecords = () => {
         >
           {/* <Form.Item required>
             <input
-              autoComplete="off"
               type="file"
               accept="application/pdf, .pdf"
               onChange={handleFileChange}
               required
               style={{ maxWidth: "230px" }}
             />
-          </Form.Item> */}
-          {/* //! test upload (start) */}
+          </Form.Item>
+          {file ? (
+            <>
+              <Button
+                type="primary"
+                onClick={() => {
+                  window.open(file);
+                }}
+              >
+                Preview File
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
+            Submit
+          </Button> */}
           <Form.Item required name="upload" valuePropName="fileList">
             <>
               <Upload
@@ -212,7 +209,6 @@ const BirthRecords = () => {
               </Upload>
             </>
           </Form.Item>
-          {/* //! test upload (end) */}
           {pdfFile ? (
             <>
               <Button
@@ -242,4 +238,4 @@ const BirthRecords = () => {
   );
 };
 
-export default BirthRecords;
+export default HouseTax;

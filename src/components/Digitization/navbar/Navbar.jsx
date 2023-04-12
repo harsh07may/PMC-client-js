@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
-import { Button, Tooltip } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import { Dropdown, Button, Drawer, Menu } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
+// import { LogoutOutlined } from "@ant-design/icons";
 
-import "./Navbar.css";
+import NavbarStyles from "./Navbar.module.css";
 
 import Logo from "../../../assets/logo.png";
 import Logout from "../../../assets/logout.svg";
@@ -23,51 +24,238 @@ const Navbar = () => {
     auth.logout();
     navigate("/");
   };
+
+  const [collapsed, setCollapsed] = useState(true);
+  const [current, setCurrent] = useState("mail");
+  const [open, setOpen] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const onSmallMenuClick = () => {
+    setOpen(false);
+  };
+
+  const searchItems = [
+    {
+      key: "1",
+      label: (
+        <NavLink
+          to="/digitization/search/MunicipalPropertyRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Municipal Property
+        </NavLink>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <NavLink
+          to="/digitization/search/ConstructionLicenseRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Construction License
+        </NavLink>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <NavLink
+          to="/digitization/search/HouseTaxRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          House Tax
+        </NavLink>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <NavLink
+          to="/digitization/search/BirthRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Birth Record
+        </NavLink>
+      ),
+    },
+  ];
+
+  const addItems = [
+    {
+      key: "a1",
+      label: (
+        <NavLink
+          to="/digitization/add/MunicipalPropertyRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Municipal Property
+        </NavLink>
+      ),
+    },
+    {
+      key: "a2",
+      label: (
+        <NavLink
+          to="/digitization/add/ConstructionLicenseRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Construction License
+        </NavLink>
+      ),
+    },
+    {
+      key: "a3",
+      label: (
+        <NavLink
+          to="/digitization/add/HouseTaxRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          House Tax
+        </NavLink>
+      ),
+    },
+    {
+      key: "a4",
+      label: (
+        <NavLink
+          to="/digitization/add/BirthRecord"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Birth Record
+        </NavLink>
+      ),
+    },
+  ];
+
+  const items = [
+    {
+      // type: "group", //? comment this to convert to dropdown
+      label: "Search",
+      children: searchItems,
+    },
+    { type: "divider" },
+    {
+      // type: "group",
+      label: "Add",
+      children: addItems,
+    },
+    { type: "divider" },
+    {
+      key: "help",
+      label: (
+        <NavLink to="/digitization/help" onClick={onSmallMenuClick} end>
+          Help
+        </NavLink>
+      ),
+    },
+    {
+      key: "logout",
+      label: (
+        <p onClick={handleLogout} className={NavbarStyles.smallLogout} danger>
+          Logout
+        </p>
+      ),
+    },
+  ];
+
   return (
     <>
-      <nav className="navbar">
-        {/*Child 1: Logo Text*/}
-        <div className="nav-items">
+      <nav className={NavbarStyles.smallNavbar}>
+        <Link to="/AppGallery">
+          <img src={Logo} alt="logo" className={NavbarStyles.smallLogo} />
+        </Link>
+        <p className={NavbarStyles.smallHeadingText}>PMC</p>
+        <>
+          <Button
+            className={NavbarStyles.smallMenuBtn}
+            type="primary"
+            shape="circle"
+            size="large"
+            icon={<MenuOutlined />}
+            onClick={showDrawer}
+          ></Button>
+          <Drawer
+            title={
+              <p style={{ textAlign: "center" }}>PONDA MUNICIPAL COUNCIL</p>
+            }
+            placement="right"
+            onClose={onClose}
+            open={open}
+          >
+            <Menu
+              theme="light"
+              mode="inline"
+              defaultSelectedKeys={["4"]}
+              items={items}
+            />
+          </Drawer>
+        </>
+      </nav>
+
+      <nav className={NavbarStyles.bigNavbar}>
+        <div className={NavbarStyles.navItems}>
           <Link to="/AppGallery">
-            <img src={Logo} alt="logo" className="logo" />
+            <img src={Logo} alt="logo" className={NavbarStyles.logo} />
           </Link>
-          <h2 className="heading-text">Ponda Municipal Council</h2>
+          <h2 className={NavbarStyles.headingText}>Ponda Municipal Council</h2>
         </div>
 
-        <div className="nav-links">
-          <NavLink
-            style={navLinkStyles}
-            className="nav-link"
-            to="/digitization/search"
-            end
+        <div className={NavbarStyles.navLinkParent}>
+          <Dropdown
+            menu={{
+              items: searchItems,
+            }}
+            placement="bottom"
+            arrow={{
+              pointAtCenter: true,
+            }}
           >
-            Search
-          </NavLink>
-          <NavLink
-            style={navLinkStyles}
-            className="nav-link"
-            to="/digitization/add"
+            <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+              Search
+            </p>
+          </Dropdown>
+          <Dropdown
+            menu={{
+              items: addItems,
+            }}
+            placement="bottom"
+            arrow={{
+              pointAtCenter: true,
+            }}
           >
-            Add
-          </NavLink>
+            <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+              Add
+            </p>
+          </Dropdown>
+
           <NavLink
             style={navLinkStyles}
-            className="nav-link"
+            className={NavbarStyles.navLink}
             to="/digitization/help"
           >
             Help
           </NavLink>
           <img
             src={Logout}
-            style={{
-              height: "32px",
-              margin: "5px",
-              padding: "7px",
-              cursor: "pointer",
-            }}
+            className={NavbarStyles.logout}
             onClick={handleLogout}
           />
-          {/* <button onClick={handleLogout}>Logout</button> */}
         </div>
       </nav>
       <Outlet />

@@ -1,5 +1,6 @@
 import React from "react";
 import * as helpStyles from "./Help.module.css";
+import AdminDashboard from "./AdminDashboard/AdminDashboard.jsx";
 
 const Help = () => {
   return (
@@ -14,6 +15,9 @@ const Help = () => {
         applicationThis area will contain instructions to use this application
       </p>
     </div>
+    // <>
+    //   <AdminDashboard></AdminDashboard>
+    // </>
   );
 };
 

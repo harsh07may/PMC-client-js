@@ -1,9 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import MunicipalProperty from "../../components/Digitization/forms/MunicipalProperty";
-import HouseTax from "../../components/Digitization/forms/HouseTax";
-import AddConstuctionLicense from "../../components/Digitization/forms/ConstructionLicense";
-import BirthRecords from "../../components/Digitization/forms/BirthRecords";
+import MunicipalProperty from "../../components/Digitization/add/MunicipalProperty";
+import HouseTax from "../../components/Digitization/add/HouseTax";
+import AddConstuctionLicense from "../../components/Digitization/add/ConstructionLicense";
+import BirthRecords from "../../components/Digitization/add/BirthRecords";
 import "./Add.css";
 import { Layout } from "antd";
 const { Content, Sider } = Layout;

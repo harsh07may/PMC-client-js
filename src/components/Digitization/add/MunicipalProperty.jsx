@@ -3,9 +3,12 @@ import axios from "axios";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
+//import Global vars
+// import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
+
 import { formInputStyles } from "./styles/AddForm.module.css";
 
-const HouseTax = () => {
+const MunicipalProperty = () => {
   //States
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -73,7 +76,7 @@ const HouseTax = () => {
 
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "house_tax_record" };
+    values = { ...values, file: data.file, type: "municipal_property_record" };
     setUploading(true);
 
     await axios
@@ -81,6 +84,8 @@ const HouseTax = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
+        // console.log({ respose: res });
+        // form.resetFields();
         if (res.status == 200) {
           insertData(values, res.data.fileLink);
         }
@@ -96,19 +101,20 @@ const HouseTax = () => {
   const insertData = async (formValues, fileLink) => {
     // console.log({ formValues: formValues });
     let jsonObject = {
-      Month: formValues.month,
-      Year: formValues.year,
+      WardNo: formValues.wardNo,
+      SubDivNo: formValues.subDivNo,
+      Title: formValues.title,
+      type: "municipal_property_record",
       FileLink: fileLink,
-      type: "house_tax_record",
     };
 
     await axios
       .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
       .then((res) => {
         if (res.status == 200) {
-          // console.log({ jsonobj: jsonObject });
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setUploading(false);
         }
       })
       .catch((error) => {
@@ -120,7 +126,8 @@ const HouseTax = () => {
 
   return (
     <>
-      <h1>HOUSE TAX RECORDS</h1>
+      <h1>MUNICIPAL PROPERTY RECORDS</h1>
+      <br />
       <Form
         style={{ marginTop: "10px" }}
         onFinish={onFinish}
@@ -140,26 +147,24 @@ const HouseTax = () => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item name="houseNo" required>
+            <Form.Item name="subDivNo" required>
               <Input
                 autoComplete="off"
                 required
                 size="large"
-                placeholder="House No."
+                placeholder="Sub Division No."
                 className={formInputStyles}
               />
             </Form.Item>
           </Col>
         </Row>
-        {/* <Row> */}
-        {/* <Col span={18}> */}
-        <Form.Item name="name" required wrapperCol={{ span: 16 }}>
+        <Form.Item name="title" required wrapperCol={{ span: 16 }}>
           <Input
             autoComplete="off"
             required
             status=""
             size="large"
-            placeholder="Name"
+            placeholder="Title"
             className={formInputStyles}
           />
         </Form.Item>
@@ -171,6 +176,7 @@ const HouseTax = () => {
         >
           {/* <Form.Item required>
             <input
+              autoComplete="off"
               type="file"
               accept="application/pdf, .pdf"
               onChange={handleFileChange}
@@ -208,6 +214,7 @@ const HouseTax = () => {
               </Upload>
             </>
           </Form.Item>
+          {/* //! test upload (end) */}
           {pdfFile ? (
             <>
               <Button
@@ -237,4 +244,4 @@ const HouseTax = () => {
   );
 };
 
-export default HouseTax;
+export default MunicipalProperty;
