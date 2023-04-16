@@ -189,62 +189,73 @@ const MunicipalPropertySearch = () => {
 
   return (
     <>
-      <h1>MUNICIPAL PROPERTY RECORDS</h1>
       <br />
-      <Form
-        style={{ marginTop: "10px" }}
-        onFinish={onFinish}
-        // onFinishFailed={() => console.log("failed")}
-        // form={form}
-      >
-        <Row gutter={30}>
-          <Col span={6}>
-            <Form.Item name="wardNo">
-              <Input
-                autoComplete="off"
-                size="large"
-                placeholder="Ward No."
-                className={formInputStyles}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item name="subDivNo">
-              <Input
-                autoComplete="off"
-                size="large"
-                placeholder="Sub Division No."
-                className={formInputStyles}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item name="title" wrapperCol={{ span: 16 }}>
-          <Input
-            autoComplete="off"
-            status=""
-            size="large"
-            placeholder="Title"
-            className={formInputStyles}
-          />
-        </Form.Item>
-        <Form.Item
-          wrapperCol={{
-            span: 12,
-            // offset: 6,
-          }}
-        >
-          <Button
-            // type="primary"
-            icon={<SearchOutlined />}
-            htmlType="submit"
-            style={{ marginLeft: 10 }}
-            loading={searching}
+      <h3 style={{ textAlign: "center" }}>MUNICIPAL PROPERTY RECORDS</h3>
+      <br />
+
+      <Row align="middle" justify="center">
+        <Col xs={22} sm={20} md={16} lg={12}>
+          <Form
+            style={{ marginTop: "10px", overflow: "hidden" }}
+            onFinish={onFinish}
+            // onFinishFailed={() => console.log("failed")}
+            // form={form}
           >
-            {searching ? "Searching" : "Search"}
-          </Button>
-        </Form.Item>
-      </Form>
+            {/* //! gutter=24 causes margin-right= -15px; Only fix is to set overflow:hidden in parent  */}
+            <Row gutter="24">
+              <Col xs={24} md={12}>
+                <Form.Item name="wardNo">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Ward No."
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item name="subDivNo">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Sub Division No."
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              name="title"
+              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+            >
+              <Input
+                autoComplete="off"
+                status=""
+                size="large"
+                placeholder="Title"
+                className={formInputStyles}
+              />
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                span: 12,
+                // offset: 6,
+              }}
+            >
+              <Button
+                // type="primary"
+                icon={<SearchOutlined />}
+                htmlType="submit"
+                style={{ marginLeft: 10 }}
+                loading={searching}
+              >
+                {searching ? "Searching" : "Search"}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
+
       <br />
       {/* {reqSent && ( */}
       <Table

@@ -178,37 +178,40 @@ function BirthRecordsSearch() {
 
   return (
     <>
-      <h1>MUNICIPAL PROPERTY RECORDS</h1>
       <br />
-      <Form
-        style={{ marginTop: "10px" }}
-        onFinish={onFinish}
-        // onFinishFailed={() => console.log("failed")}
-        // form={form}
-      >
-        <Row gutter={30}>
-          <Col span={6}>
-            <Form.Item name="month">
-              <Input
-                autoComplete="off"
-                size="large"
-                placeholder="Month"
-                className={formInputStyles}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item name="year">
-              <Input
-                autoComplete="off"
-                size="large"
-                placeholder="Year"
-                className={formInputStyles}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        {/* <Form.Item name="title" wrapperCol={{ span: 16 }}>
+      <h3 style={{ textAlign: "center" }}>MUNICIPAL PROPERTY RECORDS</h3>
+      <br />
+      <Row align="middle" justify="center">
+        <Col xs={22} sm={20} md={16} lg={14} xl={10}>
+          <Form
+            style={{ marginTop: "10px" }}
+            onFinish={onFinish}
+            // onFinishFailed={() => console.log("failed")}
+            // form={form}
+          >
+            <Row gutter={24}>
+              <Col xs={24} md={12}>
+                <Form.Item name="month">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Month"
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item name="year">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Year"
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            {/* <Form.Item name="title" wrapperCol={{ span: 16 }}>
           <Input
             autoComplete="off"
             status=""
@@ -217,23 +220,25 @@ function BirthRecordsSearch() {
             className={formInputStyles}
           />
         </Form.Item> */}
-        <Form.Item
-          wrapperCol={{
-            span: 12,
-            // offset: 6,
-          }}
-        >
-          <Button
-            // type="primary"
-            icon={<SearchOutlined />}
-            htmlType="submit"
-            style={{ marginLeft: 10 }}
-            loading={searching}
-          >
-            {searching ? "Searching" : "Search"}
-          </Button>
-        </Form.Item>
-      </Form>
+            <Form.Item
+              wrapperCol={{
+                span: 12,
+                // offset: 6,
+              }}
+            >
+              <Button
+                // type="primary"
+                icon={<SearchOutlined />}
+                htmlType="submit"
+                style={{ marginLeft: 10 }}
+                loading={searching}
+              >
+                {searching ? "Searching" : "Search"}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
       <br />
       {/* {reqSent && ( */}
       <Table

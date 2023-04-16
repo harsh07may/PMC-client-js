@@ -1,66 +1,80 @@
 import React, { useState } from "react";
-import { Layout } from "antd";
-const { Content, Sider } = Layout;
+import { Form, Input, Button, Row, Col } from "antd";
+const { Item } = Form;
 
-export default function AdminDashboard() {
-  const [documentType, setDocumentType] = useState("Properties");
-  const [selectedButtonId, setSelectedButtonId] = useState("1");
+// const layout = {
+//   labelCol: { span: 8 },
+//   wrapperCol: { span: 16 },
+// };
 
-  const handleClick = (e, key) => {
-    // console.log(documentType + " " + selectedButtonId);
-    setDocumentType(e.target.value);
-    setSelectedButtonId(key);
-  };
+// const tailLayout = {
+//   wrapperCol: { offset: 8, span: 16 },
+// };
 
+const layout = {
+  labelCol: {
+    // xs: { span: 24 },
+    // sm: { span: 12 },
+    // md: { span: 8 },
+    // lg: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 2 },
+    // sm: { span: 12 },
+    // md: { span: 14 },
+    // lg: { span: 16 },
+  },
+};
+const tailLayout = {
+  wrapperCol: {
+    xs: { offset: 12 },
+    sm: { span: 1, offset: 12 },
+    // md: { span: 1, offset: 8 },
+    md: { span: 1 },
+    // lg: { span: 12, offset: 8 },
+  },
+};
+
+const AdminDashboard = () => {
   return (
-    <>
-      <Layout
-        style={{
-          marginTop: "2.5rem",
-          // "flex-direction": "row",
-        }}
-      >
-        <Sider theme="light" style={{ position: "fixed", margin: "0 20px" }}>
-          <button
-            key="1"
-            onClick={(e) => handleClick(e, 1)}
-            value="Add Account"
-            className={selectedButtonId == "1" ? "btn btn-selected" : "btn"}
-          >
-            ADD ACCOUNTS
-          </button>
-          <button
-            key="2"
-            onClick={(e) => handleClick(e, 2)}
-            value="Manage Accounts"
-            className={selectedButtonId == "2" ? "btn btn-selected" : "btn"}
-          >
-            MANAGE ACCOUNTS
-          </button>
-          <button
-            key="3"
-            onClick={(e) => handleClick(e, 3)}
-            value="Audit Logs"
-            className={selectedButtonId == "3" ? "btn btn-selected" : "btn"}
-          >
-            AUDIT LOGS
-          </button>
-        </Sider>
-        <Content
-          // theme="light"
-          style={{
-            margin: "0 20px 0 20%",
-            padding: "8px 20px",
-            // border: "1px dashed gray",
-          }}
-        >
-          <p>asddsa</p>
-          {/* {documentType == "Properties" && <MunicipalProperty />}
-          {documentType == "HouseTax" && <HouseTax />}
-          {documentType == "ConLisc" && <AddConstuctionLicense />}
-          {documentType == "BirthRecords" && <BirthRecords />} */}
-        </Content>
-      </Layout>
-    </>
+    // <Form {...layout}>
+    //   <Item label="Name" name="username" style={{ backgroundColor: "blue" }}>
+    //     {" "}
+    //     <Input type="text" />{" "}
+    //   </Item>
+    //   <Item
+    //     label="Password"
+    //     name="password"
+    //     style={{ backgroundColor: "blue" }}
+    //   >
+    //     {" "}
+    //     <Input type="password" />{" "}
+    //   </Item>
+    //   <Item {...tailLayout} style={{ backgroundColor: "blue" }}>
+    //     <Button htmlType="submit" type="primary">
+    //       {" "}
+    //       Submit{" "}
+    //     </Button>
+    //   </Item>
+    // </Form>
+    <Row align="middle" justify="center">
+      <Col xs={24} sm={20} md={16} lg={12}>
+        <Form>
+          <Form.Item label="Username">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Password">
+            <Input.Password />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Col>
+    </Row>
   );
-}
+};
+
+export default AdminDashboard;
