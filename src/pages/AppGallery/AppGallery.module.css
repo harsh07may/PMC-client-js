@@ -3,43 +3,84 @@
   font-family: "Poppins", sans-serif;
 }
 
+/* ! To solve row gutter overflow problem */
+.antRow {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+.antRow:first-child {
+  padding-left: 0 !important;
+}
+.antRow:last-child {
+  padding-right: 0 !important;
+}
+/*! ^ */
 .appGalleryContainer {
   background-color: #1976d2;
-  height: 100vh;
+  height: 100%;
   margin: 0;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 .gallery {
-  /* height: 80vh; */
-  display: flex;
+  /* display: flex;
   align-items: center;
   justify-content: space-around;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: wrap; */
+  /* overflow: hidden; */
 }
 .heading {
   display: flex;
   justify-content: center;
   padding-top: 60px;
+  padding-bottom: 20px;
   font-size: 25px;
+  color: white;
 }
 
-.expandCard .ant-card-meta-detail {
+.expandCard {
+  width: 220px;
+}
+
+.gallery :global .ant-col {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.expandCard :global .ant-card-meta-detail {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.gallery .expand-card {
+.gallery .expandCard {
   overflow: hidden; /* otherwise header image won't respect rounded corners */
   transition: all 0.5s ease;
 }
 
-.gallery .expand-card:hover {
+.gallery .expandCard:hover {
   transform: translate3D(0, -1px, 0) scale(1.03); /* move up slightly and zoom in */
   box-shadow: 8px 28px 50px rgba(39, 44, 49, 0.07),
     1px 6px 12px rgba(39, 44, 49, 0.04);
   transition: all 0.4s ease; /* zoom in */
   cursor: pointer;
+}
+.cardLogo {
+  height: 200;
+}
+
+@media (min-width: 993px) {
+  html,
+  body,
+  body > div {
+    height: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  html,
+  body,
+  body > div {
+    height: auto;
+  }
 }
