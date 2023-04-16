@@ -179,12 +179,12 @@ function BirthRecordsSearch() {
   return (
     <>
       <br />
-      <h3 style={{ textAlign: "center" }}>MUNICIPAL PROPERTY RECORDS</h3>
+      <h3 style={{ textAlign: "center" }}>BIRTH RECORDS</h3>
       <br />
       <Row align="middle" justify="center">
         <Col xs={22} sm={20} md={16} lg={14} xl={10}>
           <Form
-            style={{ marginTop: "10px" }}
+            style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
             // onFinishFailed={() => console.log("failed")}
             // form={form}

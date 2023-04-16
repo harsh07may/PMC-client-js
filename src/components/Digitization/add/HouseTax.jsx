@@ -120,57 +120,60 @@ const HouseTax = () => {
 
   return (
     <>
-      <h1>HOUSE TAX RECORDS</h1>
       <br />
-      <Form
-        style={{ marginTop: "10px" }}
-        onFinish={onFinish}
-        onFinishFailed={() => console.log("failed")}
-        form={form}
-      >
-        <Row gutter={30}>
-          <Col span={6}>
-            <Form.Item name="wardNo" required>
+      <h3 style={{ textAlign: "center" }}>HOUSE TAX RECORDS</h3>
+      <br />
+
+      <Row align="middle" justify="center">
+        <Col xs={22} sm={20} md={16} lg={12}>
+          <Form
+            style={{ marginTop: "10px", overflow: "hidden" }}
+            onFinish={onFinish}
+            onFinishFailed={() => console.log("failed")}
+            form={form}
+          >
+            <Row gutter={24}>
+              <Col xs={24} md={12}>
+                <Form.Item name="wardNo" required>
+                  <Input
+                    autoComplete="off"
+                    required
+                    size="large"
+                    placeholder="Ward No."
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item name="houseNo" required>
+                  <Input
+                    autoComplete="off"
+                    required
+                    size="large"
+                    placeholder="House No."
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            {/* <Row> */}
+            {/* <Col span={18}> */}
+            <Form.Item
+              name="name"
+              required
+              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+            >
               <Input
                 autoComplete="off"
                 required
+                status=""
                 size="large"
-                placeholder="Ward No."
+                placeholder="Name"
                 className={formInputStyles}
               />
             </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item name="houseNo" required>
-              <Input
-                autoComplete="off"
-                required
-                size="large"
-                placeholder="House No."
-                className={formInputStyles}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        {/* <Row> */}
-        {/* <Col span={18}> */}
-        <Form.Item name="name" required wrapperCol={{ span: 16 }}>
-          <Input
-            autoComplete="off"
-            required
-            status=""
-            size="large"
-            placeholder="Name"
-            className={formInputStyles}
-          />
-        </Form.Item>
-        <Form.Item
-          wrapperCol={{
-            span: 12,
-            // offset: 6,
-          }}
-        >
-          {/* <Form.Item required>
+            <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
+              {/* <Form.Item required>
             <input
               type="file"
               accept="application/pdf, .pdf"
@@ -197,43 +200,45 @@ const HouseTax = () => {
           <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
             Submit
           </Button> */}
-          <Form.Item required name="upload" valuePropName="fileList">
-            <>
-              <Upload
-                accept="application/pdf, .pdf"
-                maxCount={1}
-                onRemove={onRemove}
-                beforeUpload={beforeUpload}
-              >
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </Upload>
-            </>
-          </Form.Item>
-          {pdfFile ? (
-            <>
+              <Form.Item required name="upload" valuePropName="fileList">
+                <>
+                  <Upload
+                    accept="application/pdf, .pdf"
+                    maxCount={1}
+                    onRemove={onRemove}
+                    beforeUpload={beforeUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Select File</Button>
+                  </Upload>
+                </>
+              </Form.Item>
+              {pdfFile ? (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      window.open(pdfFile);
+                    }}
+                  >
+                    Preview File
+                  </Button>
+                </>
+              ) : (
+                <></>
+              )}
               <Button
                 type="primary"
-                onClick={() => {
-                  window.open(pdfFile);
-                }}
+                htmlType="submit"
+                style={{ marginLeft: 10 }}
+                disabled={fileList.length === 0}
+                loading={uploading}
               >
-                Preview File
+                {uploading ? "Uploading" : "Submit"}
               </Button>
-            </>
-          ) : (
-            <></>
-          )}
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{ marginLeft: 10 }}
-            disabled={fileList.length === 0}
-            loading={uploading}
-          >
-            {uploading ? "Uploading" : "Submit"}
-          </Button>
-        </Form.Item>
-      </Form>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
     </>
   );
 };
