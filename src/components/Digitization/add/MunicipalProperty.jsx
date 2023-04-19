@@ -75,43 +75,12 @@ const MunicipalProperty = () => {
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "municipal_property_record" };
     setUploading(true);
-
+    console.log(auth.user);
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${auth.user}`,
-        },
-      })
-      .then((res) => {
-        // console.log({ respose: res });
-        // form.resetFields();
-        if (res.status == 200) {
-          insertData(values, res.data.fileLink);
-        }
-      })
-      .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
-        setUploading(false);
-        // console.log(error)
-      })
-      .finally();
-  };
-
-  const insertData = async (formValues, fileLink) => {
-    // console.log({ formValues: formValues });
-    let jsonObject = {
-      WardNo: formValues.wardNo,
-      SubDivNo: formValues.subDivNo,
-      Title: formValues.title,
-      type: "municipal_property_record",
-      FileLink: fileLink,
-    };
-
-    await axios
-      .post("http://localhost:5000/api/v1/digitization/insert", jsonObject, {
-        headers: {
-          Authorization: `Bearer ${auth.user}`,
+          Authorization: `Bearer ${auth.user.accesstoken}`,
         },
       })
       .then((res) => {
@@ -122,10 +91,11 @@ const MunicipalProperty = () => {
         }
       })
       .catch((error) => {
-        setUploading(false);
         message.error("File Uploaded Failed", 1.5);
-        // console.log(error)
-      });
+        setUploading(false);
+        console.log(error);
+      })
+      .finally();
   };
 
   return (

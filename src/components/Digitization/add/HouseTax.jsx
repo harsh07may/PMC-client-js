@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { useAuth } from "../../../utils/auth";
 import { formInputStyles } from "./styles/AddForm.module.css";
 
 const HouseTax = () => {
@@ -51,26 +51,7 @@ const HouseTax = () => {
     }
     return false;
   }
-
-  const handleFileChange = (e) => {
-    const dataObjFile = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsText(dataObjFile);
-
-    if (dataObjFile.type === "application/pdf") {
-      // console.log(dataObjFile);
-      setData({ ...data, file: dataObjFile });
-
-      //for preview button
-      const files = e.target.files;
-      files.length > 0 && setFile(URL.createObjectURL(files[0]));
-    } else {
-      e.target.value = "";
-      setFile(null);
-      message.warning("File is not a PDF", 1.5);
-    }
-  };
-
+  const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "house_tax_record" };
@@ -78,44 +59,24 @@ const HouseTax = () => {
 
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
       })
       .then((res) => {
         if (res.status == 200) {
-          insertData(values, res.data.fileLink);
-        }
-      })
-      .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
-        setUploading(false);
-        // console.log(error)
-      })
-      .finally();
-  };
-
-  const insertData = async (formValues, fileLink) => {
-    // console.log({ formValues: formValues });
-    let jsonObject = {
-      Month: formValues.month,
-      Year: formValues.year,
-      FileLink: fileLink,
-      type: "house_tax_record",
-    };
-
-    await axios
-      .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
-      .then((res) => {
-        if (res.status == 200) {
-          // console.log({ jsonobj: jsonObject });
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setUploading(false);
         }
       })
       .catch((error) => {
-        setUploading(false);
         message.error("File Uploaded Failed", 1.5);
-        // console.log(error)
-      });
+        setUploading(false);
+        console.log(error);
+      })
+      .finally();
   };
 
   return (

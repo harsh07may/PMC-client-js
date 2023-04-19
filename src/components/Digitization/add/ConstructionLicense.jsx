@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { useAuth } from "../../../utils/auth";
 import { formInputStyles } from "./styles/AddForm.module.css";
 
 const AddConstuctionLicense = () => {
@@ -52,71 +52,33 @@ const AddConstuctionLicense = () => {
   }
 
   //functions
-  const handleFileChange = (e) => {
-    const dataObjFile = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsText(dataObjFile);
-
-    if (dataObjFile.type === "application/pdf") {
-      // console.log(dataObjFile);
-      setData({ ...data, file: dataObjFile });
-
-      //for preview button
-      const files = e.target.files;
-      files.length > 0 && setFile(URL.createObjectURL(files[0]));
-    } else {
-      e.target.value = "";
-      setFile(null);
-      message.warning("File is not a PDF", 1.5);
-    }
-  };
 
   //API Calls
+  const auth = useAuth();
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "constuction_license_record" };
     setUploading(true);
+    await axios;
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
       })
       .then((res) => {
         if (res.status == 200) {
-          insertData(values, res.data.fileLink);
-        }
-      })
-      .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
-        setUploading(false);
-        // console.log(error)
-      })
-      .finally();
-  };
-
-  const insertData = async (formValues, fileLink) => {
-    // console.log({ formValues: formValues });
-    let jsonObject = {
-      LicenseNo: formValues.licenseNo,
-      SubDivNo: formValues.subDivNo,
-      Name: formValues.name,
-      Year: formValues.year,
-      FileLink: fileLink,
-      type: "constuction_license_record",
-    };
-
-    await axios
-      .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
-      .then((res) => {
-        if (res.status == 200) {
-          // console.log({ jsonobj: jsonObject });
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setUploading(false);
         }
       })
       .catch((error) => {
-        setUploading(false);
         message.error("File Uploaded Failed", 1.5);
-        // console.log(error)
-      });
+        setUploading(false);
+        console.log(error);
+      })
+      .finally();
   };
 
   return (
@@ -187,34 +149,6 @@ const AddConstuctionLicense = () => {
               </Col>
             </Row>
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
-              {/* <Form.Item required>
-            <input
-              type="file"
-              accept="application/pdf, .pdf"
-              onChange={handleFileChange}
-              required
-              style={{ maxWidth: "230px" }}
-            />
-          </Form.Item>
-          {file ? (
-            <>
-              <Button
-                type="primary"
-                onClick={() => {
-                  window.open(file);
-                }}
-              >
-                Preview File
-              </Button>
-            </>
-          ) : (
-            <></>
-          )}
-
-          <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
-            Submit
-          </Button>
-        */}
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
                   <Upload
