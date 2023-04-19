@@ -103,17 +103,6 @@ export default function Login() {
                 placeholder="Password"
               />
             </Form.Item>
-
-            {/* <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-            >
-            <Button type="primary" htmlType="submit">
-            Submit
-            </Button>
-          </Form.Item> */}
             <Form.Item style={{ marginTop: "10px" }}>
               <Button
                 type="primary"

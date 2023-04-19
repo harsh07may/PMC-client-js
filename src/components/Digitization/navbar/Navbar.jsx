@@ -145,6 +145,45 @@ const Navbar = () => {
     },
   ];
 
+  const adminItems = [
+    {
+      key: "c1",
+      label: (
+        <NavLink
+          to="/digitization/admin/AuditLog"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Audit Log
+        </NavLink>
+      ),
+    },
+    {
+      key: "c2",
+      label: (
+        <NavLink
+          to="/digitization/admin/CreateAccount"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Create Account
+        </NavLink>
+      ),
+    },
+    {
+      key: "c3",
+      label: (
+        <NavLink
+          to="/digitization/admin/ManageAccounts"
+          onClick={onSmallMenuClick}
+          end
+        >
+          Manage Accounts
+        </NavLink>
+      ),
+    },
+  ];
+
   const items = [
     {
       // type: "group", //? comment this to convert to dropdown
@@ -159,12 +198,8 @@ const Navbar = () => {
     },
     { type: "divider" },
     {
-      key: "help",
-      label: (
-        <NavLink to="/digitization/help" onClick={onSmallMenuClick} end>
-          Help
-        </NavLink>
-      ),
+      label: "Admin",
+      children: adminItems,
     },
     {
       key: "logout",
@@ -233,7 +268,7 @@ const Navbar = () => {
             </p>
           </Dropdown>
 
-          {auth.user.role == "admin" && (
+          {(auth.user.role == "admin" || auth.user.role == "editor") && (
             <Dropdown
               menu={{
                 items: addItems,
@@ -249,13 +284,21 @@ const Navbar = () => {
             </Dropdown>
           )}
 
-          <NavLink
-            style={navLinkStyles}
-            className={NavbarStyles.navLink}
-            to="/digitization/help"
-          >
-            Help
-          </NavLink>
+          {auth.user.role == "admin" && (
+            <Dropdown
+              menu={{
+                items: adminItems,
+              }}
+              placement="bottom"
+              arrow={{
+                pointAtCenter: true,
+              }}
+            >
+              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+                Admin
+              </p>
+            </Dropdown>
+          )}
           <img
             src={Logout}
             className={NavbarStyles.logout}

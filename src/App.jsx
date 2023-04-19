@@ -6,10 +6,11 @@ import RequireAuth from "./utils/RequireAuth";
 const Navbar = React.lazy(() =>
   import("./components/Digitization/navbar/Navbar")
 );
-const Help = React.lazy(() => import("./pages/Digitization/Help"));
+
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
 import LoadingSpinner from "./components/LoadingSpinner";
+import ManageAccount from "./components/Digitization/admin/ManageAccounts/ManageAccounts";
 
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
@@ -34,6 +35,15 @@ const ConstructionLicenseSearch = React.lazy(() =>
 );
 const HouseTaxSearch = React.lazy(() =>
   import("./components/Digitization/search/HouseTaxSearch")
+);
+const AuditLogs = React.lazy(() =>
+  import("./components/Digitization/admin/AuditLogs/AuditLogs")
+);
+const CreateAccount = React.lazy(() =>
+  import("./components/Digitization/admin/CreateAccount/CreateAccount")
+);
+const ManageAccounts = React.lazy(() =>
+  import("./components/Digitization/admin/ManageAccounts/ManageAccounts")
 );
 
 // Icons taken from https://www.svgrepo.com
@@ -149,11 +159,28 @@ function App() {
                 </Suspense>
               }
             />
+            //* ADMIN ROUTES
             <Route
-              path="help"
+              path="admin/AuditLog"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <Help />
+                  <AuditLogs />
+                </Suspense>
+              }
+            />
+            <Route
+              path="admin/ManageAccounts"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <ManageAccounts />
+                </Suspense>
+              }
+            />
+            <Route
+              path="admin/CreateAccount"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <CreateAccount />
                 </Suspense>
               }
             />
