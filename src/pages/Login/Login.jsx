@@ -35,7 +35,7 @@ export default function Login() {
       .then((res) => {
         const { accesstoken } = res.data;
         // console.log(res.data);
-        auth.login(accesstoken);
+        auth.login(res.data);
         navigate("/AppGallery", { replace: true });
       })
       .catch((err) => {

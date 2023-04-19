@@ -29,7 +29,7 @@ const MunicipalPropertySearch = () => {
       method: "get",
       url: `http://localhost:5000/api/v1/digitization/file-download?recordid=${recordid}&type=municipal_property_record`,
       headers: {
-        Authorization: `Bearer ${auth.user}`,
+        Authorization: `Bearer ${auth.user.accesstoken}`,
       },
       responseType: "blob",
     })
