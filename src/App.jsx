@@ -3,22 +3,6 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
 
-// import Navbar from "./components/Digitization/navbar/Navbar";
-// import Add from "./pages/Digitization/Add";
-// import Search from "./pages/Digitization/Search";
-// import Help from "./pages/Digitization/Help";
-// import Login from "./pages/Login/Login";
-// import AppGallery from "./pages/AppGallery/AppGallery";
-
-// import BirthRecords from "./components/Digitization/add/BirthRecords";
-// import ConstructionLicense from "./components/Digitization/add/ConstructionLicense";
-// import MunicipalProperty from "./components/Digitization/add/MunicipalProperty";
-// import HouseTax from "./components/Digitization/add/HouseTax";
-// import MunicipalPropertySearch from "./components/Digitization/search/MunicipalPropertySearch";
-// import BirthRecordsSearch from "./components/Digitization/search/BirthRecordsSearch";
-// import ConstructionLicenseSearch from "./components/Digitization/search/ConstructionLicenseSearch";
-// import HouseTaxSearch from "./components/Digitization/search/HouseTaxSearch";
-
 const Navbar = React.lazy(() =>
   import("./components/Digitization/navbar/Navbar")
 );

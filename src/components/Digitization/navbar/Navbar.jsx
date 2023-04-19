@@ -11,6 +11,9 @@ import Logo from "../../../assets/logo.png";
 import Logout from "../../../assets/logout.svg";
 
 const Navbar = () => {
+  const auth = useAuth();
+  // console.log(auth);
+
   const navLinkStyles = ({ isActive }) => {
     return {
       fontWeight: isActive ? "bold" : "normal",
@@ -18,7 +21,6 @@ const Navbar = () => {
       textUnderlineOffset: isActive ? "10px" : "none",
     };
   };
-  const auth = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     auth.logout();
@@ -230,19 +232,22 @@ const Navbar = () => {
               Search
             </p>
           </Dropdown>
-          <Dropdown
-            menu={{
-              items: addItems,
-            }}
-            placement="bottom"
-            arrow={{
-              pointAtCenter: true,
-            }}
-          >
-            <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-              Add
-            </p>
-          </Dropdown>
+
+          {auth.user.role == "admin" && (
+            <Dropdown
+              menu={{
+                items: addItems,
+              }}
+              placement="bottom"
+              arrow={{
+                pointAtCenter: true,
+              }}
+            >
+              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+                Add
+              </p>
+            </Dropdown>
+          )}
 
           <NavLink
             style={navLinkStyles}

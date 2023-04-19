@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { useAuth } from "../../../utils/auth";
 
 //import Global vars
 // import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
@@ -21,7 +22,6 @@ const MunicipalProperty = () => {
   //functions
   function onRemove(file) {
     setFileList([]);
-    console.log("on remove");
     //* old code
     setPdfFile(null);
     //* old code
@@ -29,9 +29,7 @@ const MunicipalProperty = () => {
 
   //* beforeUpload() is basically handleFileChange()
   function beforeUpload(file) {
-    console.log(file);
     setFileList([file]);
-    // console.log(fileList);
 
     //* old code from handleFileChange
     const dataObjFile = file;
@@ -39,7 +37,6 @@ const MunicipalProperty = () => {
     reader.readAsText(dataObjFile);
 
     if (dataObjFile.type === "application/pdf") {
-      console.log(dataObjFile);
       setData({ ...data, file: dataObjFile });
 
       //for preview button
@@ -73,7 +70,7 @@ const MunicipalProperty = () => {
       message.warning("File is not a PDF", 1.5);
     }
   };
-
+  const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "municipal_property_record" };
@@ -81,7 +78,10 @@ const MunicipalProperty = () => {
 
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user}`,
+        },
       })
       .then((res) => {
         // console.log({ respose: res });
@@ -109,7 +109,11 @@ const MunicipalProperty = () => {
     };
 
     await axios
-      .post("http://localhost:5000/api/v1/digitization/insert", jsonObject)
+      .post("http://localhost:5000/api/v1/digitization/insert", jsonObject, {
+        headers: {
+          Authorization: `Bearer ${auth.user}`,
+        },
+      })
       .then((res) => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);

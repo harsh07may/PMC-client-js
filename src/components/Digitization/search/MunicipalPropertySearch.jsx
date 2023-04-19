@@ -66,18 +66,21 @@ const MunicipalPropertySearch = () => {
       title: "Action",
       width: "15%",
       key: "filelink",
-      render: (_, record) => (
-        <Button
-          size="small"
-          onClick={() => {
-            console.log("download");
-            // console.log(record);
-            handleclick(record.recordid);
-          }}
-        >
-          Download
-        </Button>
-      ),
+      render: (_, record) =>
+        record.hasChildren ? (
+          <></>
+        ) : (
+          <Button
+            size="small"
+            onClick={() => {
+              console.log("download " + record.recordid);
+              // console.log(record);
+              handleclick(record.recordid);
+            }}
+          >
+            Download
+          </Button>
+        ),
     },
   ];
 
@@ -105,7 +108,6 @@ const MunicipalPropertySearch = () => {
         <Button
           size="small"
           onClick={() => {
-            console.log("download " + record.recordid);
             handleclick(record.recordid);
           }}
         >
@@ -120,6 +122,7 @@ const MunicipalPropertySearch = () => {
       <Table
         className="expandedRow"
         columns={expandedColumns}
+        rowKey={(record) => record.recordid}
         dataSource={record.kids}
         pagination={false}
       />
@@ -193,10 +196,6 @@ const MunicipalPropertySearch = () => {
     // console.log(organizeArray(unsorted));
     //!
     const fixedData = organizeArray(unsorted);
-    console.log(fixedData);
-    for (let i = 0; i < fixedData.length; i++) {
-      fixedData[i].key = i.toString();
-    }
     setTableData(fixedData);
   };
 
@@ -211,7 +210,6 @@ const MunicipalPropertySearch = () => {
     }
 
     setSearching(true);
-    console.log(values);
 
     await axios
       .get(
@@ -302,13 +300,10 @@ const MunicipalPropertySearch = () => {
       <Table
         loading={searching}
         columns={columns}
-        rowkey={(record) => record.recordid}
+        rowKey={(record) => record.recordid}
         expandable={{
           expandedRowRender: renderExpandedRow,
           rowExpandable: (record) => record.hasChildren == true,
-          onExpand: (expanded, record) => {
-            console.log("onExpand: ", record, expanded);
-          },
         }}
         dataSource={tableData}
       />

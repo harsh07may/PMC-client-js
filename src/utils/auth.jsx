@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
           }
         )
         .then((res) => {
-          setUser(res.data.accesstoken);
+          setUser(res.data);
           setLoading(false);
         })
         .catch((err) => {
