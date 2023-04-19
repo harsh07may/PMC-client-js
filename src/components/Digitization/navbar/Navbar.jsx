@@ -46,11 +46,11 @@ const Navbar = () => {
       key: "1",
       label: (
         <NavLink
-          to="/digitization/search/MunicipalPropertyRecord"
+          to="/digitization/search/MunicipalPropertyR ecord"
           onClick={onSmallMenuClick}
           end
         >
-          Municipal Property
+          Municipal Properties
         </NavLink>
       ),
     },
@@ -62,7 +62,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          Construction License
+          Construction Licenses
         </NavLink>
       ),
     },
@@ -74,7 +74,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          House Tax
+          House Tax Records
         </NavLink>
       ),
     },
@@ -86,7 +86,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          Birth Record
+          Birth Records
         </NavLink>
       ),
     },
@@ -101,7 +101,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          Municipal Property
+          Municipal Properties
         </NavLink>
       ),
     },
@@ -113,7 +113,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          Construction License
+          Construction Licenses
         </NavLink>
       ),
     },
@@ -125,7 +125,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          House Tax
+          House Tax Records
         </NavLink>
       ),
     },
@@ -137,7 +137,7 @@ const Navbar = () => {
           onClick={onSmallMenuClick}
           end
         >
-          Birth Record
+          Birth Records
         </NavLink>
       ),
     },

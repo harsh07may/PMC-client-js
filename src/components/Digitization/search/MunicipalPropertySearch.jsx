@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
 import {
@@ -19,7 +22,6 @@ import fileDownload from "js-file-download";
 
 const MunicipalPropertySearch = () => {
   //data members
-  //! test
   const auth = useAuth();
 
   const handleclick = (recordid) => {
@@ -68,7 +70,7 @@ const MunicipalPropertySearch = () => {
         <Button
           size="small"
           onClick={() => {
-            console.log("record");
+            console.log("download");
             // console.log(record);
             handleclick(record.recordid);
           }}
@@ -81,57 +83,47 @@ const MunicipalPropertySearch = () => {
 
   //! EXPERIMENTAL
   //TODO EMBEDED COLUMNS
-  const embededData = [];
-  for (let i = 0; i < 3; ++i) {
-    embededData.push({
-      key: i.toString(),
-      title: "Screen",
-      subDivNo: "10.3.4.5654",
-      wardNo: 500,
-      // expandable: i % 2 == 0 ? false : true,
-      expandable: false,
-    });
-  }
+  //* TESTED
+  const expandedColumns = [
+    {
+      title: "Timestamp",
+      dataIndex: "timestamp",
+      key: "Timestamp",
+      // 19-04-2023 01:00:17 PM
+      // render: (_, record) => record.timestamp.split(" ")[0],
+      render: (_, record) => {
+        return dayjs(record.timestamp, "DD-MM-YYYY HH:mm:ss A").format(
+          "DD/MM/YYYY h:mm A"
+        );
+      },
+    },
+    {
+      title: "Action",
+      dataIndex: "operation2",
+      key: "operation2",
+      render: (_, record) => (
+        <Button
+          size="small"
+          onClick={() => {
+            console.log("download " + record.recordid);
+            handleclick(record.recordid);
+          }}
+        >
+          Download
+        </Button>
+      ),
+    },
+  ];
 
-  const expandedRowRender = () => {
-    const columns = [
-      {
-        title: "Date",
-        dataIndex: "date",
-        key: "date",
-      },
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-      },
-      {
-        title: "Status",
-        key: "state",
-        render: () => <Badge status="success" text="Finished" />,
-      },
-      {
-        title: "Upgrade Status",
-        dataIndex: "upgradeNum",
-        key: "upgradeNum",
-      },
-      {
-        title: "Action",
-        dataIndex: "operation",
-        key: "operation",
-        render: () => <a>Download</a>,
-      },
-    ];
-    const dataSrc = [];
-    for (let i = 0; i < 3; ++i) {
-      dataSrc.push({
-        key: i.toString(),
-        date: "2014-12-24 23:12:00",
-        name: "This is production name",
-        upgradeNum: "Upgraded: 56",
-      });
-    }
-    return <Table columns={columns} dataSource={dataSrc} pagination={false} />;
+  const renderExpandedRow = (record) => {
+    return (
+      <Table
+        className="expandedRow"
+        columns={expandedColumns}
+        dataSource={record.kids}
+        pagination={false}
+      />
+    );
   };
 
   //! EXPERIMENTAL
@@ -151,11 +143,61 @@ const MunicipalPropertySearch = () => {
 
   //functions
   const handleDataChange = async () => {
-    console.log("oil");
-    for (let i = 0; i < data.length; i++) {
-      data[i].key = i.toString();
+    const hashFn = (e) => {
+      return e["wardno"] + e["subdivno"] + e["title"];
+    };
+
+    const groupArray = (arr, groupFn) => {
+      const groups = {};
+
+      for (const ele of arr) {
+        const hash = groupFn(ele);
+
+        if (!groups[hash]) {
+          groups[hash] = [];
+        }
+
+        groups[hash].push(ele);
+      }
+      return groups;
+    };
+
+    const organizeArray = (obj) => {
+      const outputArr = [];
+
+      for (const ele in obj) {
+        if (obj[ele].length == 1) {
+          const temp = obj[ele][0];
+          temp.hasChildren = false;
+          outputArr.push(temp);
+        } else {
+          const tempObj = {};
+
+          tempObj.wardno = obj[ele][0]["wardno"];
+          tempObj.subdivno = obj[ele][0]["subdivno"];
+          tempObj.title = obj[ele][0]["title"];
+          tempObj.hasChildren = true;
+          tempObj.kids = obj[ele];
+          tempObj.recordid =
+            obj[ele][0]["wardno"] +
+            obj[ele][0]["subdivno"] +
+            obj[ele][0]["title"] +
+            "a";
+
+          outputArr.push(tempObj);
+        }
+      }
+      return outputArr;
+    };
+    const unsorted = groupArray(data, hashFn);
+    // console.log(organizeArray(unsorted));
+    //!
+    const fixedData = organizeArray(unsorted);
+    console.log(fixedData);
+    for (let i = 0; i < fixedData.length; i++) {
+      fixedData[i].key = i.toString();
     }
-    setTableData(data);
+    setTableData(fixedData);
   };
 
   //API Calls
@@ -257,18 +299,19 @@ const MunicipalPropertySearch = () => {
       </Row>
 
       <br />
-      {/* {reqSent && ( */}
       <Table
         loading={searching}
         columns={columns}
+        rowkey={(record) => record.recordid}
         expandable={{
-          expandedRowRender,
-          rowExpandable: (record) => record.expandable,
+          expandedRowRender: renderExpandedRow,
+          rowExpandable: (record) => record.hasChildren == true,
+          onExpand: (expanded, record) => {
+            console.log("onExpand: ", record, expanded);
+          },
         }}
         dataSource={tableData}
-        // size="small"
       />
-      {/* )} */}
     </>
   );
 };

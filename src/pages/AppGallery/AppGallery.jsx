@@ -3,7 +3,7 @@ import { PoweroffOutlined } from "@ant-design/icons";
 import { Card, Button, Row, Col } from "antd";
 const { Meta } = Card;
 
-import { NavLink, Outlet, useNavigate, redirect } from "react-router-dom";
+import { NavLink, Link, Outlet, useNavigate, redirect } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
 
 import styles from "./AppGallery.module.css";
@@ -40,6 +40,7 @@ export default function AppGallery() {
         <div className={styles.gallery}>
           <Row className={styles.antRow} gutter={[50, 50]}>
             <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
+              {/* <Link to="/digitization"> */}
               <Card
                 className={styles.expandCard}
                 onClick={() => navigate("/digitization")}
@@ -51,6 +52,7 @@ export default function AppGallery() {
                   description="Digitize your files"
                 />
               </Card>
+              {/* </Link> */}
             </Col>
             <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
               <Card

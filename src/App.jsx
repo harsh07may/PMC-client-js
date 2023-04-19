@@ -75,22 +75,22 @@ function App() {
           <Route
             path="/AppGallery"
             element={
-              // <RequireAuth>
-              <Suspense fallback={<LoadingSpinner />}>
-                <AppGallery />
-              </Suspense>
-              //</RequireAuth>
+              <RequireAuth>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AppGallery />
+                </Suspense>
+              </RequireAuth>
             }
           />
 
           <Route
             path="/digitization/*"
             element={
-              //<RequireAuth>
-              <Suspense fallback={<LoadingSpinner />}>
-                <Navbar />
-              </Suspense>
-              //</RequireAuth>
+              <RequireAuth>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Navbar />
+                </Suspense>
+              </RequireAuth>
             }
           >
             //* FALLBACK ROUTE

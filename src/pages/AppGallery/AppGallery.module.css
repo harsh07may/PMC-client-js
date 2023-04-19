@@ -20,17 +20,16 @@
   height: 100%;
   margin: 0;
 }
-.gallery {
-  /* display: flex;
+/* .gallery {
+  display: flex;
   align-items: center;
   justify-content: space-around;
   flex-direction: row;
-  flex-wrap: wrap; */
-  /* overflow: hidden; */
-}
+  flex-wrap: wrap;
+  overflow: hidden;
+} */
 .heading {
-  display: flex;
-  justify-content: center;
+  text-align: center;
   padding-top: 60px;
   padding-bottom: 20px;
   font-size: 25px;
