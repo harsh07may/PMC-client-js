@@ -31,19 +31,16 @@ const BirthRecords = () => {
 
   function onRemove() {
     setFileList([]);
-    console.log("on remove");
     setPdfFile(null);
   }
 
   function beforeUpload(file) {
-    console.log(file);
     setFileList([file]);
     const dataObjFile = file;
     const reader = new FileReader();
     reader.readAsText(dataObjFile);
 
     if (dataObjFile.type === "application/pdf") {
-      console.log(dataObjFile);
       setData({ ...data, file: dataObjFile });
 
       //for preview button
@@ -57,10 +54,10 @@ const BirthRecords = () => {
   }
 
   const onFinish = async (values) => {
-    let month = dayjs(values.month).format("MMM");
-    let year = dayjs(values.month).format("YYYY");
+    let Month = dayjs(values.month).format("MMM");
+    let Year = dayjs(values.month).format("YYYY");
 
-    values = { month, year, file: data.file, type: "birth_record" };
+    values = { Month, Year, file: data.file, type: "birth_record" };
     setUploading(true);
 
     await axios

@@ -212,8 +212,14 @@ const MunicipalPropertySearch = () => {
     setSearching(true);
 
     await axios
+
       .get(
-        `http://localhost:5000/api/v1/digitization/search?type=${values.type}&subDivNo=${values.subDivNo}&title=${values.title}&wardNo=${values.wardNo}`
+        `http://localhost:5000/api/v1/digitization/search?type=${values.type}&subDivNo=${values.subDivNo}&title=${values.title}&wardNo=${values.wardNo}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
       )
       .then((res) => {
         setData(res.data);
