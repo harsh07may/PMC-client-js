@@ -93,7 +93,11 @@ export default function CreateAccount() {
             style={{
               maxWidth: 600,
             }}
-            scrollToFirstError
+            scrollToFirstError={{
+              behavior: "smooth",
+              block: "center",
+              inline: "center",
+            }}
           >
             <Form.Item
               name="fullname"
@@ -183,7 +187,7 @@ export default function CreateAccount() {
               rules={[
                 {
                   required: true,
-                  message: "Please input your Designation!",
+                  message: "Please input your designation!",
                   whitespace: true,
                 },
               ]}

@@ -184,7 +184,7 @@ const Navbar = () => {
     },
   ];
 
-  const items = [
+  const miniAdminItems = [
     {
       // type: "group", //? comment this to convert to dropdown
       label: "Search",
@@ -204,7 +204,55 @@ const Navbar = () => {
     {
       key: "logout",
       label: (
-        <p onClick={handleLogout} className={NavbarStyles.smallLogout} danger>
+        <p
+          onClick={handleLogout}
+          className={NavbarStyles.smallLogout}
+          danger="true"
+        >
+          Logout
+        </p>
+      ),
+    },
+  ];
+  const miniEditorItems = [
+    {
+      // type: "group", //? comment this to convert to dropdown
+      label: "Search",
+      children: searchItems,
+    },
+    { type: "divider" },
+    {
+      // type: "group",
+      label: "Add",
+      children: addItems,
+    },
+    {
+      key: "logout",
+      label: (
+        <p
+          onClick={handleLogout}
+          className={NavbarStyles.smallLogout}
+          danger="true"
+        >
+          Logout
+        </p>
+      ),
+    },
+  ];
+  const miniViewerItems = [
+    {
+      // type: "group", //? comment this to convert to dropdown
+      label: "Search",
+      children: searchItems,
+    },
+    {
+      key: "logout",
+      label: (
+        <p
+          onClick={handleLogout}
+          className={NavbarStyles.smallLogout}
+          danger="true"
+        >
           Logout
         </p>
       ),
@@ -239,7 +287,13 @@ const Navbar = () => {
               theme="light"
               mode="inline"
               defaultSelectedKeys={["4"]}
-              items={items}
+              items={
+                auth.user.role == "admin"
+                  ? miniAdminItems
+                  : auth.user.role == "editor"
+                  ? miniEditorItems
+                  : miniViewerItems
+              }
             />
           </Drawer>
         </>
