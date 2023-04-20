@@ -18,30 +18,17 @@ const AddConstuctionLicense = () => {
   function onRemove(file) {
     setFileList([]);
     console.log("on remove");
-    //* old code
     setPdfFile(null);
-    //* old code
   }
 
-  //* beforeUpload() is basically handleFileChange()
   function beforeUpload(file) {
-    console.log(file);
     setFileList([file]);
-    // console.log(fileList);
-
-    //* old code from handleFileChange
     const dataObjFile = file;
     const reader = new FileReader();
     reader.readAsText(dataObjFile);
 
     if (dataObjFile.type === "application/pdf") {
-      console.log(dataObjFile);
       setData({ ...data, file: dataObjFile });
-
-      //for preview button
-
-      //const files = e.target.files; // check file array AKA FileList
-      // fileList.length > 0 &&
       setPdfFile(URL.createObjectURL(file));
     } else {
       setFileList([]);
@@ -51,14 +38,10 @@ const AddConstuctionLicense = () => {
     return false;
   }
 
-  //functions
-
-  //API Calls
   const auth = useAuth();
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "constuction_license_record" };
     setUploading(true);
-    await axios;
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: {
@@ -70,6 +53,8 @@ const AddConstuctionLicense = () => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setFileList([]);
+          setPdfFile(null);
           setUploading(false);
         }
       })
@@ -161,7 +146,6 @@ const AddConstuctionLicense = () => {
                   </Upload>
                 </>
               </Form.Item>
-              {/* //! test upload (end) */}
               {pdfFile ? (
                 <>
                   <Button

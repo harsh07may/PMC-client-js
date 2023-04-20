@@ -75,7 +75,6 @@ const MunicipalProperty = () => {
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "municipal_property_record" };
     setUploading(true);
-    console.log(auth.user);
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: {
@@ -87,13 +86,15 @@ const MunicipalProperty = () => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setFileList([]);
+          setPdfFile(null);
           setUploading(false);
         }
       })
       .catch((error) => {
         message.error("File Uploaded Failed", 1.5);
         setUploading(false);
-        console.log(error);
+        // console.log(error);
       })
       .finally();
   };
@@ -108,7 +109,7 @@ const MunicipalProperty = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            onFinishFailed={() => console.log("failed")}
+            // onFinishFailed={() => console.log("failed")}
             form={form}
           >
             <Row gutter={24}>

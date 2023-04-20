@@ -42,8 +42,6 @@ const BirthRecords = () => {
 
     if (dataObjFile.type === "application/pdf") {
       setData({ ...data, file: dataObjFile });
-
-      //for preview button
       setPdfFile(URL.createObjectURL(file));
     } else {
       setFileList([]);
@@ -71,6 +69,8 @@ const BirthRecords = () => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setFileList([]);
+          setPdfFile(null);
           setUploading(false);
         }
       })
@@ -104,28 +104,6 @@ const BirthRecords = () => {
                   />
                 </Form.Item>
               </Col>
-              {/* <Col xs={24} sm={12}>
-                <Form.Item name="month" required>
-                  <Input
-                    autoComplete="off"
-                    required
-                    size="large"
-                    placeholder="Month"
-                    className={formInputStyles}
-                  />
-                </Form.Item>
-              </Col> */}
-              {/* <Col xs={24} sm={12}>
-                <Form.Item name="year" required>
-                  <Input
-                    autoComplete="off"
-                    required
-                    size="large"
-                    placeholder="Year"
-                    className={formInputStyles}
-                  />
-                </Form.Item>
-              </Col> */}
             </Row>
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
               <Form.Item required name="upload" valuePropName="fileList">

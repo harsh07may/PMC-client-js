@@ -6,7 +6,6 @@ import { useAuth } from "../../../utils/auth";
 import { formInputStyles } from "./styles/AddForm.module.css";
 
 const HouseTax = () => {
-  //States
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
@@ -15,34 +14,20 @@ const HouseTax = () => {
   });
   const [pdfFile, setPdfFile] = useState(null);
 
-  //functions
   function onRemove(file) {
     setFileList([]);
     console.log("on remove");
-    //* old code
     setPdfFile(null);
-    //* old code
   }
 
-  //* beforeUpload() is basically handleFileChange()
   function beforeUpload(file) {
-    console.log(file);
     setFileList([file]);
-    // console.log(fileList);
-
-    //* old code from handleFileChange
     const dataObjFile = file;
     const reader = new FileReader();
     reader.readAsText(dataObjFile);
 
     if (dataObjFile.type === "application/pdf") {
-      console.log(dataObjFile);
       setData({ ...data, file: dataObjFile });
-
-      //for preview button
-
-      //const files = e.target.files; // check file array AKA FileList
-      // fileList.length > 0 &&
       setPdfFile(URL.createObjectURL(file));
     } else {
       setFileList([]);
@@ -68,6 +53,8 @@ const HouseTax = () => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
           form.resetFields();
+          setFileList([]);
+          setPdfFile(null);
           setUploading(false);
         }
       })
@@ -117,8 +104,6 @@ const HouseTax = () => {
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Row> */}
-            {/* <Col span={18}> */}
             <Form.Item
               name="name"
               required
@@ -134,33 +119,6 @@ const HouseTax = () => {
               />
             </Form.Item>
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
-              {/* <Form.Item required>
-            <input
-              type="file"
-              accept="application/pdf, .pdf"
-              onChange={handleFileChange}
-              required
-              style={{ maxWidth: "230px" }}
-            />
-          </Form.Item>
-          {file ? (
-            <>
-              <Button
-                type="primary"
-                onClick={() => {
-                  window.open(file);
-                }}
-              >
-                Preview File
-              </Button>
-            </>
-          ) : (
-            <></>
-          )}
-
-          <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
-            Submit
-          </Button> */}
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
                   <Upload
