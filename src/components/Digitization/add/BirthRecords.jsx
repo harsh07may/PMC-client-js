@@ -1,51 +1,43 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Input, Row, Col, Button, message } from "antd";
-import { useAuth } from "../../../utils/auth";
-import { formInputStyles } from "./styles/AddForm.module.css";
-
-//! test imports (start)
-import { UploadOutlined } from "@ant-design/icons";
 import {
-  // Button,
-  // Form,
-  // message,
   Upload,
+  Form,
+  Input,
+  Row,
+  Col,
+  Button,
+  message,
+  DatePicker,
 } from "antd";
-//! test imports (end)
+import { useAuth } from "../../../utils/auth";
+import * as formInputStyles from "./styles/AddForm.module.css";
+import { UploadOutlined } from "@ant-design/icons";
+
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 const BirthRecords = () => {
-  //! test states (start)
-
+  const auth = useAuth();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
 
-  //! test states (end)
-
-  //* Old States
   const [form] = Form.useForm();
   const [data, setData] = useState({
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
-  //* Old States
 
-  //! test functions (start)
-  function onRemove(file) {
+  function onRemove() {
     setFileList([]);
     console.log("on remove");
-    //* old code
     setPdfFile(null);
-    //* old code
   }
 
-  //* beforeUpload() is basically handleFileChange()
   function beforeUpload(file) {
     console.log(file);
     setFileList([file]);
-    // console.log(fileList);
-
-    //* old code from handleFileChange
     const dataObjFile = file;
     const reader = new FileReader();
     reader.readAsText(dataObjFile);
@@ -55,9 +47,6 @@ const BirthRecords = () => {
       setData({ ...data, file: dataObjFile });
 
       //for preview button
-
-      //const files = e.target.files; // check file array AKA FileList
-      // fileList.length > 0 &&
       setPdfFile(URL.createObjectURL(file));
     } else {
       setFileList([]);
@@ -66,20 +55,14 @@ const BirthRecords = () => {
     }
     return false;
   }
-  //! test funcs (end)
 
-  //functions
-
-  const auth = useAuth();
-  //API Calls
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "birth_record" };
+    let month = dayjs(values.month).format("MMM");
+    let year = dayjs(values.month).format("YYYY");
 
-    //! test area
+    values = { month, year, file: data.file, type: "birth_record" };
     setUploading(true);
-    //! test area
 
-    console.log(values);
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
         headers: {
@@ -110,8 +93,21 @@ const BirthRecords = () => {
             onFinishFailed={() => console.log("failed")}
             form={form}
           >
-            <Row gutter={24}>
-              <Col xs={24} sm={12}>
+            <Row>
+              <Col xs={24} sm={24} align="middle">
+                <Form.Item
+                  name="month"
+                  rules={[{ required: true, message: "Please select month!" }]}
+                >
+                  <DatePicker
+                    className={`${formInputStyles.monthPicker}`}
+                    picker="month"
+                    format="MMMM YYYY"
+                    size="large"
+                  />
+                </Form.Item>
+              </Col>
+              {/* <Col xs={24} sm={12}>
                 <Form.Item name="month" required>
                   <Input
                     autoComplete="off"
@@ -121,8 +117,8 @@ const BirthRecords = () => {
                     className={formInputStyles}
                   />
                 </Form.Item>
-              </Col>
-              <Col xs={24} sm={12}>
+              </Col> */}
+              {/* <Col xs={24} sm={12}>
                 <Form.Item name="year" required>
                   <Input
                     autoComplete="off"
@@ -132,29 +128,9 @@ const BirthRecords = () => {
                     className={formInputStyles}
                   />
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
-            {/* <Form.Item name="title" required wrapperCol={{ span: 16 }}>
-          <Input
-            required
-            status=""
-            size="large"
-            placeholder="Title"
-            className={formInputStyles}
-          />
-        </Form.Item> */}
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
-              {/* <Form.Item required>
-            <input
-              autoComplete="off"
-              type="file"
-              accept="application/pdf, .pdf"
-              onChange={handleFileChange}
-              required
-              style={{ maxWidth: "230px" }}
-            />
-          </Form.Item> */}
-              {/* //! test upload (start) */}
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
                   <Upload
@@ -167,7 +143,6 @@ const BirthRecords = () => {
                   </Upload>
                 </>
               </Form.Item>
-              {/* //! test upload (end) */}
               {pdfFile ? (
                 <>
                   <Button
