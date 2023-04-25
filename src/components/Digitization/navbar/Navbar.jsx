@@ -29,8 +29,6 @@ const Navbar = () => {
     navigate("/");
   };
 
-  const [collapsed, setCollapsed] = useState(true);
-  const [current, setCurrent] = useState("mail");
   const [open, setOpen] = useState(false);
 
   const showDrawer = () => {
@@ -52,6 +50,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/search/MunicipalPropertyR ecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Municipal Properties
@@ -64,6 +63,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/search/ConstructionLicenseRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Construction Licenses
@@ -76,6 +76,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/search/HouseTaxRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           House Tax Records
@@ -88,6 +89,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/search/BirthRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Birth Records
@@ -103,6 +105,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/add/MunicipalPropertyRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Municipal Properties
@@ -115,6 +118,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/add/ConstructionLicenseRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Construction Licenses
@@ -127,6 +131,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/add/HouseTaxRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           House Tax Records
@@ -139,6 +144,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/add/BirthRecord"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Birth Records
@@ -154,6 +160,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/admin/AuditLog"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Audit Log
@@ -179,6 +186,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/admin/ManageAccounts"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Manage Accounts
