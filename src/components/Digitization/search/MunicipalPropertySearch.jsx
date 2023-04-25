@@ -3,26 +3,16 @@ import axios from "axios";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
-import {
-  Badge,
-  Dropdown,
-  Space,
-  Table,
-  Form,
-  Input,
-  Row,
-  Col,
-  Button,
-  message,
-} from "antd";
+import { Table, Form, Input, Row, Col, Button, message } from "antd";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
+import { useNavigate } from "react-router-dom";
 
 const MunicipalPropertySearch = () => {
-  //data members
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleclick = (recordid) => {
     axios({
@@ -40,7 +30,7 @@ const MunicipalPropertySearch = () => {
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
-        console.log(err);
+        message.error("File not found", 2);
       });
   };
   const columns = [
@@ -74,7 +64,6 @@ const MunicipalPropertySearch = () => {
             size="small"
             onClick={() => {
               console.log("download " + record.recordid);
-              // console.log(record);
               handleclick(record.recordid);
             }}
           >
@@ -84,9 +73,6 @@ const MunicipalPropertySearch = () => {
     },
   ];
 
-  //! EXPERIMENTAL
-  //TODO EMBEDED COLUMNS
-  //* TESTED
   const expandedColumns = [
     {
       title: "Timestamp",
@@ -129,10 +115,7 @@ const MunicipalPropertySearch = () => {
     );
   };
 
-  //! EXPERIMENTAL
-
   //States
-  const [reqSent, setReqSent] = useState(false);
   const [searching, setSearching] = useState(false);
   const [data, setData] = useState(null);
   const [tableData, setTableData] = useState([]);
@@ -193,8 +176,6 @@ const MunicipalPropertySearch = () => {
       return outputArr;
     };
     const unsorted = groupArray(data, hashFn);
-    // console.log(organizeArray(unsorted));
-    //!
     const fixedData = organizeArray(unsorted);
     setTableData(fixedData);
   };
@@ -225,11 +206,16 @@ const MunicipalPropertySearch = () => {
         setData(res.data);
         setSearching(false);
       })
-      .catch((err) => {
-        message.error("File not found", 2);
+      .catch((axiosError) => {
         setData(null);
         setSearching(false);
-        // message.error(err, 1.4);
+
+        if (axiosError.response.data.error?.name == "AuthenticationError") {
+          // message.error("Please reload the page", 3.5);
+          navigate(0, { replace: true });
+        } else {
+          message.error("File not found", 2);
+        }
       });
   };
 
@@ -244,8 +230,6 @@ const MunicipalPropertySearch = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            // onFinishFailed={() => console.log("failed")}
-            // form={form}
           >
             {/* //! gutter=24 causes margin-right= -15px; Only fix is to set overflow:hidden in parent  */}
             <Row gutter="24">
@@ -289,7 +273,6 @@ const MunicipalPropertySearch = () => {
               }}
             >
               <Button
-                // type="primary"
                 icon={<SearchOutlined />}
                 htmlType="submit"
                 style={{ marginLeft: 10 }}
@@ -308,6 +291,7 @@ const MunicipalPropertySearch = () => {
         columns={columns}
         rowKey={(record) => record.recordid}
         expandable={{
+          expandRowByClick: true,
           expandedRowRender: renderExpandedRow,
           rowExpandable: (record) => record.hasChildren == true,
         }}

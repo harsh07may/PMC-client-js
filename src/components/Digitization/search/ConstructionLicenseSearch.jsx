@@ -1,31 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+import { SearchOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
-import {
-  Badge,
-  Dropdown,
-  Space,
-  Table,
-  Form,
-  Input,
-  Row,
-  Col,
-  Button,
-  message,
-} from "antd";
+import { Table, Form, Input, Row, Col, Button, message } from "antd";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
+import { useNavigate } from "react-router-dom";
 
-function ConstructionLicenseSearch() {
+const ConstructionLicenseSearch = () => {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleclick = (recordid) => {
     axios({
       method: "get",
       url: `http://localhost:5000/api/v1/digitization/file-download?recordid=${recordid}&type=house_tax_record`,
       headers: {
-        Authorization: `Bearer ${auth.user}`,
+        Authorization: `Bearer ${auth.user.accesstoken}`,
       },
       responseType: "blob",
     })
@@ -36,7 +30,7 @@ function ConstructionLicenseSearch() {
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
-        console.log(err);
+        message.error("File not found", 2);
       });
   };
   const columns = [
@@ -68,12 +62,44 @@ function ConstructionLicenseSearch() {
       title: "Action",
       width: "15%",
       key: "filelink",
+      render: (_, record) =>
+        record.hasChildren ? (
+          <></>
+        ) : (
+          <Button
+            size="small"
+            onClick={() => {
+              console.log("download " + record.recordid);
+              handleclick(record.recordid);
+            }}
+          >
+            Download
+          </Button>
+        ),
+    },
+  ];
+
+  const expandedColumns = [
+    {
+      title: "Timestamp",
+      dataIndex: "timestamp",
+      key: "Timestamp",
+      // 19-04-2023 01:00:17 PM
+      // render: (_, record) => record.timestamp.split(" ")[0],
+      render: (_, record) => {
+        return dayjs(record.timestamp, "DD-MM-YYYY HH:mm:ss A").format(
+          "DD/MM/YYYY h:mm A"
+        );
+      },
+    },
+    {
+      title: "Action",
+      dataIndex: "operation2",
+      key: "operation2",
       render: (_, record) => (
         <Button
           size="small"
           onClick={() => {
-            console.log("record");
-            // console.log(record);
             handleclick(record.recordid);
           }}
         >
@@ -83,65 +109,19 @@ function ConstructionLicenseSearch() {
     },
   ];
 
-  //! EXPERIMENTAL
-  //TODO EMBEDED COLUMNS
-  const embededData = [];
-  for (let i = 0; i < 3; ++i) {
-    embededData.push({
-      key: i.toString(),
-      title: "Screen",
-      subDivNo: "10.3.4.5654",
-      wardNo: 500,
-      // expandable: i % 2 == 0 ? false : true,
-      expandable: false,
-    });
-  }
-
-  const expandedRowRender = () => {
-    const columns = [
-      {
-        title: "Date",
-        dataIndex: "date",
-        key: "date",
-      },
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-      },
-      {
-        title: "Status",
-        key: "state",
-        render: () => <Badge status="success" text="Finished" />,
-      },
-      {
-        title: "Upgrade Status",
-        dataIndex: "upgradeNum",
-        key: "upgradeNum",
-      },
-      {
-        title: "Action",
-        dataIndex: "operation",
-        key: "operation",
-        render: () => <a>Download</a>,
-      },
-    ];
-    const dataSrc = [];
-    for (let i = 0; i < 3; ++i) {
-      dataSrc.push({
-        key: i.toString(),
-        date: "2014-12-24 23:12:00",
-        name: "This is production name",
-        upgradeNum: "Upgraded: 56",
-      });
-    }
-    return <Table columns={columns} dataSource={dataSrc} pagination={false} />;
+  const renderExpandedRow = (record) => {
+    return (
+      <Table
+        className="expandedRow"
+        columns={expandedColumns}
+        rowKey={(record) => record.recordid}
+        dataSource={record.kids}
+        pagination={false}
+      />
+    );
   };
-  //TODO
-  //! EXPERIMENTAL
 
   //States
-  const [reqSent, setReqSent] = useState(false);
   const [searching, setSearching] = useState(false);
   const [data, setData] = useState(null);
   const [tableData, setTableData] = useState([]);
@@ -155,16 +135,62 @@ function ConstructionLicenseSearch() {
 
   //functions
   const handleDataChange = async () => {
-    console.log("oil");
-    for (let i = 0; i < data.length; i++) {
-      data[i].key = i.toString();
-    }
-    setTableData(data);
+    const hashFn = (e) => {
+      return e["licenseno"] + e["subdivno"] + e["name"] + e["year"];
+    };
+
+    const groupArray = (arr, groupFn) => {
+      const groups = {};
+
+      for (const ele of arr) {
+        const hash = groupFn(ele);
+
+        if (!groups[hash]) {
+          groups[hash] = [];
+        }
+
+        groups[hash].push(ele);
+      }
+      return groups;
+    };
+
+    const organizeArray = (obj) => {
+      const outputArr = [];
+
+      for (const ele in obj) {
+        if (obj[ele].length == 1) {
+          const temp = obj[ele][0];
+          temp.hasChildren = false;
+          outputArr.push(temp);
+        } else {
+          const tempObj = {};
+
+          tempObj.licenseno = obj[ele][0]["licenseno"];
+          tempObj.subdivno = obj[ele][0]["subdivno"];
+          tempObj.name = obj[ele][0]["name"];
+          tempObj.year = obj[ele][0]["year"];
+          tempObj.hasChildren = true;
+          tempObj.kids = obj[ele];
+          tempObj.recordid =
+            obj[ele][0]["licenseno"] +
+            obj[ele][0]["subdivno"] +
+            obj[ele][0]["name"] +
+            obj[ele][0]["year"] +
+            "a";
+
+          outputArr.push(tempObj);
+        }
+      }
+      return outputArr;
+    };
+    const unsorted = groupArray(data, hashFn);
+    const fixedData = organizeArray(unsorted);
+    setTableData(fixedData);
   };
 
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, type: "municipal_property_record" };
+    values = { ...values, type: "construction_license" };
 
     for (const key in values) {
       if (typeof values[key] === "undefined") {
@@ -173,21 +199,30 @@ function ConstructionLicenseSearch() {
     }
 
     setSearching(true);
-    console.log(values);
 
     await axios
       .get(
-        `http://localhost:5000/api/v1/digitization/search?type=${values.type}&subDivNo=${values.subDivNo}&title=${values.title}&wardNo=${values.wardNo}`
+        `http://localhost:5000/api/v1/digitization/search?type=${values.type}&subDivNo=${values.subDivNo}&title=${values.name}&licenseNo=${values.licenseNo}&year=${values.year}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
       )
       .then((res) => {
         setData(res.data);
         setSearching(false);
       })
-      .catch((err) => {
-        message.error("File not found", 2);
+      .catch((axiosError) => {
         setData(null);
         setSearching(false);
-        // message.error(err, 1.4);
+
+        if (axiosError.response.data.error?.name == "AuthenticationError") {
+          // message.error("Please reload the page", 3.5);
+          navigate(0, { replace: true });
+        } else {
+          message.error("File not found", 2);
+        }
       });
   };
 
@@ -196,13 +231,12 @@ function ConstructionLicenseSearch() {
       <br />
       <h3 style={{ textAlign: "center" }}>CONSTRUCTION LICENSE RECORDS</h3>
       <br />
+
       <Row align="middle" justify="center">
         <Col xs={22} sm={20} md={16} lg={12}>
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            // onFinishFailed={() => console.log("failed")}
-            // form={form}
           >
             <Row gutter={24}>
               <Col xs={24} md={8}>
@@ -239,12 +273,10 @@ function ConstructionLicenseSearch() {
             </Row>
             <Form.Item
               name="name"
-              required
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
             >
               <Input
                 autoComplete="off"
-                required
                 status=""
                 size="large"
                 placeholder="Name"
@@ -258,7 +290,6 @@ function ConstructionLicenseSearch() {
               }}
             >
               <Button
-                // type="primary"
                 icon={<SearchOutlined />}
                 htmlType="submit"
                 style={{ marginLeft: 10 }}
@@ -270,21 +301,21 @@ function ConstructionLicenseSearch() {
           </Form>
         </Col>
       </Row>
+
       <br />
-      {/* {reqSent && ( */}
       <Table
         loading={searching}
         columns={columns}
+        rowKey={(record) => record.recordid}
         expandable={{
-          expandedRowRender,
-          rowExpandable: (record) => record.expandable,
+          expandRowByClick: true,
+          expandedRowRender: renderExpandedRow,
+          rowExpandable: (record) => record.hasChildren == true,
         }}
         dataSource={tableData}
-        // size="small"
       />
-      {/* )} */}
     </>
   );
-}
+};
 
 export default ConstructionLicenseSearch;
