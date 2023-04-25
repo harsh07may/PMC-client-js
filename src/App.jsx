@@ -10,7 +10,6 @@ const Navbar = React.lazy(() =>
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
 import LoadingSpinner from "./components/LoadingSpinner";
-import ManageAccount from "./components/Digitization/admin/ManageAccounts/ManageAccounts";
 
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
@@ -178,6 +177,14 @@ function App() {
             />
             <Route
               path="admin/CreateAccount"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <CreateAccount />
+                </Suspense>
+              }
+            />
+            <Route
+              path="admin/EditAccount"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <CreateAccount />
