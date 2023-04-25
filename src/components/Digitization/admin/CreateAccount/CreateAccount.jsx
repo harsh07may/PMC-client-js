@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   AutoComplete,
   Button,
@@ -49,10 +50,12 @@ const tailFormItemLayout = {
   },
 };
 
-export default function CreateAccount() {
+export default function CreateAccount(props) {
   const auth = useAuth();
+  let { state } = useLocation();
+  const navigate = useNavigate();
+
   const onFinish = (values) => {
-    console.log(values);
     axios
       .post("http://localhost:5000/api/v1/user/register", values, {
         headers: {
@@ -76,13 +79,35 @@ export default function CreateAccount() {
   };
 
   const [form] = Form.useForm();
+  const [disableUsername, setDisableUsername] = useState(false);
+
+  useEffect(() => {
+    if (state) {
+      setDisableUsername(true);
+      axios({
+        method: "get",
+        url: `http://localhost:5000/api/v1/admin/get-user?username=${state?.username}`,
+        headers: {
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
+      }).then((res) => {
+        form.setFieldsValue({
+          fullname: res.data.rows[0].fullname,
+          username: res.data.rows[0].username,
+          designation: res.data.rows[0].designation,
+          roles: [res.data.rows[0].roles],
+        });
+      });
+    }
+  }, [state]);
 
   return (
     <>
       <br />
-      <h3 style={{ textAlign: "center" }}>MUNICIPAL PROPERTY RECORDS</h3>
+      <h3 style={{ textAlign: "center" }}>
+        {state ? `Edit Account` : `Create Account`}
+      </h3>
       <br />
-
       <Row align="middle" justify="center">
         <Col xs={22} sm={20} md={16} lg={12}>
           <Form
@@ -133,7 +158,7 @@ export default function CreateAccount() {
                 },
               ]}
             >
-              <Input />
+              <Input disabled={disableUsername} />
             </Form.Item>
 
             <Form.Item
@@ -158,7 +183,6 @@ export default function CreateAccount() {
               name="confirm"
               label="Confirm Password"
               dependencies={["password"]}
-              hasFeedback
               rules={[
                 {
                   required: true,
@@ -214,8 +238,22 @@ export default function CreateAccount() {
 
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
-                Create Account
+                {state ? `Save Changes` : `Create Account`}
               </Button>
+              {state ? (
+                <Button
+                  style={{ marginLeft: 10 }}
+                  danger
+                  onClick={() =>
+                    navigate("../admin/ManageAccounts", { replace: true })
+                  }
+                >
+                  Cancel
+                  {/* to="/digitization/admin/ManageAccounts" */}
+                </Button>
+              ) : (
+                ""
+              )}
             </Form.Item>
           </Form>
         </Col>
