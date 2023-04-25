@@ -20,6 +20,10 @@ export const AuthProvider = ({ children }) => {
           }
         )
         .then((res) => {
+          if (res.data.accesstoken === "") {
+            //* no access token, redirect to login page
+            navigate("/", { replace: true });
+          }
           setUser(res.data);
           setLoading(false);
         })
