@@ -10,6 +10,8 @@ import NavbarStyles from "./Navbar.module.css";
 import Logo from "../../../assets/logo.png";
 import Logout from "../../../assets/logout.svg";
 
+import CustomDropdown from "../../CustomDropdown/CustomDropdown";
+
 const Navbar = () => {
   const auth = useAuth();
   // console.log(auth);
@@ -164,6 +166,7 @@ const Navbar = () => {
         <NavLink
           to="/digitization/admin/CreateAccount"
           onClick={onSmallMenuClick}
+          reloadDocument
           end
         >
           Create Account
@@ -308,51 +311,81 @@ const Navbar = () => {
         </div>
 
         <div className={NavbarStyles.navLinkParent}>
-          <Dropdown
-            menu={{
-              items: searchItems,
-            }}
-            placement="bottom"
-            arrow={{
-              pointAtCenter: true,
-            }}
-          >
+          <CustomDropdown menu={searchItems}>
             <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
               Search
             </p>
-          </Dropdown>
+          </CustomDropdown>
 
           {(auth.user.role == "admin" || auth.user.role == "editor") && (
-            <Dropdown
-              menu={{
-                items: addItems,
-              }}
-              placement="bottom"
-              arrow={{
-                pointAtCenter: true,
-              }}
-            >
+            <CustomDropdown menu={addItems}>
               <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
                 Add
               </p>
-            </Dropdown>
+            </CustomDropdown>
+          )}
+          {auth.user.role == "admin" && (
+            <CustomDropdown menu={adminItems}>
+              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+                Admin
+              </p>
+            </CustomDropdown>
           )}
 
-          {auth.user.role == "admin" && (
+          {/* 
+            //! antd dropdown causes page links to freeze, replaced with custom dropdown. 
+            //! Don't delete antd dropdown code.  
+            //! Test before migrating to new antd version     
+            //! Current version antd v5.5.3     
+          */}
+
+          {/* 
             <Dropdown
               menu={{
-                items: adminItems,
+                items: searchItems,
               }}
               placement="bottom"
               arrow={{
                 pointAtCenter: true,
               }}
+              trigger={"click"}
             >
               <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                Admin
+                Search
               </p>
-            </Dropdown>
-          )}
+            </Dropdown> 
+            {(auth.user.role == "admin" || auth.user.role == "editor") && (
+              <Dropdown
+                menu={{
+                  items: addItems,
+                }}
+                placement="bottom"
+                arrow={{
+                  pointAtCenter: true,
+                }}
+              >
+                <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+                  Add
+                </p>
+              </Dropdown>
+            )}
+
+            {auth.user.role == "admin" && (
+              <Dropdown
+                menu={{
+                  items: adminItems,
+                }}
+                placement="bottom"
+                arrow={{
+                  pointAtCenter: true,
+                }}
+              >
+                <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+                  Admin
+                </p>
+              </Dropdown>
+            )} 
+          */}
           <img
             src={Logout}
             className={NavbarStyles.logout}
