@@ -94,11 +94,26 @@ const digitizationColumns = [
 const userColumns = [
   {
     title: "Description",
-    dataIndex: "resourcename",
-    key: "title",
+    dataIndex: "description",
+    key: "description",
     width: "40%",
     render: (_, record) => {
-      return <p>{record.resourcename}</p>;
+      // "Registered User %harsh%"
+      if (record.action == "register" || record.action == "Register") {
+        let username = record.description.split("%")[1];
+        return (
+          <p>
+            {record.description.split("%")[0]}{" "}
+            {
+              <Text keyboard strong>
+                {record.description.split("%")[1]}
+              </Text>
+            }
+          </p>
+        );
+      } else {
+        return <p>{record.description}</p>;
+      }
     },
   },
   {
@@ -107,9 +122,10 @@ const userColumns = [
     dataIndex: "action",
     render: (_, { action }) => {
       let color = {
-        Search: "geekblue",
-        Download: "red",
-        Upload: "green",
+        login: "green",
+        register: "geekblue",
+        Register: "geekblue",
+        update: "red",
       }[action];
       return (
         <Tag color={color} key={action}>
@@ -159,29 +175,6 @@ const userColumns = [
   //   },
   // },
 ];
-const adminData = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
 
 const getRandomUserParams = (params) => ({
   page: params.pagination?.current,
@@ -213,7 +206,7 @@ export default function AuditLogs() {
       //* digitization tab
       axios({
         method: "get",
-        url: `http://localhost:5000/api/v1/digitization/get-search-audit?${qs.stringify(
+        url: `http://localhost:5000/api/v1/admin/get-digitization-audit?${qs.stringify(
           getRandomUserParams(digitizationTableParams)
         )}`,
         headers: {
@@ -234,7 +227,7 @@ export default function AuditLogs() {
       //* user tab
       axios({
         method: "get",
-        url: `http://localhost:5000/api/v1/user/get-user-audit?${qs.stringify(
+        url: `http://localhost:5000/api/v1/admin/get-user-audit?${qs.stringify(
           getRandomUserParams(userTableParams)
         )}`,
         headers: {
@@ -264,7 +257,7 @@ export default function AuditLogs() {
     fetchData("user");
   }, [JSON.stringify(userTableParams)]);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleDigitizationTableChange = (pagination, filters, sorter) => {
     setDigitizationTableParams({
       pagination,
       filters,
@@ -278,69 +271,23 @@ export default function AuditLogs() {
     // }
   };
 
-  return (
-    // <List>
-    //   <Table {...tableProps} rowKey="id">
-    //     <Table.Column dataIndex="id" title="ID" />
-    //     <Table.Column dataIndex="title" title="Title" />
-    //     <Table.Column
-    //       dataIndex={["category", "id"]}
-    //       title="Category"
-    //       render={(value) => {
-    //         if (isLoading) {
-    //           return <TextField value="Loading..." />;
-    //         }
+  const handleUserTableChange = (pagination, filters, sorter) => {
+    setUserTableParams({
+      pagination,
+      filters,
+      ...sorter,
+    });
 
-    //         return (
-    //           <TextField
-    //             value={data?.data.find((item) => item.id === value)?.title}
-    //           />
-    //         );
-    //       }}
-    //       filterDropdown={(props) => (
-    //         <FilterDropdown
-    //           {...props}
-    //           mapValue={(selectedKeys) => selectedKeys.map(Number)}
-    //         >
-    //           <Select
-    //             style={{ minWidth: 200 }}
-    //             mode="multiple"
-    //             placeholder="Select Category"
-    //             {...categorySelectProps}
-    //           />
-    //         </FilterDropdown>
-    //       )}
-    //       defaultFilteredValue={getDefaultFilter("category.id", filters, "in")}
-    //     />
-    //     <Table.Column
-    //       dataIndex="status"
-    //       title="Status"
-    //       render={(value) => <TagField value={value} />}
-    //       filterDropdown={(props) => (
-    //         <FilterDropdown {...props}>
-    //           <Radio.Group>
-    //             <Radio value="published">Published</Radio>
-    //             <Radio value="draft">Draft</Radio>
-    //             <Radio value="rejected">Rejected</Radio>
-    //           </Radio.Group>
-    //         </FilterDropdown>
-    //       )}
-    //     />
-    //     <Table.Column
-    //       title="Actions"
-    //       dataIndex="actions"
-    //       render={(_, record) => (
-    //         <Space>
-    //           <EditButton hideText size="small" recordItemId={record.id} />
-    //           <ShowButton hideText size="small" recordItemId={record.id} />
-    //           <LogButton hideText size="small" recordItemId={record.id} />
-    //         </Space>
-    //       )}
-    //     />
-    //   </Table>
-    // </List>
+    //? pageSize fixed to 10 rows in backend
+    // `dataSource` is useless since `pageSize` changed
+    // if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+    //   setDigitizationData([]);
+    // }
+  };
+
+  return (
     <>
-      <Button
+      {/* <Button
         onClick={() => {
           fetchData();
           console.log(
@@ -351,7 +298,7 @@ export default function AuditLogs() {
         }}
       >
         click
-      </Button>
+      </Button> */}
       <List
         className={styles.list}
         header={<Title level={3}>Audit Logs</Title>}
@@ -372,12 +319,12 @@ export default function AuditLogs() {
                   dataSource={digitizationData}
                   pagination={digitizationTableParams.pagination}
                   loading={loading}
-                  onChange={handleTableChange}
+                  onChange={handleDigitizationTableChange}
                 ></Table>
               ),
             },
             {
-              label: `Admin Audit Logs`,
+              label: `User Audit Logs`,
               key: 2,
               children: (
                 <Table
@@ -386,7 +333,7 @@ export default function AuditLogs() {
                   dataSource={userData}
                   pagination={userTableParams.pagination}
                   loading={loading}
-                  onChange={handleTableChange}
+                  onChange={handleUserTableChange}
                 ></Table>
               ),
             },
