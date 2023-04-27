@@ -9,5 +9,9 @@ export default function ({ children }) {
   if (auth.loading) {
     return <LoadingSpinner />;
   }
-  return auth.user ? children : <Navigate to="/" />;
+  return auth.user.role == "admin" ? (
+    children
+  ) : (
+    <Navigate to="/AppGallery" replace />
+  );
 }

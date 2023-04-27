@@ -20,8 +20,8 @@ export default function Login() {
   }, []);
 
   const openNotification = () => {
-    notification.open({
-      message: "Unsuccessful Login",
+    notification.error({
+      message: "Unsuccessful Login!",
       description: "Try again",
     });
   };
@@ -33,18 +33,12 @@ export default function Login() {
       withCredentials: true,
     })
       .then((res) => {
-        const { accesstoken } = res.data;
-        // console.log(res.data);
         auth.login(res.data);
         navigate("/AppGallery", { replace: true });
       })
       .catch((err) => {
         openNotification();
       });
-  };
-  const onFinishFailed = (errorInfo) => {
-    //!
-    console.log("Failed:", errorInfo);
   };
   return (
     <>
@@ -60,7 +54,6 @@ export default function Login() {
             name="login"
             initialValues={{ remember: true }}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
             labelCol={{
               span: 10,

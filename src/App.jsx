@@ -3,13 +3,18 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
 
-const Navbar = React.lazy(() =>
-  import("./components/Digitization/navbar/Navbar")
+const DigitizationNavbar = React.lazy(() =>
+  import("./components/Digitization/navbar/DigitizationNavbar")
+);
+
+const AdministrationNavbar = React.lazy(() =>
+  import("./components/Administration/navbar/AdminNavbar")
 );
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
-import LoadingSpinner from "./components/LoadingSpinner";
+import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
+import AdminAccess from "./utils/AdminAccess";
 
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
@@ -36,13 +41,13 @@ const HouseTaxSearch = React.lazy(() =>
   import("./components/Digitization/search/HouseTaxSearch")
 );
 const AuditLogs = React.lazy(() =>
-  import("./components/Digitization/admin/AuditLogs/AuditLogs")
+  import("./components/Administration/AuditLogs/AuditLogs")
 );
 const CreateAccount = React.lazy(() =>
-  import("./components/Digitization/admin/CreateAccount/CreateAccount")
+  import("./components/Administration/Accounts/CreateAccount/CreateAccount")
 );
 const ManageAccounts = React.lazy(() =>
-  import("./components/Digitization/admin/ManageAccounts/ManageAccounts")
+  import("./components/Administration/Accounts/ManageAccounts/ManageAccounts")
 );
 
 // Icons taken from https://www.svgrepo.com
@@ -75,13 +80,12 @@ function App() {
               </RequireAuth>
             }
           />
-
           <Route
             path="/digitization/*"
             element={
               <RequireAuth>
                 <Suspense fallback={<LoadingSpinner />}>
-                  <Navbar />
+                  <DigitizationNavbar />
                 </Suspense>
               </RequireAuth>
             }
@@ -158,8 +162,9 @@ function App() {
                 </Suspense>
               }
             />
-            //* ADMIN ROUTES
-            <Route
+          </Route>
+          //* ADMIN ROUTES
+          {/* <Route
               path="admin/AuditLog"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
@@ -185,6 +190,55 @@ function App() {
             />
             <Route
               path="admin/EditAccount"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <CreateAccount />
+                </Suspense>
+              }
+            />
+          </Route> */}
+          //* ADMIN ROUTES
+          <Route
+            path="/administration/*"
+            element={
+              <RequireAuth>
+                <AdminAccess>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AdministrationNavbar />
+                  </Suspense>
+                </AdminAccess>
+              </RequireAuth>
+            }
+          >
+            //* FALLBACK ROUTE
+            <Route index element={<Navigate to="AuditLog" />} />
+            <Route path="*" element={<Navigate to="AuditLog" />} />
+            <Route
+              path="AuditLog"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AuditLogs />
+                </Suspense>
+              }
+            />
+            <Route
+              path="accounts/ManageAccounts"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <ManageAccounts />
+                </Suspense>
+              }
+            />
+            <Route
+              path="accounts/CreateAccount"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <CreateAccount />
+                </Suspense>
+              }
+            />
+            <Route
+              path="accounts/EditAccount"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <CreateAccount />

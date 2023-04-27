@@ -52,24 +52,24 @@ const MunicipalProperty = () => {
     return false;
   }
 
-  const handleFileChange = (e) => {
-    const dataObjFile = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsText(dataObjFile);
+  // const handleFileChange = (e) => {
+  //   const dataObjFile = e.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsText(dataObjFile);
 
-    if (dataObjFile.type === "application/pdf") {
-      // console.log(dataObjFile);
-      setData({ ...data, file: dataObjFile });
+  //   if (dataObjFile.type === "application/pdf") {
+  //     // console.log(dataObjFile);
+  //     setData({ ...data, file: dataObjFile });
 
-      //for preview button
-      const files = e.target.files;
-      files.length > 0 && setFile(URL.createObjectURL(files[0]));
-    } else {
-      e.target.value = "";
-      setFile(null);
-      message.warning("File is not a PDF", 1.5);
-    }
-  };
+  //     //for preview button
+  //     const files = e.target.files;
+  //     files.length > 0 && setFile(URL.createObjectURL(files[0]));
+  //   } else {
+  //     e.target.value = "";
+  //     setFile(null);
+  //     message.warning("File is not a PDF", 1.5);
+  //   }
+  // };
   const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
@@ -92,9 +92,13 @@ const MunicipalProperty = () => {
         }
       })
       .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
+        // message.error("File Uploaded Failed", 1.5);
         setUploading(false);
-        // console.log(error);
+        console.log(error.name);
+        if (error.name == "AuthenticationError") {
+          message.error("You are not logged in", 1.5);
+          console.log("ok");
+        }
       })
       .finally();
   };
@@ -114,10 +118,18 @@ const MunicipalProperty = () => {
           >
             <Row gutter={24}>
               <Col xs={24} md={12}>
-                <Form.Item name="wardNo" required>
+                <Form.Item
+                  name="wardNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a ward number!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
-                    required
+                    // required
                     size="large"
                     placeholder="Ward No."
                     className={formInputStyles}
@@ -125,10 +137,18 @@ const MunicipalProperty = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="subDivNo" required>
+                <Form.Item
+                  name="subDivNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a sub-division number!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
-                    required
+                    // required
                     size="large"
                     placeholder="Sub Division No."
                     className={formInputStyles}
@@ -139,11 +159,17 @@ const MunicipalProperty = () => {
             <Form.Item
               name="title"
               required
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter a title!",
+                },
+              ]}
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
             >
               <Input
                 autoComplete="off"
-                required
+                // required
                 status=""
                 size="large"
                 placeholder="Title"
@@ -191,11 +217,20 @@ const MunicipalProperty = () => {
                   </Upload>
                 </>
               </Form.Item>
-              {/* //! test upload (end) */}
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={fileList.length === 0}
+                loading={uploading}
+              >
+                {uploading ? "Uploading" : "Submit"}
+              </Button>
               {pdfFile ? (
                 <>
                   <Button
-                    type="primary"
+                    style={{ marginLeft: 10 }}
+                    // type="primary"
                     onClick={() => {
                       window.open(pdfFile);
                     }}
@@ -206,15 +241,6 @@ const MunicipalProperty = () => {
               ) : (
                 <></>
               )}
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ marginLeft: 10 }}
-                disabled={fileList.length === 0}
-                loading={uploading}
-              >
-                {uploading ? "Uploading" : "Submit"}
-              </Button>
             </Form.Item>
           </Form>
         </Col>

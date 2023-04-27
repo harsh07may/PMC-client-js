@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  AutoComplete,
-  Button,
-  Cascader,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  message,
-} from "antd";
+import { Button, Col, Form, Input, Row, Select, message } from "antd";
 const { Option } = Select;
 import axios from "axios";
 import { useAuth } from "../../../../utils/auth";
@@ -50,32 +38,62 @@ const tailFormItemLayout = {
   },
 };
 
-export default function CreateAccount(props) {
+export default function CreateAccount() {
   const auth = useAuth();
+  const [messageApi, contextHolder] = message.useMessage();
   let { state } = useLocation();
   const navigate = useNavigate();
 
   const onFinish = (values) => {
-    axios
-      .post("http://localhost:5000/api/v1/user/register", values, {
-        headers: {
-          Authorization: `Bearer ${auth.user.accesstoken}`,
-        },
-      })
-      .then((res) => {
-        // console.log({ respose: res });
-        if (res.status == 200) {
-          message.success("Account Registered Successfully!", 1.5);
-          form.resetFields();
-        }
-      })
-      .catch((error) => {
-        if (error.response.status == 400) {
-          message.error("Username already registered!", 1.5);
-        }
-        console.log(error);
-      })
-      .finally();
+    if (state) {
+      // For edit account
+      axios
+        .post("http://localhost:5000/api/v1/admin/update-user", values, {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            messageApi
+              .open({
+                type: "success",
+                content: "Account Modified Successfully!",
+                duration: 1.5,
+              })
+              .then(() =>
+                navigate("../accounts/ManageAccounts", { replace: true })
+              );
+          }
+        })
+        .catch((error) => {
+          if (error.response.status == 400) {
+            message.error("Username already registered!", 1.5);
+          }
+          console.log(error);
+        });
+    } else {
+      //  For create account
+      axios
+        .post("http://localhost:5000/api/v1/user/register", values, {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        })
+        .then((res) => {
+          // console.log({ respose: res });
+          if (res.status == 200) {
+            message.success("Account Registered Successfully!", 1.5);
+            form.resetFields();
+          }
+        })
+        .catch((error) => {
+          if (error.response.status == 400) {
+            message.error("Username already registered!", 1.5);
+          }
+          console.log(error);
+        });
+    }
   };
 
   const [form] = Form.useForm();
@@ -95,7 +113,7 @@ export default function CreateAccount(props) {
           fullname: res.data.rows[0].fullname,
           username: res.data.rows[0].username,
           designation: res.data.rows[0].designation,
-          roles: [res.data.rows[0].roles],
+          roles: res.data.rows[0].roles,
         });
       });
     }
@@ -103,6 +121,7 @@ export default function CreateAccount(props) {
 
   return (
     <>
+      {contextHolder}
       <br />
       <h3 style={{ textAlign: "center" }}>
         {state ? `Edit Account` : `Create Account`}
@@ -174,7 +193,7 @@ export default function CreateAccount(props) {
                   message: "Password should be at least 8 characters long!",
                 },
               ]}
-              hasFeedback
+              // hasFeedback
             >
               <Input.Password />
             </Form.Item>
@@ -245,7 +264,7 @@ export default function CreateAccount(props) {
                   style={{ marginLeft: 10 }}
                   danger
                   onClick={() =>
-                    navigate("../admin/ManageAccounts", { replace: true })
+                    navigate("../accounts/ManageAccounts", { replace: true })
                   }
                 >
                   Cancel

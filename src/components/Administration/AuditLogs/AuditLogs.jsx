@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import qs from "qs";
-import {
-  List,
-  Space,
-  Table,
-  Tag,
-  Select,
-  Radio,
-  Tooltip,
-  Button,
-  Typography,
-  Tabs,
-} from "antd";
+import { List, Table, Tag, Tooltip, Typography, Tabs } from "antd";
 const { Title, Text } = Typography;
 
-import { useAuth } from "../../../../utils/auth";
+import { useAuth } from "../../../utils/auth";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -98,15 +87,19 @@ const userColumns = [
     key: "description",
     width: "40%",
     render: (_, record) => {
-      // "Registered User %harsh%"
-      if (record.action == "register" || record.action == "Register") {
+      // "Registered User %harsh"
+      if (
+        record.action == "register" ||
+        record.action == "Register" || //due to typo in db, remove in prod
+        record.action == "update"
+      ) {
         let username = record.description.split("%")[1];
         return (
           <p>
             {record.description.split("%")[0]}{" "}
             {
               <Text keyboard strong>
-                {record.description.split("%")[1]}
+                {username}
               </Text>
             }
           </p>
@@ -189,6 +182,7 @@ export default function AuditLogs() {
   const [digitizationTableParams, setDigitizationTableParams] = useState({
     pagination: {
       current: 1,
+      showSizeChanger: false,
     },
   });
   //user audit
@@ -196,6 +190,7 @@ export default function AuditLogs() {
   const [userTableParams, setUserTableParams] = useState({
     pagination: {
       current: 1,
+      showSizeChanger: false,
     },
   });
 
@@ -234,7 +229,6 @@ export default function AuditLogs() {
           Authorization: `Bearer ${auth.user.accesstoken}`,
         },
       }).then((res) => {
-        console.log(res.data);
         setUserData(res.data.rows);
         setLoading(false);
         setUserTableParams({

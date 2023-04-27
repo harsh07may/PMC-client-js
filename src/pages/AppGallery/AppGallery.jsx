@@ -82,13 +82,13 @@ export default function AppGallery() {
             </Col>
             <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
               <Card
-                onClick={() => console.log("4")}
+                onClick={() => navigate("/administration")}
                 className={styles.expandCard}
                 hoverable
                 cover={<img src={userLogo} className={styles.cardLogo} />}
               >
                 <Meta
-                  title="User Management"
+                  title="Administration"
                   description="Manage user accounts"
                 />
               </Card>

@@ -1,13 +1,23 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { notification } from "antd";
 
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
+
+  const openErrorNotification = () => {
+    notification.error({
+      message: "Oops! Something went wrong.",
+      description: "Try again",
+    });
+  };
+
   useEffect(() => {
     const checkRefreshToken = () => {
       axios
@@ -21,14 +31,17 @@ export const AuthProvider = ({ children }) => {
         )
         .then((res) => {
           if (res.data.accesstoken === "") {
-            //* no access token, redirect to login page
+            // no access token, redirect to login page
             navigate("/", { replace: true });
           }
           setUser(res.data);
           setLoading(false);
         })
         .catch((err) => {
-          console.log("Error" + err);
+          //crash case
+          openErrorNotification();
+          navigate("/", { replace: true });
+          // console.log("Error" + err);
         });
     };
     return checkRefreshToken;
@@ -52,7 +65,8 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
       })
       .catch((err) => {
-        console.log("Error" + err);
+        openErrorNotification();
+        // console.log("Error" + err);
       });
   };
   return (

@@ -118,10 +118,18 @@ const BirthRecords = () => {
                   </Upload>
                 </>
               </Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={fileList.length === 0}
+                loading={uploading}
+              >
+                {uploading ? "Uploading" : "Submit"}
+              </Button>
               {pdfFile ? (
                 <>
                   <Button
-                    type="primary"
+                    style={{ marginLeft: 10 }}
                     onClick={() => {
                       window.open(pdfFile);
                     }}
@@ -132,15 +140,6 @@ const BirthRecords = () => {
               ) : (
                 <></>
               )}
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ marginLeft: 10 }}
-                disabled={fileList.length === 0}
-                loading={uploading}
-              >
-                {uploading ? "Uploading" : "Submit"}
-              </Button>
             </Form.Item>
           </Form>
         </Col>

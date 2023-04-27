@@ -40,7 +40,11 @@ const AddConstuctionLicense = () => {
 
   const auth = useAuth();
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "constuction_license_record" };
+    values = {
+      ...values,
+      file: data.file,
+      type: "construction_license_record",
+    };
     setUploading(true);
     await axios
       .post("http://localhost:5000/api/v1/digitization/upload", values, {
@@ -59,9 +63,13 @@ const AddConstuctionLicense = () => {
         }
       })
       .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
+        // message.error("File Uploaded Failed", 1.5);
         setUploading(false);
-        console.log(error);
+        console.log(error.name);
+        if (error.name == "AuthenticationError") {
+          message.error("You are not logged in", 1.5);
+          console.log("ok");
+        }
       })
       .finally();
   };
@@ -82,10 +90,17 @@ const AddConstuctionLicense = () => {
           >
             <Row gutter={24}>
               <Col xs={24} md={8}>
-                <Form.Item name="licenseNo" required>
+                <Form.Item
+                  name="licenseNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a license number!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
-                    required
                     size="large"
                     placeholder="License No."
                     className={formInputStyles}
@@ -93,10 +108,17 @@ const AddConstuctionLicense = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item name="subDivNo" required>
+                <Form.Item
+                  name="subDivNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a sub-division number!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
-                    required
                     size="large"
                     placeholder="Sub Division No."
                     className={formInputStyles}
@@ -104,10 +126,18 @@ const AddConstuctionLicense = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item name="year" required>
+                <Form.Item
+                  name="year"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a year!",
+                    },
+                    // TODO add regex for year, 4 digits
+                  ]}
+                >
                   <Input
                     autoComplete="off"
-                    required
                     size="large"
                     placeholder="Year"
                     className={formInputStyles}
@@ -119,15 +149,19 @@ const AddConstuctionLicense = () => {
               <Col span={24}>
                 <Form.Item
                   name="name"
-                  required
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a title!",
+                    },
+                  ]}
                   wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
                 >
                   <Input
                     autoComplete="off"
-                    required
                     status=""
                     size="large"
-                    placeholder="Name"
+                    placeholder="Title"
                     className={formInputStyles}
                   />
                 </Form.Item>
@@ -146,10 +180,18 @@ const AddConstuctionLicense = () => {
                   </Upload>
                 </>
               </Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={fileList.length === 0}
+                loading={uploading}
+              >
+                {uploading ? "Uploading" : "Submit"}
+              </Button>
               {pdfFile ? (
                 <>
                   <Button
-                    type="primary"
+                    style={{ marginLeft: 10 }}
                     onClick={() => {
                       window.open(pdfFile);
                     }}
@@ -160,15 +202,6 @@ const AddConstuctionLicense = () => {
               ) : (
                 <></>
               )}
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ marginLeft: 10 }}
-                disabled={fileList.length === 0}
-                loading={uploading}
-              >
-                {uploading ? "Uploading" : "Submit"}
-              </Button>
             </Form.Item>
           </Form>
         </Col>

@@ -153,78 +153,6 @@ const Navbar = () => {
     },
   ];
 
-  const adminItems = [
-    {
-      key: "c1",
-      label: (
-        <NavLink
-          to="/digitization/admin/AuditLog"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Audit Log
-        </NavLink>
-      ),
-    },
-    {
-      key: "c2",
-      label: (
-        <NavLink
-          to="/digitization/admin/CreateAccount"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Create Account
-        </NavLink>
-      ),
-    },
-    {
-      key: "c3",
-      label: (
-        <NavLink
-          to="/digitization/admin/ManageAccounts"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Manage Accounts
-        </NavLink>
-      ),
-    },
-  ];
-
-  const miniAdminItems = [
-    {
-      // type: "group", //? comment this to convert to dropdown
-      label: "Search",
-      children: searchItems,
-    },
-    { type: "divider" },
-    {
-      // type: "group",
-      label: "Add",
-      children: addItems,
-    },
-    { type: "divider" },
-    {
-      label: "Admin",
-      children: adminItems,
-    },
-    {
-      key: "logout",
-      label: (
-        <p
-          onClick={handleLogout}
-          className={NavbarStyles.smallLogout}
-          danger="true"
-        >
-          Logout
-        </p>
-      ),
-    },
-  ];
   const miniEditorItems = [
     {
       // type: "group", //? comment this to convert to dropdown
@@ -300,7 +228,7 @@ const Navbar = () => {
               defaultSelectedKeys={["4"]}
               items={
                 auth.user.role == "admin"
-                  ? miniAdminItems
+                  ? miniEditorItems
                   : auth.user.role == "editor"
                   ? miniEditorItems
                   : miniViewerItems
@@ -329,13 +257,6 @@ const Navbar = () => {
             <CustomDropdown menu={addItems}>
               <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
                 Add
-              </p>
-            </CustomDropdown>
-          )}
-          {auth.user.role == "admin" && (
-            <CustomDropdown menu={adminItems}>
-              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                Admin
               </p>
             </CustomDropdown>
           )}

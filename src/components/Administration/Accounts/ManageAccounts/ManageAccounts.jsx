@@ -103,7 +103,10 @@ const userColumns = [
             cancelText="No"
             onConfirm={() => {}}
           > */}
-          <Link to="../admin/EditAccount" state={{ username: record.username }}>
+          <Link
+            to="../accounts/EditAccount"
+            state={{ username: record.username }}
+          >
             Edit
           </Link>
           {/* </Popconfirm> */}

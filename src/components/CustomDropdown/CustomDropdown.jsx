@@ -1,16 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import listenForOutsideClick from "./listen-for-outside-clicks";
 import "./CustomDropdown.css";
 
-function Dropdown({ menu, children }) {
+function CustomDropdown({ menu, children }) {
   const [isOpen, setIsOpen] = useState(false);
-
+  //!
+  // Hide and show dropdown
+  //* const [isOpen, setIsOpen] = useState(false)
+  const toggle = (isOpen) => {
+    return setIsOpen(!isOpen);
+  };
+  // Hide Dropdown on Outside Click
+  const menuRef = useRef(null);
+  const [listening, setListening] = useState(false);
+  useEffect(listenForOutsideClick(listening, setListening, menuRef, setIsOpen));
+  //!
   function handleDropdownClick() {
     setIsOpen(!isOpen);
   }
 
+  function handleMouseLeave() {
+    // setIsOpen(false);
+    // console.log("mouse leave");
+  }
+
   return (
-    <div className="dropdown">
-      <div className="dropdown__toggle" onClick={handleDropdownClick}>
+    <div className="dropdown" ref={menuRef}>
+      <div
+        className="dropdown__toggle"
+        onClick={handleDropdownClick}
+        // onMouseLeave={handleMouseLeave}
+      >
         {children}
         {/* <span className="dropdown__icon">{isOpen ? "▲" : "▼"}</span> */}
       </div>
@@ -31,4 +51,4 @@ function Dropdown({ menu, children }) {
   );
 }
 
-export default Dropdown;
+export default CustomDropdown;

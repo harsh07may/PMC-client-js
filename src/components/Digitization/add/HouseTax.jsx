@@ -131,10 +131,19 @@ const HouseTax = () => {
                   </Upload>
                 </>
               </Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ marginLeft: 10 }}
+                disabled={fileList.length === 0}
+                loading={uploading}
+              >
+                {uploading ? "Uploading" : "Submit"}
+              </Button>
               {pdfFile ? (
                 <>
                   <Button
-                    type="primary"
+                    style={{ marginLeft: 10 }}
                     onClick={() => {
                       window.open(pdfFile);
                     }}
@@ -145,15 +154,6 @@ const HouseTax = () => {
               ) : (
                 <></>
               )}
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ marginLeft: 10 }}
-                disabled={fileList.length === 0}
-                loading={uploading}
-              >
-                {uploading ? "Uploading" : "Submit"}
-              </Button>
             </Form.Item>
           </Form>
         </Col>
