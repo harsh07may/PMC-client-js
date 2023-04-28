@@ -2,20 +2,18 @@ import React, { Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
+import AdminAccess from "./utils/AdminAccess";
+import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
+
+const Login = React.lazy(() => import("./pages/Login/Login"));
+const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
 
 const DigitizationNavbar = React.lazy(() =>
   import("./components/Digitization/navbar/DigitizationNavbar")
 );
-
 const AdministrationNavbar = React.lazy(() =>
   import("./components/Administration/navbar/AdminNavbar")
 );
-
-const Login = React.lazy(() => import("./pages/Login/Login"));
-const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
-import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
-import AdminAccess from "./utils/AdminAccess";
-
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
 );
@@ -49,8 +47,6 @@ const CreateAccount = React.lazy(() =>
 const ManageAccounts = React.lazy(() =>
   import("./components/Administration/Accounts/ManageAccounts/ManageAccounts")
 );
-
-// Icons taken from https://www.svgrepo.com
 
 const NotFound = () => {
   return <h1>Page Not found</h1>;
@@ -163,40 +159,6 @@ function App() {
               }
             />
           </Route>
-          //* ADMIN ROUTES
-          {/* <Route
-              path="admin/AuditLog"
-              element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <AuditLogs />
-                </Suspense>
-              }
-            />
-            <Route
-              path="admin/ManageAccounts"
-              element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <ManageAccounts />
-                </Suspense>
-              }
-            />
-            <Route
-              path="admin/CreateAccount"
-              element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <CreateAccount />
-                </Suspense>
-              }
-            />
-            <Route
-              path="admin/EditAccount"
-              element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <CreateAccount />
-                </Suspense>
-              }
-            />
-          </Route> */}
           //* ADMIN ROUTES
           <Route
             path="/administration/*"

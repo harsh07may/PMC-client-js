@@ -1,3 +1,4 @@
+// Icons taken from https://www.svgrepo.com
 import React from "react";
 import { PoweroffOutlined } from "@ant-design/icons";
 import { Card, Button, Row, Col } from "antd";
