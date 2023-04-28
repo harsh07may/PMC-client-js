@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
-import { Dropdown, Button, Drawer, Menu } from "antd";
+import { Button, Drawer, Menu } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 // import { LogoutOutlined } from "@ant-design/icons";
 
@@ -247,74 +247,14 @@ const Navbar = () => {
         </div>
 
         <div className={NavbarStyles.navLinkParent}>
-          <CustomDropdown menu={searchItems}>
-            <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-              Search
-            </p>
-          </CustomDropdown>
+          <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+            Dashboard
+          </p>
 
-          {(auth.user.role == "admin" || auth.user.role == "editor") && (
-            <CustomDropdown menu={addItems}>
-              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                Add
-              </p>
-            </CustomDropdown>
-          )}
+          <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+            Calendar
+          </p>
 
-          {/* 
-            //! antd dropdown causes page links to freeze, replaced with custom dropdown. 
-            //! Don't delete antd dropdown code.  
-            //! Test before migrating to new antd version     
-            //! Current version antd v5.5.3     
-          */}
-
-          {/* 
-            <Dropdown
-              menu={{
-                items: searchItems,
-              }}
-              placement="bottom"
-              arrow={{
-                pointAtCenter: true,
-              }}
-              trigger={"click"}
-            >
-              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                Search
-              </p>
-            </Dropdown> 
-            {(auth.user.role == "admin" || auth.user.role == "editor") && (
-              <Dropdown
-                menu={{
-                  items: addItems,
-                }}
-                placement="bottom"
-                arrow={{
-                  pointAtCenter: true,
-                }}
-              >
-                <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                  Add
-                </p>
-              </Dropdown>
-            )}
-
-            {auth.user.role == "admin" && (
-              <Dropdown
-                menu={{
-                  items: adminItems,
-                }}
-                placement="bottom"
-                arrow={{
-                  pointAtCenter: true,
-                }}
-              >
-                <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                  Admin
-                </p>
-              </Dropdown>
-            )} 
-          */}
           <img
             src={Logout}
             className={NavbarStyles.logout}

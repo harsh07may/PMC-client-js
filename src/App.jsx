@@ -14,6 +14,9 @@ const DigitizationNavbar = React.lazy(() =>
 const AdministrationNavbar = React.lazy(() =>
   import("./components/Administration/navbar/AdminNavbar")
 );
+const LeaveManagementNavbar = React.lazy(() => {
+  import("./components/LeaveManagement/navbar/LeaveManagementNavbar");
+});
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
 );
@@ -204,6 +207,28 @@ function App() {
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <CreateAccount />
+                </Suspense>
+              }
+            />
+          </Route>
+          //* LEAVE MANAGEMENT ROUTES
+          <Route
+            path="/leavemanagement/*"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <LeaveManagementNavbar />
+                </Suspense>
+              </RequireAuth>
+            }
+          >
+            <Route index element={<Navigate to="AuditLog" />} />
+            <Route path="*" element={<Navigate to="AuditLog" />} />
+            <Route
+              path="AuditLog"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AuditLogs />
                 </Suspense>
               }
             />

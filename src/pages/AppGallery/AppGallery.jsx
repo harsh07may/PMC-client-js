@@ -58,7 +58,7 @@ export default function AppGallery() {
             <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
               <Card
                 className={styles.expandCard}
-                onClick={() => console.log("2")}
+                onClick={() => navigate("/leavemanagement")}
                 hoverable
                 cover={<img src={calenderLogo} className={styles.cardLogo} />}
               >
