@@ -43,20 +43,7 @@ const Navbar = () => {
     setOpen(false);
   };
 
-  const adminItems = [
-    {
-      key: "c1",
-      label: (
-        <NavLink
-          to="/administration/AuditLog"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Audit Log
-        </NavLink>
-      ),
-    },
+  const accountItems = [
     {
       key: "c2",
       label: (
@@ -87,8 +74,23 @@ const Navbar = () => {
 
   const miniAdminItems = [
     {
-      label: "Admin",
-      children: adminItems,
+      // label: "Audit Logs",
+      // children: adminItems,
+      key: "c1",
+      label: (
+        <NavLink
+          to="/administration/AuditLog"
+          onClick={onSmallMenuClick}
+          reloadDocument
+          end
+        >
+          Audit Log
+        </NavLink>
+      ),
+    },
+    {
+      label: "Accounts",
+      children: accountItems,
     },
     {
       key: "logout",
@@ -148,7 +150,18 @@ const Navbar = () => {
 
         <div className={NavbarStyles.navLinkParent}>
           {auth.user.role == "admin" && (
-            <CustomDropdown menu={adminItems}>
+            <NavLink
+              className={NavbarStyles.navLink}
+              style={navLinkStyles}
+              to="/administration/AuditLog"
+              reloadDocument
+              end
+            >
+              Audit Log
+            </NavLink>
+          )}
+          {auth.user.role == "admin" && (
+            <CustomDropdown menu={accountItems}>
               <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
                 Admin
               </p>

@@ -14,9 +14,9 @@ const DigitizationNavbar = React.lazy(() =>
 const AdministrationNavbar = React.lazy(() =>
   import("./components/Administration/navbar/AdminNavbar")
 );
-const LeaveManagementNavbar = React.lazy(() => {
-  import("./components/LeaveManagement/navbar/LeaveManagementNavbar");
-});
+const LeaveManagementNavbar = React.lazy(() =>
+  import("./components/LeaveManagement/navbar/LeaveManagementNavbar")
+);
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
 );
@@ -213,7 +213,7 @@ function App() {
           </Route>
           //* LEAVE MANAGEMENT ROUTES
           <Route
-            path="/leavemanagement/*"
+            path="/leave/*"
             element={
               <RequireAuth>
                 <Suspense fallback={<LoadingSpinner />}>
@@ -222,13 +222,24 @@ function App() {
               </RequireAuth>
             }
           >
-            <Route index element={<Navigate to="AuditLog" />} />
-            <Route path="*" element={<Navigate to="AuditLog" />} />
+            //* FALLBACK ROUTE
+            <Route index element={<Navigate to="test" />} />
+            <Route path="*" element={<Navigate to="test" />} />
             <Route
-              path="AuditLog"
+              path="test"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <AuditLogs />
+                  {/* <AuditLogs /> */}
+                  <p>test</p>
+                </Suspense>
+              }
+            />
+            <Route
+              path="dashboard"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  {/* <ManageAccounts /> */}
+                  <p>dashboard</p>
                 </Suspense>
               }
             />
