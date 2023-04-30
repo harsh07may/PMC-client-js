@@ -1,3 +1,6 @@
+const PORT = import.meta.env.VITE_PORT;
+const HOST = import.meta.env.VITE_HOST;
+const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import { useState, createContext, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     const checkRefreshToken = () => {
       axios
         .post(
-          "http://localhost:5000/api/v1/user/refresh_token",
+          `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/refresh_token`,
           {},
           {
             credentials: "include",
@@ -53,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     axios
       .post(
-        "http://localhost:5000/api/v1/user/logout",
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/logout`,
         {},
         {
           credentials: "include",

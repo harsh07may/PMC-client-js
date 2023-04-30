@@ -1,3 +1,6 @@
+const PORT = import.meta.env.VITE_PORT;
+const HOST = import.meta.env.VITE_HOST;
+const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Col, Form, Input, Row, Select, message } from "antd";
@@ -48,11 +51,15 @@ export default function CreateAccount() {
     if (state) {
       // For edit account
       axios
-        .post("http://localhost:5000/api/v1/admin/update-user", values, {
-          headers: {
-            Authorization: `Bearer ${auth.user.accesstoken}`,
-          },
-        })
+        .post(
+          `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/update-user`,
+          values,
+          {
+            headers: {
+              Authorization: `Bearer ${auth.user.accesstoken}`,
+            },
+          }
+        )
         .then((res) => {
           if (res.status == 200) {
             messageApi
@@ -75,7 +82,7 @@ export default function CreateAccount() {
     } else {
       //  For create account
       axios
-        .post("http://localhost:5000/api/v1/user/register", values, {
+        .post(`${PROTOCOL}://${HOST}:${PORT}/api/v1/user/register`, values, {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
           },
@@ -104,7 +111,7 @@ export default function CreateAccount() {
       setDisableUsername(true);
       axios({
         method: "get",
-        url: `http://localhost:5000/api/v1/admin/get-user?username=${state?.username}`,
+        url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-user?username=${state?.username}`,
         headers: {
           Authorization: `Bearer ${auth.user.accesstoken}`,
         },

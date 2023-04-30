@@ -1,3 +1,6 @@
+const PORT = import.meta.env.VITE_PORT;
+const HOST = import.meta.env.VITE_HOST;
+const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import qs from "qs";
@@ -201,7 +204,7 @@ export default function AuditLogs() {
       //* digitization tab
       axios({
         method: "get",
-        url: `http://localhost:5000/api/v1/admin/get-digitization-audit?${qs.stringify(
+        url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-digitization-audit?${qs.stringify(
           getRandomUserParams(digitizationTableParams)
         )}`,
         headers: {
@@ -222,7 +225,7 @@ export default function AuditLogs() {
       //* user tab
       axios({
         method: "get",
-        url: `http://localhost:5000/api/v1/admin/get-user-audit?${qs.stringify(
+        url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-user-audit?${qs.stringify(
           getRandomUserParams(userTableParams)
         )}`,
         headers: {
@@ -285,7 +288,7 @@ export default function AuditLogs() {
         onClick={() => {
           fetchData();
           console.log(
-            `http://localhost:5000/api/v1/user/get-user-audit?${qs.stringify(
+            `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/get-user-audit?${qs.stringify(
               getRandomUserParams(userTableParams)
             )}`
           );

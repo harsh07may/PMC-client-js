@@ -1,3 +1,6 @@
+const PORT = import.meta.env.VITE_PORT;
+const HOST = import.meta.env.VITE_HOST;
+const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -17,7 +20,7 @@ function HouseTaxSearch() {
   const handleclick = (recordid) => {
     axios({
       method: "get",
-      url: `http://localhost:5000/api/v1/digitization/file-download?recordid=${recordid}&type=house_tax_record`,
+      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/file-download?recordid=${recordid}&type=house_tax_record`,
       headers: {
         Authorization: `Bearer ${auth.user.accesstoken}`,
       },
@@ -193,7 +196,7 @@ function HouseTaxSearch() {
 
     await axios
       .get(
-        `http://localhost:5000/api/v1/digitization/search?type=${values.type}&HouseNo=${values.houseNo}&Name=${values.name}&WardNo=${values.wardNo}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&HouseNo=${values.houseNo}&Name=${values.name}&WardNo=${values.wardNo}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,

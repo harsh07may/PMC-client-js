@@ -1,3 +1,6 @@
+const PORT = import.meta.env.VITE_PORT;
+const HOST = import.meta.env.VITE_HOST;
+const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +31,7 @@ export default function Login() {
   const onFinish = (values) => {
     axios({
       method: "post",
-      url: "http://localhost:5000/api/v1/user/login",
+      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/login`,
       data: values,
       withCredentials: true,
     })
