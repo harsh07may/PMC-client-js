@@ -18,9 +18,8 @@ const AddConstuctionLicense = () => {
   });
   const [pdfFile, setPdfFile] = useState(null);
 
-  function onRemove(file) {
+  function onRemove() {
     setFileList([]);
-    console.log("on remove");
     setPdfFile(null);
   }
 
@@ -116,37 +115,36 @@ const AddConstuctionLicense = () => {
               </Col>
               <Col xs={24} md={8}>
                 <Form.Item
-                  name="subDivNo"
+                  name="surveyNo"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter a sub-division number!",
+                      message: "Please enter a survey number!",
                     },
                   ]}
                 >
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Sub Division No."
+                    placeholder="Survey No."
                     className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
                 <Form.Item
-                  name="year"
+                  name="location"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter a year!",
+                      message: "Please enter a location!",
                     },
-                    // TODO add regex for year, 4 digits
                   ]}
                 >
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Year"
+                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>
@@ -155,7 +153,7 @@ const AddConstuctionLicense = () => {
             <Row>
               <Col span={24}>
                 <Form.Item
-                  name="name"
+                  name="title"
                   rules={[
                     {
                       required: true,

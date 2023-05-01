@@ -19,7 +19,7 @@ const HouseTax = () => {
 
   function onRemove(file) {
     setFileList([]);
-    console.log("on remove");
+    // console.log("on remove");
     setPdfFile(null);
   }
 
@@ -89,12 +89,12 @@ const HouseTax = () => {
           >
             <Row gutter={24}>
               <Col xs={24} md={12}>
-                <Form.Item name="wardNo" required>
+                <Form.Item name="location" required>
                   <Input
                     autoComplete="off"
                     required
                     size="large"
-                    placeholder="Ward No."
+                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>

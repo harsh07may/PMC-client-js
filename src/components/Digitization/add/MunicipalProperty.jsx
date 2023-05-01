@@ -112,7 +112,7 @@ const MunicipalProperty = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter a Survey number!",
+                      message: "Please enter a survey number!",
                     },
                   ]}
                 >

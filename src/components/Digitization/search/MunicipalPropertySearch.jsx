@@ -38,15 +38,15 @@ const MunicipalPropertySearch = () => {
   };
   const columns = [
     {
-      title: "Ward No.",
-      dataIndex: "wardno",
-      key: "wardno",
+      title: "Survey No.",
+      dataIndex: "surveyno",
+      key: "surveyno",
       width: "15%",
     },
     {
-      title: "Sub Div No.",
-      dataIndex: "subdivno",
-      key: "subdivno",
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
       width: "15%",
     },
     {
@@ -133,7 +133,7 @@ const MunicipalPropertySearch = () => {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["wardno"] + e["subdivno"] + e["title"];
+      return e["surveyno"] + e["location"] + e["title"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -162,14 +162,14 @@ const MunicipalPropertySearch = () => {
         } else {
           const tempObj = {};
 
-          tempObj.wardno = obj[ele][0]["wardno"];
-          tempObj.subdivno = obj[ele][0]["subdivno"];
+          tempObj.surveyno = obj[ele][0]["surveyno"];
+          tempObj.location = obj[ele][0]["location"];
           tempObj.title = obj[ele][0]["title"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
           tempObj.recordid =
-            obj[ele][0]["wardno"] +
-            obj[ele][0]["subdivno"] +
+            obj[ele][0]["surveyno"] +
+            obj[ele][0]["location"] +
             obj[ele][0]["title"] +
             "a";
 
@@ -198,7 +198,7 @@ const MunicipalPropertySearch = () => {
     await axios
 
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&subDivNo=${values.subDivNo}&title=${values.title}&wardNo=${values.wardNo}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&location=${values.location}&title=${values.title}&surveyNo=${values.surveyNo}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -237,21 +237,21 @@ const MunicipalPropertySearch = () => {
             {/* //! gutter=24 causes margin-right= -15px; Only fix is to set overflow:hidden in parent  */}
             <Row gutter="24">
               <Col xs={24} md={12}>
-                <Form.Item name="wardNo">
+                <Form.Item name="surveyNo">
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Ward No."
+                    placeholder="Survey No."
                     className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="subDivNo">
+                <Form.Item name="location">
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Sub Division No."
+                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>

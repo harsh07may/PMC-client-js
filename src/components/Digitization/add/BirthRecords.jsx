@@ -57,8 +57,9 @@ const BirthRecords = () => {
   const onFinish = async (values) => {
     let Month = dayjs(values.month).format("MMM");
     let Year = dayjs(values.month).format("YYYY");
+    let Title = values.title;
 
-    values = { Month, Year, file: data.file, type: "birth_record" };
+    values = { Month, Year, Title, file: data.file, type: "birth_record" };
     setUploading(true);
 
     await axios
@@ -101,13 +102,37 @@ const BirthRecords = () => {
               <Col xs={24} sm={24} align="middle">
                 <Form.Item
                   name="month"
-                  rules={[{ required: true, message: "Please select month!" }]}
+                  rules={[
+                    { required: true, message: "Please select a month!" },
+                  ]}
                 >
                   <DatePicker
                     className={`${formInputStyles.monthPicker}`}
                     picker="month"
                     format="MMMM YYYY"
                     size="large"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={24} sm={24} align="middle">
+                <Form.Item
+                  name="title"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a title!",
+                    },
+                  ]}
+                  wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+                >
+                  <Input
+                    autoComplete="off"
+                    status=""
+                    size="large"
+                    placeholder="Title"
+                    className={`${formInputStyles.formInputStyles}`}
                   />
                 </Form.Item>
               </Col>

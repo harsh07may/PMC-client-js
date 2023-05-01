@@ -8,8 +8,6 @@ const { Option } = Select;
 import axios from "axios";
 import { useAuth } from "../../../../utils/auth";
 
-// import { formInputStyles } from "./createAccounts.module.css";
-
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -275,7 +273,6 @@ export default function CreateAccount() {
                   }
                 >
                   Cancel
-                  {/* to="/digitization/admin/ManageAccounts" */}
                 </Button>
               ) : (
                 ""

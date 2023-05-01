@@ -38,8 +38,8 @@ function HouseTaxSearch() {
   };
   const columns = [
     {
-      title: "Ward No.",
-      dataIndex: "wardno",
+      title: "Location",
+      dataIndex: "location",
       key: "wardno",
       width: "15%",
     },
@@ -133,7 +133,7 @@ function HouseTaxSearch() {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["wardno"] + e["houseno"] + e["name"];
+      return e["location"] + e["houseno"] + e["name"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -162,13 +162,13 @@ function HouseTaxSearch() {
         } else {
           const tempObj = {};
 
-          tempObj.wardno = obj[ele][0]["wardno"];
+          tempObj.location = obj[ele][0]["location"];
           tempObj.houseno = obj[ele][0]["houseno"];
           tempObj.name = obj[ele][0]["name"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
           tempObj.recordid =
-            obj[ele][0]["wardno"] +
+            obj[ele][0]["location"] +
             obj[ele][0]["houseno"] +
             obj[ele][0]["name"] +
             "a";
@@ -196,7 +196,7 @@ function HouseTaxSearch() {
 
     await axios
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&HouseNo=${values.houseNo}&Name=${values.name}&WardNo=${values.wardNo}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&HouseNo=${values.houseNo}&Name=${values.name}&Location=${values.location}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -235,11 +235,11 @@ function HouseTaxSearch() {
             {/* //! gutter=24 causes margin-right= -15px; Only fix is to set overflow:hidden in parent  */}
             <Row gutter="24">
               <Col xs={24} md={12}>
-                <Form.Item name="wardNo">
+                <Form.Item name="location">
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Ward No."
+                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>

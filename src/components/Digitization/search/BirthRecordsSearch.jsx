@@ -50,6 +50,13 @@ function BirthRecordsSearch() {
       align: "center",
     },
     {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      align: "center",
+      render: (_, record) => (record.hasChildren ? <></> : `${record.title}`),
+    },
+    {
       title: "Action",
       key: "filelink",
       align: "center",
@@ -86,11 +93,18 @@ function BirthRecordsSearch() {
       },
     },
     {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      align: "center",
+      width: "35%",
+    },
+    {
       title: "Action",
       dataIndex: "operation2",
       key: "operation2",
       align: "left",
-      width: "40%",
+      width: "30%",
       render: (_, record) => (
         <Button
           size="small"
@@ -192,7 +206,7 @@ function BirthRecordsSearch() {
     await axios
 
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&Month=${values.month}&Year=${values.year}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&Month=${values.month}&Year=${values.year}&Title=${values.title}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -250,15 +264,17 @@ function BirthRecordsSearch() {
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Form.Item name="title" wrapperCol={{ span: 16 }}>
-          <Input
-            autoComplete="off"
-            status=""
-            size="large"
-            placeholder="Title"
-            className={formInputStyles}
-          />
-        </Form.Item> */}
+            <Form.Item
+              name="title"
+              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+            >
+              <Input
+                autoComplete="off"
+                size="large"
+                placeholder="Title"
+                className={formInputStyles}
+              />
+            </Form.Item>
             <Form.Item
               wrapperCol={{
                 span: 12,

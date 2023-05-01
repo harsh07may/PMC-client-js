@@ -44,21 +44,21 @@ const ConstructionLicenseSearch = () => {
       width: "15%",
     },
     {
-      title: "Sub Div No.",
-      dataIndex: "subdivno",
-      key: "subdivno",
+      title: "Survey No.",
+      dataIndex: "surveyno",
+      key: "surveyno",
       width: "15%",
     },
     {
-      title: "Year",
-      dataIndex: "year",
-      key: "year",
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
       width: "15%",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
       align: "center",
     },
     {
@@ -139,7 +139,7 @@ const ConstructionLicenseSearch = () => {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["licenseno"] + e["subdivno"] + e["name"] + e["year"];
+      return e["licenseno"] + e["surveyno"] + e["location"] + e["title"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -169,16 +169,16 @@ const ConstructionLicenseSearch = () => {
           const tempObj = {};
 
           tempObj.licenseno = obj[ele][0]["licenseno"];
-          tempObj.subdivno = obj[ele][0]["subdivno"];
-          tempObj.name = obj[ele][0]["name"];
-          tempObj.year = obj[ele][0]["year"];
+          tempObj.surveyno = obj[ele][0]["surveyno"];
+          tempObj.title = obj[ele][0]["title"];
+          tempObj.location = obj[ele][0]["location"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
           tempObj.recordid =
             obj[ele][0]["licenseno"] +
-            obj[ele][0]["subdivno"] +
-            obj[ele][0]["name"] +
-            obj[ele][0]["year"] +
+            obj[ele][0]["surveyno"] +
+            obj[ele][0]["title"] +
+            obj[ele][0]["location"] +
             "a";
 
           outputArr.push(tempObj);
@@ -205,7 +205,7 @@ const ConstructionLicenseSearch = () => {
 
     await axios
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&subDivNo=${values.subDivNo}&title=${values.name}&licenseNo=${values.licenseNo}&year=${values.year}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&surveyNo=${values.surveyNo}&title=${values.title}&licenseNo=${values.licenseNo}&location=${values.location}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -253,36 +253,36 @@ const ConstructionLicenseSearch = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item name="subDivNo">
+                <Form.Item name="surveyNo">
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Sub Division No."
+                    placeholder="Survey No."
                     className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item name="year">
+                <Form.Item name="location">
                   <Input
                     autoComplete="off"
                     status=""
                     size="large"
-                    placeholder="Year"
+                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
             </Row>
             <Form.Item
-              name="name"
+              name="title"
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
             >
               <Input
                 autoComplete="off"
                 status=""
                 size="large"
-                placeholder="Name"
+                placeholder="Title"
                 className={formInputStyles}
               />
             </Form.Item>
