@@ -1,10 +1,10 @@
 const PORT = import.meta.env.VITE_PORT;
 const HOST = import.meta.env.VITE_HOST;
 const PROTOCOL = import.meta.env.VITE_PROTOCOL;
-import React, { useEffect } from "react";
+import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { Button, notification, Form, Input, message } from "antd";
+import { Button, notification, Form, Input } from "antd";
 import axios from "axios";
 import { useAuth } from "../../utils/auth";
 
@@ -16,11 +16,6 @@ export default function Login() {
   const auth = useAuth();
 
   const navigate = useNavigate();
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      auth.logout();
-    }
-  }, []);
 
   const openNotification = () => {
     notification.error({
@@ -37,6 +32,7 @@ export default function Login() {
     })
       .then((res) => {
         auth.login(res.data);
+        auth.setLoading(false);
         navigate("/AppGallery", { replace: true });
       })
       .catch((err) => {

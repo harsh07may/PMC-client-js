@@ -55,24 +55,6 @@ const MunicipalProperty = () => {
     return false;
   }
 
-  // const handleFileChange = (e) => {
-  //   const dataObjFile = e.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsText(dataObjFile);
-
-  //   if (dataObjFile.type === "application/pdf") {
-  //     // console.log(dataObjFile);
-  //     setData({ ...data, file: dataObjFile });
-
-  //     //for preview button
-  //     const files = e.target.files;
-  //     files.length > 0 && setFile(URL.createObjectURL(files[0]));
-  //   } else {
-  //     e.target.value = "";
-  //     setFile(null);
-  //     message.warning("File is not a PDF", 1.5);
-  //   }
-  // };
   const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
@@ -126,11 +108,11 @@ const MunicipalProperty = () => {
             <Row gutter={24}>
               <Col xs={24} md={12}>
                 <Form.Item
-                  name="wardNo"
+                  name="surveyNo"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter a ward number!",
+                      message: "Please enter a Survey number!",
                     },
                   ]}
                 >
@@ -138,18 +120,18 @@ const MunicipalProperty = () => {
                     autoComplete="off"
                     // required
                     size="large"
-                    placeholder="Ward No."
+                    placeholder="Survey No."
                     className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
                 <Form.Item
-                  name="subDivNo"
+                  name="location"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter a sub-division number!",
+                      message: "Please enter a location!",
                     },
                   ]}
                 >
@@ -157,7 +139,7 @@ const MunicipalProperty = () => {
                     autoComplete="off"
                     // required
                     size="large"
-                    placeholder="Sub Division No."
+                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>
@@ -184,34 +166,6 @@ const MunicipalProperty = () => {
               />
             </Form.Item>
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
-              {/* <Form.Item required>
-                    <input
-                      autoComplete="off"
-                      type="file"
-                      accept="application/pdf, .pdf"
-                      onChange={handleFileChange}
-                      required
-                      style={{ maxWidth: "230px" }}
-                    />
-                  </Form.Item>
-                  {file ? (
-                    <>
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          window.open(file);
-                        }}
-                      >
-                        Preview File
-                      </Button>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-
-                  <Button type="primary" htmlType="submit" style={{ marginLeft: 10 }}>
-                    Submit
-                  </Button> */}
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
                   <Upload
