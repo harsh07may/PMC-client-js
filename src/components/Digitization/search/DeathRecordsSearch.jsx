@@ -13,14 +13,14 @@ import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
 import { useNavigate } from "react-router-dom";
 
-const ConstructionLicenseSearch = () => {
+function DeathRecordsSearch() {
   const auth = useAuth();
   const navigate = useNavigate();
 
   const handleclick = (recordid) => {
     axios({
       method: "get",
-      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/file-download?recordid=${recordid}&type=house_tax_record`,
+      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/file-download?recordid=${recordid}&type=death_record`,
       headers: {
         Authorization: `Bearer ${auth.user.accesstoken}`,
       },
@@ -38,33 +38,29 @@ const ConstructionLicenseSearch = () => {
   };
   const columns = [
     {
-      title: "License No.",
-      dataIndex: "licenseno",
-      key: "licenseno",
-      width: "15%",
+      title: "Month",
+      dataIndex: "month",
+      key: "month",
+      align: "center",
     },
     {
-      title: "Survey No.",
-      dataIndex: "surveyno",
-      key: "surveyno",
-      width: "15%",
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-      width: "15%",
+      title: "Year",
+      dataIndex: "year",
+      key: "year",
+      align: "center",
     },
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
       align: "center",
+      render: (_, record) => (record.hasChildren ? <></> : `${record.title}`),
     },
     {
       title: "Action",
-      width: "15%",
       key: "filelink",
+      align: "center",
+      width: "40%",
       render: (_, record) =>
         record.hasChildren ? (
           <></>
@@ -86,6 +82,7 @@ const ConstructionLicenseSearch = () => {
       title: "Timestamp",
       dataIndex: "timestamp",
       key: "Timestamp",
+      align: "center",
       // 19-04-2023 01:00:17 PM
       // render: (_, record) => record.timestamp.split(" ")[0],
       render: (_, record) => {
@@ -95,9 +92,18 @@ const ConstructionLicenseSearch = () => {
       },
     },
     {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      align: "center",
+      width: "35%",
+    },
+    {
       title: "Action",
       dataIndex: "operation2",
       key: "operation2",
+      align: "left",
+      width: "30%",
       render: (_, record) => (
         <Button
           size="small"
@@ -138,7 +144,7 @@ const ConstructionLicenseSearch = () => {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["licenseno"] + e["surveyno"] + e["location"] + e["title"];
+      return e["month"] + e["year"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -167,18 +173,11 @@ const ConstructionLicenseSearch = () => {
         } else {
           const tempObj = {};
 
-          tempObj.licenseno = obj[ele][0]["licenseno"];
-          tempObj.surveyno = obj[ele][0]["surveyno"];
-          tempObj.title = obj[ele][0]["title"];
-          tempObj.location = obj[ele][0]["location"];
+          tempObj.month = obj[ele][0]["month"];
+          tempObj.year = obj[ele][0]["year"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
-          tempObj.recordid =
-            obj[ele][0]["licenseno"] +
-            obj[ele][0]["surveyno"] +
-            obj[ele][0]["title"] +
-            obj[ele][0]["location"] +
-            "a";
+          tempObj.recordid = obj[ele][0]["month"] + obj[ele][0]["year"] + "a";
 
           outputArr.push(tempObj);
         }
@@ -192,7 +191,7 @@ const ConstructionLicenseSearch = () => {
 
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, type: "construction_license" };
+    values = { ...values, type: "death_record" };
 
     for (const key in values) {
       if (typeof values[key] === "undefined") {
@@ -203,8 +202,9 @@ const ConstructionLicenseSearch = () => {
     setSearching(true);
 
     await axios
+
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&surveyNo=${values.surveyNo}&title=${values.title}&licenseNo=${values.licenseNo}&location=${values.location}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&month=${values.month}&year=${values.year}&title=${values.title}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -231,43 +231,32 @@ const ConstructionLicenseSearch = () => {
   return (
     <>
       <br />
-      <h3 style={{ textAlign: "center" }}>CONSTRUCTION LICENSE RECORDS</h3>
+      <h3 style={{ textAlign: "center" }}>DEATH RECORDS</h3>
       <br />
-
       <Row align="middle" justify="center">
-        <Col xs={22} sm={20} md={16} lg={12}>
+        <Col xs={22} sm={20} md={16} lg={14} xl={10}>
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
           >
-            <Row gutter={24}>
-              <Col xs={24} md={8}>
-                <Form.Item name="licenseNo">
+            {/* //! gutter=24 causes margin-right= -15px; Only fix is to set overflow:hidden in parent  */}
+            <Row gutter="24">
+              <Col xs={24} md={12}>
+                <Form.Item name="month">
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="License No."
+                    placeholder="Month"
                     className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={8}>
-                <Form.Item name="surveyNo">
+              <Col xs={24} md={12}>
+                <Form.Item name="year">
                   <Input
                     autoComplete="off"
                     size="large"
-                    placeholder="Survey No."
-                    className={formInputStyles}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={8}>
-                <Form.Item name="location">
-                  <Input
-                    autoComplete="off"
-                    status=""
-                    size="large"
-                    placeholder="Location"
+                    placeholder="Year"
                     className={formInputStyles}
                   />
                 </Form.Item>
@@ -279,7 +268,6 @@ const ConstructionLicenseSearch = () => {
             >
               <Input
                 autoComplete="off"
-                status=""
                 size="large"
                 placeholder="Title"
                 className={formInputStyles}
@@ -318,6 +306,6 @@ const ConstructionLicenseSearch = () => {
       />
     </>
   );
-};
+}
 
-export default ConstructionLicenseSearch;
+export default DeathRecordsSearch;

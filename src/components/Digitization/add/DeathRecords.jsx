@@ -1,25 +1,39 @@
 const PORT = import.meta.env.VITE_PORT;
 const HOST = import.meta.env.VITE_HOST;
 const PROTOCOL = import.meta.env.VITE_PROTOCOL;
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Input, Row, Col, Button, message, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  Upload,
+  Form,
+  Input,
+  Row,
+  Col,
+  Button,
+  message,
+  DatePicker,
+} from "antd";
 import { useAuth } from "../../../utils/auth";
-import { formInputStyles } from "./styles/AddForm.module.css";
+import * as formInputStyles from "./styles/AddForm.module.css";
+import { UploadOutlined } from "@ant-design/icons";
 
-const HouseTax = () => {
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
+const DeathRecords = () => {
+  const auth = useAuth();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
+
   const [form] = Form.useForm();
   const [data, setData] = useState({
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
 
-  function onRemove(file) {
+  function onRemove() {
     setFileList([]);
-    // console.log("on remove");
     setPdfFile(null);
   }
 
@@ -39,10 +53,13 @@ const HouseTax = () => {
     }
     return false;
   }
-  const auth = useAuth();
-  //API Calls
+
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "house_tax_record" };
+    let Month = dayjs(values.month).format("MMM");
+    let Year = dayjs(values.month).format("YYYY");
+    let Title = values.title;
+
+    values = { Month, Year, Title, file: data.file, type: "death_record" };
     setUploading(true);
 
     await axios
@@ -65,66 +82,61 @@ const HouseTax = () => {
           setUploading(false);
         }
       })
-      .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
-        setUploading(false);
-        console.log(error);
-      })
       .finally();
   };
 
   return (
     <>
       <br />
-      <h3 style={{ textAlign: "center" }}>HOUSE TAX RECORDS</h3>
+      <h3 style={{ textAlign: "center" }}>DEATH RECORDS</h3>
       <br />
-
       <Row align="middle" justify="center">
-        <Col xs={22} sm={20} md={16} lg={12}>
+        <Col xs={22} sm={20} md={16} lg={14} xl={10}>
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            onFinishFailed={() => console.log("failed")}
+            // onFinishFailed={() => console.log("failed")}
             form={form}
           >
-            <Row gutter={24}>
-              <Col xs={24} md={12}>
-                <Form.Item name="location" required>
-                  <Input
-                    autoComplete="off"
-                    required
+            <Row>
+              <Col xs={24} sm={24} align="middle">
+                <Form.Item
+                  name="month"
+                  rules={[
+                    { required: true, message: "Please select a month!" },
+                  ]}
+                >
+                  <DatePicker
+                    className={`${formInputStyles.monthPicker}`}
+                    picker="month"
+                    format="MMMM YYYY"
                     size="large"
-                    placeholder="Location"
-                    className={formInputStyles}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
-                <Form.Item name="houseNo" required>
-                  <Input
-                    autoComplete="off"
-                    required
-                    size="large"
-                    placeholder="House No."
-                    className={formInputStyles}
                   />
                 </Form.Item>
               </Col>
             </Row>
-            <Form.Item
-              name="title"
-              required
-              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
-            >
-              <Input
-                autoComplete="off"
-                required
-                status=""
-                size="large"
-                placeholder="Title"
-                className={formInputStyles}
-              />
-            </Form.Item>
+            <Row>
+              <Col xs={24} sm={24} align="middle">
+                <Form.Item
+                  name="title"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a title!",
+                    },
+                  ]}
+                  wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+                >
+                  <Input
+                    autoComplete="off"
+                    status=""
+                    size="large"
+                    placeholder="Title"
+                    className={`${formInputStyles.formInputStyles}`}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
@@ -141,7 +153,6 @@ const HouseTax = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                style={{ marginLeft: 10 }}
                 disabled={fileList.length === 0}
                 loading={uploading}
               >
@@ -169,4 +180,4 @@ const HouseTax = () => {
   );
 };
 
-export default HouseTax;
+export default DeathRecords;

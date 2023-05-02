@@ -13,14 +13,14 @@ import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
 import { useNavigate } from "react-router-dom";
 
-const ConstructionLicenseSearch = () => {
+function TradeLicenseSearch() {
   const auth = useAuth();
   const navigate = useNavigate();
 
   const handleclick = (recordid) => {
     axios({
       method: "get",
-      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/file-download?recordid=${recordid}&type=house_tax_record`,
+      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/file-download?recordid=${recordid}&type=trade_license_record`,
       headers: {
         Authorization: `Bearer ${auth.user.accesstoken}`,
       },
@@ -38,21 +38,15 @@ const ConstructionLicenseSearch = () => {
   };
   const columns = [
     {
+      title: "Location",
+      dataIndex: "location",
+      key: "wardno",
+      width: "15%",
+    },
+    {
       title: "License No.",
       dataIndex: "licenseno",
       key: "licenseno",
-      width: "15%",
-    },
-    {
-      title: "Survey No.",
-      dataIndex: "surveyno",
-      key: "surveyno",
-      width: "15%",
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
       width: "15%",
     },
     {
@@ -138,7 +132,7 @@ const ConstructionLicenseSearch = () => {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["licenseno"] + e["surveyno"] + e["location"] + e["title"];
+      return e["location"] + e["licenseno"] + e["title"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -167,17 +161,15 @@ const ConstructionLicenseSearch = () => {
         } else {
           const tempObj = {};
 
-          tempObj.licenseno = obj[ele][0]["licenseno"];
-          tempObj.surveyno = obj[ele][0]["surveyno"];
-          tempObj.title = obj[ele][0]["title"];
           tempObj.location = obj[ele][0]["location"];
+          tempObj.licenseno = obj[ele][0]["licenseno"];
+          tempObj.title = obj[ele][0]["title"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
           tempObj.recordid =
-            obj[ele][0]["licenseno"] +
-            obj[ele][0]["surveyno"] +
-            obj[ele][0]["title"] +
             obj[ele][0]["location"] +
+            obj[ele][0]["licenseno"] +
+            obj[ele][0]["title"] +
             "a";
 
           outputArr.push(tempObj);
@@ -192,8 +184,7 @@ const ConstructionLicenseSearch = () => {
 
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, type: "construction_license" };
-
+    values = { ...values, type: "trade_license_record" };
     for (const key in values) {
       if (typeof values[key] === "undefined") {
         values[key] = "";
@@ -204,7 +195,7 @@ const ConstructionLicenseSearch = () => {
 
     await axios
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&surveyNo=${values.surveyNo}&title=${values.title}&licenseNo=${values.licenseNo}&location=${values.location}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&licenseNo=${values.licenseNo}&title=${values.title}&location=${values.location}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -231,7 +222,7 @@ const ConstructionLicenseSearch = () => {
   return (
     <>
       <br />
-      <h3 style={{ textAlign: "center" }}>CONSTRUCTION LICENSE RECORDS</h3>
+      <h3 style={{ textAlign: "center" }}>TRADE LICENSE RECORDS</h3>
       <br />
 
       <Row align="middle" justify="center">
@@ -240,34 +231,24 @@ const ConstructionLicenseSearch = () => {
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
           >
-            <Row gutter={24}>
-              <Col xs={24} md={8}>
+            {/* //! gutter=24 causes margin-right= -15px; Only fix is to set overflow:hidden in parent  */}
+            <Row gutter="24">
+              <Col xs={24} md={12}>
+                <Form.Item name="location">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Location"
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
                 <Form.Item name="licenseNo">
                   <Input
                     autoComplete="off"
                     size="large"
                     placeholder="License No."
-                    className={formInputStyles}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={8}>
-                <Form.Item name="surveyNo">
-                  <Input
-                    autoComplete="off"
-                    size="large"
-                    placeholder="Survey No."
-                    className={formInputStyles}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={8}>
-                <Form.Item name="location">
-                  <Input
-                    autoComplete="off"
-                    status=""
-                    size="large"
-                    placeholder="Location"
                     className={formInputStyles}
                   />
                 </Form.Item>
@@ -318,6 +299,6 @@ const ConstructionLicenseSearch = () => {
       />
     </>
   );
-};
+}
 
-export default ConstructionLicenseSearch;
+export default TradeLicenseSearch;

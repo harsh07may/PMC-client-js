@@ -50,9 +50,9 @@ function HouseTaxSearch() {
       width: "15%",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
       align: "center",
     },
     {
@@ -66,7 +66,6 @@ function HouseTaxSearch() {
           <Button
             size="small"
             onClick={() => {
-              console.log("download " + record.recordid);
               handleclick(record.recordid);
             }}
           >
@@ -133,7 +132,7 @@ function HouseTaxSearch() {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["location"] + e["houseno"] + e["name"];
+      return e["location"] + e["houseno"] + e["title"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -164,13 +163,13 @@ function HouseTaxSearch() {
 
           tempObj.location = obj[ele][0]["location"];
           tempObj.houseno = obj[ele][0]["houseno"];
-          tempObj.name = obj[ele][0]["name"];
+          tempObj.title = obj[ele][0]["title"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
           tempObj.recordid =
             obj[ele][0]["location"] +
             obj[ele][0]["houseno"] +
-            obj[ele][0]["name"] +
+            obj[ele][0]["title"] +
             "a";
 
           outputArr.push(tempObj);
@@ -196,7 +195,7 @@ function HouseTaxSearch() {
 
     await axios
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&HouseNo=${values.houseNo}&Name=${values.name}&Location=${values.location}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&houseNo=${values.houseNo}&title=${values.title}&location=${values.location}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -256,14 +255,14 @@ function HouseTaxSearch() {
               </Col>
             </Row>
             <Form.Item
-              name="name"
+              name="title"
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
             >
               <Input
                 autoComplete="off"
                 status=""
                 size="large"
-                placeholder="Name"
+                placeholder="Title"
                 className={formInputStyles}
               />
             </Form.Item>

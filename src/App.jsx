@@ -29,6 +29,12 @@ const MunicipalProperty = React.lazy(() =>
 const HouseTax = React.lazy(() =>
   import("./components/Digitization/add/HouseTax")
 );
+const TradeLicense = React.lazy(() =>
+  import("./components/Digitization/add/TradeLicense")
+);
+const DeathRecords = React.lazy(() =>
+  import("./components/Digitization/add/DeathRecords")
+);
 const MunicipalPropertySearch = React.lazy(() =>
   import("./components/Digitization/search/MunicipalPropertySearch")
 );
@@ -40,6 +46,12 @@ const ConstructionLicenseSearch = React.lazy(() =>
 );
 const HouseTaxSearch = React.lazy(() =>
   import("./components/Digitization/search/HouseTaxSearch")
+);
+const DeathRecordsSearch = React.lazy(() =>
+  import("./components/Digitization/search/DeathRecordsSearch")
+);
+const TradeLicenseSearch = React.lazy(() =>
+  import("./components/Digitization/search/TradeLicenseSearch")
 );
 const AuditLogs = React.lazy(() =>
   import("./components/Administration/AuditLogs/AuditLogs")
@@ -100,7 +112,7 @@ function App() {
               path="add/MunicipalPropertyRecord"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <MunicipalProperty></MunicipalProperty>
+                  <MunicipalProperty />
                 </Suspense>
               }
             />
@@ -108,7 +120,7 @@ function App() {
               path="add/BirthRecord"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <BirthRecords></BirthRecords>
+                  <BirthRecords />
                 </Suspense>
               }
             />
@@ -116,7 +128,7 @@ function App() {
               path="add/ConstructionLicenseRecord"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <ConstructionLicense></ConstructionLicense>
+                  <ConstructionLicense />
                 </Suspense>
               }
             />
@@ -124,7 +136,23 @@ function App() {
               path="add/HouseTaxRecord"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <HouseTax></HouseTax>
+                  <HouseTax />
+                </Suspense>
+              }
+            />
+            <Route
+              path="add/TradeLicenseRecord"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <TradeLicense />
+                </Suspense>
+              }
+            />
+            <Route
+              path="add/DeathRecord"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <DeathRecords />
                 </Suspense>
               }
             />
@@ -158,6 +186,22 @@ function App() {
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <HouseTaxSearch />
+                </Suspense>
+              }
+            />
+            <Route
+              path="search/TradeLicenseRecord"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <TradeLicenseSearch />
+                </Suspense>
+              }
+            />
+            <Route
+              path="search/DeathRecord"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <DeathRecordsSearch />
                 </Suspense>
               }
             />

@@ -8,7 +8,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../utils/auth";
 import { formInputStyles } from "./styles/AddForm.module.css";
 
-const HouseTax = () => {
+const TradeLicenseTax = () => {
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
@@ -42,7 +42,7 @@ const HouseTax = () => {
   const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
-    values = { ...values, file: data.file, type: "house_tax_record" };
+    values = { ...values, file: data.file, type: "trade_license_record" };
     setUploading(true);
 
     await axios
@@ -76,7 +76,7 @@ const HouseTax = () => {
   return (
     <>
       <br />
-      <h3 style={{ textAlign: "center" }}>HOUSE TAX RECORDS</h3>
+      <h3 style={{ textAlign: "center" }}>TRADE LICENSE RECORDS</h3>
       <br />
 
       <Row align="middle" justify="center">
@@ -100,12 +100,12 @@ const HouseTax = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="houseNo" required>
+                <Form.Item name="licenseNo" required>
                   <Input
                     autoComplete="off"
                     required
                     size="large"
-                    placeholder="House No."
+                    placeholder="License No."
                     className={formInputStyles}
                   />
                 </Form.Item>
@@ -169,4 +169,4 @@ const HouseTax = () => {
   );
 };
 
-export default HouseTax;
+export default TradeLicenseTax;

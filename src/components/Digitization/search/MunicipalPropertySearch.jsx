@@ -66,7 +66,6 @@ const MunicipalPropertySearch = () => {
           <Button
             size="small"
             onClick={() => {
-              console.log("download " + record.recordid);
               handleclick(record.recordid);
             }}
           >
@@ -198,7 +197,7 @@ const MunicipalPropertySearch = () => {
     await axios
 
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&location=${values.location}&title=${values.title}&surveyNo=${values.surveyNo}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&location=${values.location}&title=${values.title}&surveyno=${values.surveyNo}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,

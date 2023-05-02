@@ -96,6 +96,32 @@ const Navbar = () => {
         </NavLink>
       ),
     },
+    {
+      key: "5",
+      label: (
+        <NavLink
+          to="/digitization/search/DeathRecord"
+          onClick={onSmallMenuClick}
+          reloadDocument
+          end
+        >
+          Death Records
+        </NavLink>
+      ),
+    },
+    {
+      key: "6",
+      label: (
+        <NavLink
+          to="/digitization/search/TradeLicenseRecord"
+          onClick={onSmallMenuClick}
+          reloadDocument
+          end
+        >
+          Trade Licenses
+        </NavLink>
+      ),
+    },
   ];
 
   const addItems = [
@@ -148,6 +174,32 @@ const Navbar = () => {
           end
         >
           Birth Records
+        </NavLink>
+      ),
+    },
+    {
+      key: "a5",
+      label: (
+        <NavLink
+          to="/digitization/add/DeathRecord"
+          onClick={onSmallMenuClick}
+          reloadDocument
+          end
+        >
+          Death Records
+        </NavLink>
+      ),
+    },
+    {
+      key: "a6",
+      label: (
+        <NavLink
+          to="/digitization/add/TradeLicenseRecord"
+          onClick={onSmallMenuClick}
+          reloadDocument
+          end
+        >
+          Trade Licenses
         </NavLink>
       ),
     },

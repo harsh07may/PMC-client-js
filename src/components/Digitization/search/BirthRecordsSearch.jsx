@@ -68,7 +68,7 @@ function BirthRecordsSearch() {
           <Button
             size="small"
             onClick={() => {
-              console.log("download " + record.recordid);
+              // console.log("download " + record.recordid);
               handleclick(record.recordid);
             }}
           >
@@ -188,7 +188,7 @@ function BirthRecordsSearch() {
     const unsorted = groupArray(data, hashFn);
     const fixedData = organizeArray(unsorted);
     setTableData(fixedData);
-    console.log(fixedData);
+    // console.log(fixedData);
   };
 
   //API Calls
@@ -206,7 +206,7 @@ function BirthRecordsSearch() {
     await axios
 
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&Month=${values.month}&Year=${values.year}&Title=${values.title}`,
+        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&month=${values.month}&year=${values.year}&title=${values.title}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
