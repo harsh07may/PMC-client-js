@@ -21,8 +21,8 @@
 .dropdown__menu {
   position: absolute;
   top: 100%;
-  /* left: calc(-25%); */
-  /* width: 100%; */
+  left: calc((100% - 160px) / 2 * 1);
+  width: 160px;
   /* background-color: #fff; */
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border-radius: 0.25rem; */
@@ -62,7 +62,7 @@
   transition: all 0.2s;
   border-radius: 4px;
 
-  /* 2ns antd style */
+  /* 2nd antd style */
   position: relative;
   display: flex;
   align-items: center;

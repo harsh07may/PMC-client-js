@@ -4,33 +4,19 @@ import "./CustomDropdown.css";
 
 function CustomDropdown({ menu, children }) {
   const [isOpen, setIsOpen] = useState(false);
-  //!
-  // Hide and show dropdown
-  //* const [isOpen, setIsOpen] = useState(false)
-  const toggle = (isOpen) => {
-    return setIsOpen(!isOpen);
-  };
+
   // Hide Dropdown on Outside Click
   const menuRef = useRef(null);
   const [listening, setListening] = useState(false);
   useEffect(listenForOutsideClick(listening, setListening, menuRef, setIsOpen));
-  //!
+
   function handleDropdownClick() {
     setIsOpen(!isOpen);
   }
 
-  function handleMouseLeave() {
-    // setIsOpen(false);
-    // console.log("mouse leave");
-  }
-
   return (
     <div className="dropdown" ref={menuRef}>
-      <div
-        className="dropdown__toggle"
-        onClick={handleDropdownClick}
-        // onMouseLeave={handleMouseLeave}
-      >
+      <div className="dropdown__toggle" onClick={handleDropdownClick}>
         {children}
         {/* <span className="dropdown__icon">{isOpen ? "▲" : "▼"}</span> */}
       </div>
