@@ -58,43 +58,43 @@ const permissionGroups = [
   {
     groupName: "Municipality Property Records",
     options: [
-      { value: "munic_editor", label: "MP Editor" },
-      { value: "munic_viewer", label: "MP Viewer" },
+      { value: "municipality_property_records/editor", label: "MP Editor" },
+      { value: "municipality_property_records/viewer", label: "MP Viewer" },
     ],
   },
   {
     groupName: "Birth Records",
     options: [
-      { value: "birth_editor", label: "BTH Editor" },
-      { value: "birth_viewer", label: "BTH Viewer" },
+      { value: "birth_records/editor", label: "BTH Editor" },
+      { value: "birth_records/viewer", label: "BTH Viewer" },
     ],
   },
   {
     groupName: "Death Records",
     options: [
-      { value: "death_editor", label: "DTH Editor" },
-      { value: "death_viewer", label: "DTH Viewer" },
+      { value: "death_records/editor", label: "DTH Editor" },
+      { value: "death_records/viewer", label: "DTH Viewer" },
     ],
   },
   {
     groupName: "House Tax Records",
     options: [
-      { value: "house_editor", label: "HT Editor" },
-      { value: "house_viewer", label: "HT Viewer" },
+      { value: "house_tax_records/editor", label: "HT Editor" },
+      { value: "house_tax_records/viewer", label: "HT Viewer" },
     ],
   },
   {
     groupName: "Construction License Records",
     options: [
-      { value: "constr_editor", label: "CL Editor" },
-      { value: "constr_viewer", label: "CL Viewer" },
+      { value: "construction_license_records/editor", label: "CL Editor" },
+      { value: "construction_license_records/viewer", label: "CL Viewer" },
     ],
   },
   {
     groupName: "Trade License Records",
     options: [
-      { value: "trade_editor", label: "TL Editor" },
-      { value: "trade_viewer", label: "TL Viewer" },
+      { value: "trade_license_records/editor", label: "TL Editor" },
+      { value: "trade_license_records/viewer", label: "TL Viewer" },
     ],
   },
 ];
@@ -102,28 +102,29 @@ const permissionGroups = [
 const formatPerms = (perms) => {
   const result = {
     admin: false,
-    munic: "deny",
-    birth: "deny",
-    death: "deny",
-    house: "deny",
-    constr: "deny",
-    trade: "deny",
+    municipality_property_records: "deny",
+    birth_records: "deny",
+    death_records: "deny",
+    house_tax_records: "deny",
+    construction_license_records: "deny",
+    trade_license_records: "deny",
   };
 
   if (perms.includes("admin"))
     return {
       admin: true,
-      munic: "editor",
-      birth: "editor",
-      death: "editor",
-      house: "editor",
-      constr: "editor",
-      trade: "editor",
+      municipality_property_records: "editor",
+      birth_records: "editor",
+      death_records: "editor",
+      house_tax_records: "editor",
+      construction_license_records: "editor",
+      trade_license_records: "editor",
     };
 
   perms.forEach((element) => {
     if (element !== "admin") {
-      result[element.split("_")[0]] = element.split("_")[1];
+      console.log(element);
+      result[element.split("/")[0]] = element.split("/")[1];
     }
   });
 
@@ -219,7 +220,7 @@ export default function CreateAccount() {
 
   const onFinish = (values) => {
     const perms = formatPerms(values.permissions);
-    values = { ...values, permissions: perms };
+    values = { ...values, perms: perms };
 
     if (state) {
       // For edit account
@@ -234,7 +235,7 @@ export default function CreateAccount() {
           }
         )
         .then((res) => {
-          if (res.status == 200) {
+          if (res.status == 201) {
             messageApi
               .open({
                 type: "success",
@@ -256,22 +257,24 @@ export default function CreateAccount() {
       console.log(values);
       //  For create account
       axios
-        .post(`${PROTOCOL}://${HOST}:${PORT}/api/v1/user/register`, values, {
+        .post(`${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/register`, values, {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
           },
         })
         .then((res) => {
-          // console.log({ respose: res });
-          if (res.status == 200) {
+          console.log(res);
+          if (res.status == 201) {
             message.success("Account Registered Successfully!", 1.5);
             form.resetFields();
+            setSelectedItems([]);
+            setDatas(permissionGroups);
           }
         })
         .catch((error) => {
-          if (error.response.status == 400) {
-            message.error("Username already registered!", 1.5);
-          }
+          // if (error.response.status == 400) {
+          //   message.error("Username already registered!", 1.5);
+          // }
           console.log(error);
         });
     }
@@ -371,12 +374,11 @@ export default function CreateAccount() {
                   required: true,
                   message: "Please input your password!",
                 },
-                // {
-                //   pattern: new RegExp(/^.{8,20}$/),
-                //   message: "Password should be at least 8 characters long!",
-                // },
+                {
+                  pattern: new RegExp(/^.{8,20}$/),
+                  message: "Password should be at least 8 characters long!",
+                },
               ]}
-              // hasFeedback
             >
               <Input.Password />
             </Form.Item>
@@ -425,7 +427,6 @@ export default function CreateAccount() {
                 onChange={onChange}
               >
                 {datas.map((data) => (
-                  // added disabled for both option and checkbox
                   <OptGroup label={data.groupName} key={data.groupName}>
                     {data.options.map((option) => (
                       <Option
@@ -461,7 +462,6 @@ export default function CreateAccount() {
                   }
                 >
                   Cancel
-                  {/* to="/digitization/admin/ManageAccounts" */}
                 </Button>
               ) : (
                 ""

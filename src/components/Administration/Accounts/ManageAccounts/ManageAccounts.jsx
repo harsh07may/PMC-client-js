@@ -72,16 +72,16 @@ const userColumns = [
       );
     },
   },
-  {
-    title: "Designation",
-    dataIndex: "designation",
-    key: "designation",
-    render: (_, { designation }) => {
-      return (
-        <Text>{designation.replace(/\b\w/g, (x) => x.toUpperCase())}</Text>
-      );
-    },
-  },
+  // {
+  //   title: "Designation",
+  //   dataIndex: "designation",
+  //   key: "designation",
+  //   render: (_, { designation }) => {
+  //     return (
+  //       <Text>{designation.replace(/\b\w/g, (x) => x.toUpperCase())}</Text>
+  //     );
+  //   },
+  // },
   {
     title: "createdAt",
     dataIndex: "createdAt",
