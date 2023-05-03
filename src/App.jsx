@@ -2,8 +2,9 @@ import React, { Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
-import AdminAccess from "./utils/AdminAccess";
 import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
+import AccessHandler from "./utils/AccessHandler";
+import DefaultDigitizationRoute from "./utils/defaultDigitizationRoute";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
@@ -62,7 +63,6 @@ const CreateAccount = React.lazy(() =>
 const ManageAccounts = React.lazy(() =>
   import("./components/Administration/Accounts/ManageAccounts/ManageAccounts")
 );
-
 const NotFound = () => {
   return <h1>Page Not found</h1>;
 };
@@ -95,114 +95,186 @@ function App() {
             path="/digitization/*"
             element={
               <RequireAuth>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <DigitizationNavbar />
-                </Suspense>
+                <AccessHandler
+                  resource={[
+                    "municipality_property_records",
+                    "birth_records",
+                    "construction_license_records",
+                    "death_records",
+                    "house_tax_records",
+                    "trade_license_records",
+                  ]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <DigitizationNavbar />
+                  </Suspense>
+                </AccessHandler>
               </RequireAuth>
             }
           >
             //* FALLBACK ROUTE
-            <Route index element={<Navigate to="search" />} />
-            <Route
-              path="*"
-              element={<Navigate to="search/MunicipalPropertyRecord" />}
-            />
+            {/*//* index routes will activate when none of the paths are matched,
+            //* here this index routes navigates to "search" which doesn't exist
+            //* so the wildcard (*) path gets activated, which navigates to search/MunicipalPropertyRecord */}
+            <Route index element={<DefaultDigitizationRoute />} />
+            <Route path="*" element={<DefaultDigitizationRoute />} />
             //* ADD RECORD ROUTES
             <Route
               path="add/MunicipalPropertyRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <MunicipalProperty />
-                </Suspense>
+                <AccessHandler
+                  resource={["municipality_property_records"]}
+                  accessLevel={"editor"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <MunicipalProperty />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="add/BirthRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <BirthRecords />
-                </Suspense>
+                <AccessHandler
+                  resource={["birth_records"]}
+                  accessLevel={"editor"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <BirthRecords />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="add/ConstructionLicenseRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <ConstructionLicense />
-                </Suspense>
+                <AccessHandler
+                  resource={["construction_license_records"]}
+                  accessLevel={"editor"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <ConstructionLicense />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="add/HouseTaxRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <HouseTax />
-                </Suspense>
+                <AccessHandler
+                  resource={["house_tax_records"]}
+                  accessLevel={"editor"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <HouseTax />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="add/TradeLicenseRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <TradeLicense />
-                </Suspense>
+                <AccessHandler
+                  resource={["trade_license_records"]}
+                  accessLevel={"editor"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <TradeLicense />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="add/DeathRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <DeathRecords />
-                </Suspense>
+                <AccessHandler
+                  resource={["death_records"]}
+                  accessLevel={"editor"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <DeathRecords />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             //* SEARCH RECORD ROUTES
             <Route
               path="search/MunicipalPropertyRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <MunicipalPropertySearch />
-                </Suspense>
+                <AccessHandler
+                  resource={["municipality_property_records"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <MunicipalPropertySearch />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="search/BirthRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <BirthRecordsSearch />
-                </Suspense>
+                <AccessHandler
+                  resource={["birth_records"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <BirthRecordsSearch />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="search/ConstructionLicenseRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <ConstructionLicenseSearch />
-                </Suspense>
+                <AccessHandler
+                  resource={["construction_license_records"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <ConstructionLicenseSearch />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="search/HouseTaxRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <HouseTaxSearch />
-                </Suspense>
+                <AccessHandler
+                  resource={["house_tax_records"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <HouseTaxSearch />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="search/TradeLicenseRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <TradeLicenseSearch />
-                </Suspense>
+                <AccessHandler
+                  resource={["trade_license_records"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <TradeLicenseSearch />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route
               path="search/DeathRecord"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <DeathRecordsSearch />
-                </Suspense>
+                <AccessHandler
+                  resource={["death_records"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <DeathRecordsSearch />
+                  </Suspense>
+                </AccessHandler>
               }
             />
           </Route>
@@ -211,11 +283,11 @@ function App() {
             path="/administration/*"
             element={
               <RequireAuth>
-                <AdminAccess>
+                <AccessHandler resource={["admin"]} accessLevel={"admin"}>
                   <Suspense fallback={<LoadingSpinner />}>
                     <AdministrationNavbar />
                   </Suspense>
-                </AdminAccess>
+                </AccessHandler>
               </RequireAuth>
             }
           >

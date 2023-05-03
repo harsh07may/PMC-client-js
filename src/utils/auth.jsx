@@ -12,9 +12,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const login = (accessToken) => {
-    const { userRoles } = jwt(accessToken);
     // console.log(jwt(accessToken));
-    setUser({ accesstoken: accessToken, role: userRoles });
+    setUser({ accesstoken: accessToken });
   };
 
   const logout = () => {
