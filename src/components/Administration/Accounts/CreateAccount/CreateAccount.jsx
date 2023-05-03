@@ -3,10 +3,21 @@ const HOST = import.meta.env.VITE_HOST;
 const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Col, Form, Input, Row, Select, message } from "antd";
-const { Option } = Select;
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  message,
+  Checkbox,
+  Tag,
+} from "antd";
+const { Option, OptGroup } = Select;
 import axios from "axios";
 import { useAuth } from "../../../../utils/auth";
+import { isIntersecting } from "../../../../utils/fns";
 
 const formItemLayout = {
   labelCol: {
@@ -39,13 +50,177 @@ const tailFormItemLayout = {
   },
 };
 
+const permissionGroups = [
+  {
+    groupName: "ADMIN",
+    options: [{ value: "admin", label: "ADMIN" }],
+  },
+  {
+    groupName: "Municipality Property Records",
+    options: [
+      { value: "munic_editor", label: "MP Editor" },
+      { value: "munic_viewer", label: "MP Viewer" },
+    ],
+  },
+  {
+    groupName: "Birth Records",
+    options: [
+      { value: "birth_editor", label: "BTH Editor" },
+      { value: "birth_viewer", label: "BTH Viewer" },
+    ],
+  },
+  {
+    groupName: "Death Records",
+    options: [
+      { value: "death_editor", label: "DTH Editor" },
+      { value: "death_viewer", label: "DTH Viewer" },
+    ],
+  },
+  {
+    groupName: "House Tax Records",
+    options: [
+      { value: "house_editor", label: "HT Editor" },
+      { value: "house_viewer", label: "HT Viewer" },
+    ],
+  },
+  {
+    groupName: "Construction License Records",
+    options: [
+      { value: "constr_editor", label: "CL Editor" },
+      { value: "constr_viewer", label: "CL Viewer" },
+    ],
+  },
+  {
+    groupName: "Trade License Records",
+    options: [
+      { value: "trade_editor", label: "TL Editor" },
+      { value: "trade_viewer", label: "TL Viewer" },
+    ],
+  },
+];
+
+const formatPerms = (perms) => {
+  const result = {
+    admin: false,
+    munic: "deny",
+    birth: "deny",
+    death: "deny",
+    house: "deny",
+    constr: "deny",
+    trade: "deny",
+  };
+
+  if (perms.includes("admin"))
+    return {
+      admin: true,
+      munic: "editor",
+      birth: "editor",
+      death: "editor",
+      house: "editor",
+      constr: "editor",
+      trade: "editor",
+    };
+
+  perms.forEach((element) => {
+    if (element !== "admin") {
+      result[element.split("_")[0]] = element.split("_")[1];
+    }
+  });
+
+  return result;
+};
+
 export default function CreateAccount() {
+  const [datas, setDatas] = useState(permissionGroups);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const onChange = (option) => {
+    setSelectedItems(option);
+
+    const newData = () =>
+      datas.map((data) => {
+        if (
+          isIntersecting(
+            data.options.map((each) => {
+              return each.value;
+            }),
+            option
+          )
+        ) {
+          return {
+            groupName: data.groupName,
+            options: data.options.map((each) => {
+              return {
+                value: each.value,
+                label: each.label,
+                disabled: !isIntersecting([each.value], option),
+              };
+            }),
+          };
+        } else {
+          return {
+            groupName: data.groupName,
+            options: data.options.map((each) => {
+              return {
+                value: each.value,
+                label: each.label,
+                disabled: false,
+              };
+            }),
+          };
+        }
+      });
+
+    const newAdminData = () =>
+      datas.map((data) => {
+        return {
+          groupName: data.groupName,
+          options: data.options.map((each) => {
+            return {
+              value: each.value,
+              label: each.label,
+              disabled: !isIntersecting([each.value], "admin"),
+            };
+          }),
+        };
+      });
+
+    if (option.length > 0) {
+      if (isIntersecting(["admin"], option)) {
+        setDatas(newAdminData());
+      } else {
+        setDatas(newData());
+      }
+    } else {
+      setDatas(permissionGroups);
+    }
+  };
+
+  function tagRender(props) {
+    const { label, value, closable, onClose } = props;
+
+    return (
+      <Tag
+        color="blue"
+        closable={closable}
+        onClose={onClose}
+        style={{ margin: 3 }}
+      >
+        {label}
+      </Tag>
+    );
+  }
+  //!
+
   const auth = useAuth();
   const [messageApi, contextHolder] = message.useMessage();
   let { state } = useLocation();
   const navigate = useNavigate();
 
   const onFinish = (values) => {
+    const perms = formatPerms(values.permissions);
+    values = { ...values, permissions: perms };
+
     if (state) {
       // For edit account
       axios
@@ -78,6 +253,7 @@ export default function CreateAccount() {
           console.log(error);
         });
     } else {
+      console.log(values);
       //  For create account
       axios
         .post(`${PROTOCOL}://${HOST}:${PORT}/api/v1/user/register`, values, {
@@ -114,12 +290,14 @@ export default function CreateAccount() {
           Authorization: `Bearer ${auth.user.accesstoken}`,
         },
       }).then((res) => {
+        const permData = ["admin"];
         form.setFieldsValue({
           fullname: res.data.rows[0].fullname,
           username: res.data.rows[0].username,
-          designation: res.data.rows[0].designation,
           roles: res.data.rows[0].roles,
+          permissions: permData,
         });
+        onChange(permData);
       });
     }
   }, [state]);
@@ -162,7 +340,7 @@ export default function CreateAccount() {
                 },
               ]}
             >
-              <Input />
+              <Input autoComplete="off" />
             </Form.Item>
 
             <Form.Item
@@ -182,7 +360,7 @@ export default function CreateAccount() {
                 },
               ]}
             >
-              <Input disabled={disableUsername} />
+              <Input autoComplete="off" disabled={disableUsername} />
             </Form.Item>
 
             <Form.Item
@@ -193,10 +371,10 @@ export default function CreateAccount() {
                   required: true,
                   message: "Please input your password!",
                 },
-                {
-                  pattern: new RegExp(/^.{8,20}$/),
-                  message: "Password should be at least 8 characters long!",
-                },
+                // {
+                //   pattern: new RegExp(/^.{8,20}$/),
+                //   message: "Password should be at least 8 characters long!",
+                // },
               ]}
               // hasFeedback
             >
@@ -228,35 +406,45 @@ export default function CreateAccount() {
             >
               <Input.Password />
             </Form.Item>
-
             <Form.Item
-              name="designation"
-              label="Designation"
+              name="permissions"
+              label="Permissions"
+              initialValue={[]}
               rules={[
                 {
                   required: true,
-                  message: "Please input your designation!",
-                  whitespace: true,
+                  message: "Please select a permisssion!",
                 },
               ]}
             >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              name="roles"
-              label="Role"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a role!",
-                },
-              ]}
-            >
-              <Select placeholder="Role">
-                <Option value="viewer">Viewer</Option>
-                <Option value="editor">Editor</Option>
-                <Option value="admin">Admin</Option>
+              <Select
+                mode="multiple"
+                value={selectedItems}
+                tagRender={tagRender}
+                style={{ width: "100%" }}
+                onChange={onChange}
+              >
+                {datas.map((data) => (
+                  // added disabled for both option and checkbox
+                  <OptGroup label={data.groupName} key={data.groupName}>
+                    {data.options.map((option) => (
+                      <Option
+                        value={option.value}
+                        key={option.value}
+                        disabled={option?.disabled ?? false}
+                      >
+                        <Checkbox
+                          style={{ pointerEvents: "none" }}
+                          type="checkbox"
+                          checked={selectedItems.indexOf(option.value) !== -1}
+                          disabled={option?.disabled ?? false}
+                        >
+                          {option.label}
+                        </Checkbox>
+                      </Option>
+                    ))}
+                  </OptGroup>
+                ))}
               </Select>
             </Form.Item>
 
@@ -273,6 +461,7 @@ export default function CreateAccount() {
                   }
                 >
                   Cancel
+                  {/* to="/digitization/admin/ManageAccounts" */}
                 </Button>
               ) : (
                 ""

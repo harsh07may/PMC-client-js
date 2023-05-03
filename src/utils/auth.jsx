@@ -3,6 +3,7 @@ const HOST = import.meta.env.VITE_HOST;
 const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import { useState, createContext, useContext } from "react";
 import axios from "axios";
+import jwt from "jwt-decode";
 
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
@@ -10,8 +11,10 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
 
-  const login = (user) => {
-    setUser(user);
+  const login = (accessToken) => {
+    const { userRoles } = jwt(accessToken);
+    // console.log(jwt(accessToken));
+    setUser({ accesstoken: accessToken, role: userRoles });
   };
 
   const logout = () => {
@@ -33,6 +36,7 @@ export const AuthProvider = ({ children }) => {
         // console.log("Error" + err);
       });
   };
+
   return (
     <AuthContext.Provider value={{ user, login, logout, loading, setLoading }}>
       {children}
