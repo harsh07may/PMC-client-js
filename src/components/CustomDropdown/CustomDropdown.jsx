@@ -22,15 +22,17 @@ function CustomDropdown({ menu, children }) {
       </div>
       {isOpen && (
         <div className="dropdown__menu">
-          {menu.map((item) => (
-            <div
-              className="dropdown__item"
-              key={item.key}
-              onClick={handleDropdownClick}
-            >
-              {item.label}
-            </div>
-          ))}
+          {menu.map((item) => {
+            return (
+              <div
+                className="dropdown__item"
+                key={item.key}
+                onClick={handleDropdownClick}
+              >
+                {item.label}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

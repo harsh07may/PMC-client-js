@@ -11,10 +11,20 @@ import Logo from "../../../assets/logo.png";
 import Logout from "../../../assets/logout.svg";
 
 import CustomDropdown from "../../CustomDropdown/CustomDropdown";
+import { checkPermission } from "../../../utils/fns";
+import jwtDecode from "jwt-decode";
 
 const Navbar = () => {
   const auth = useAuth();
-  // console.log(auth);
+
+  const allDocTypes = [
+    "municipality_property_records",
+    "birth_records",
+    "construction_license_records",
+    "death_records",
+    "house_tax_records",
+    "trade_license_records",
+  ];
 
   const navLinkStyles = ({ isActive }) => {
     return {
@@ -44,7 +54,11 @@ const Navbar = () => {
   };
 
   const searchItems = [
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["municipality_property_records"],
+      "viewer"
+    ) && {
       key: "1",
       label: (
         <NavLink
@@ -57,7 +71,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["construction_license_records"],
+      "viewer"
+    ) && {
       key: "2",
       label: (
         <NavLink
@@ -70,7 +88,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["house_tax_records"],
+      "viewer"
+    ) && {
       key: "3",
       label: (
         <NavLink
@@ -83,7 +105,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["birth_records"],
+      "viewer"
+    ) && {
       key: "4",
       label: (
         <NavLink
@@ -96,7 +122,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["death_records"],
+      "viewer"
+    ) && {
       key: "5",
       label: (
         <NavLink
@@ -109,7 +139,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["trade_license_records"],
+      "viewer"
+    ) && {
       key: "6",
       label: (
         <NavLink
@@ -122,10 +156,14 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const addItems = [
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["municipality_property_records"],
+      "editor"
+    ) && {
       key: "a1",
       label: (
         <NavLink
@@ -138,7 +176,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["construction_license_records"],
+      "editor"
+    ) && {
       key: "a2",
       label: (
         <NavLink
@@ -151,7 +193,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["house_tax_records"],
+      "editor"
+    ) && {
       key: "a3",
       label: (
         <NavLink
@@ -164,7 +210,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["birth_records"],
+      "editor"
+    ) && {
       key: "a4",
       label: (
         <NavLink
@@ -177,7 +227,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["death_records"],
+      "editor"
+    ) && {
       key: "a5",
       label: (
         <NavLink
@@ -190,7 +244,11 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["trade_license_records"],
+      "editor"
+    ) && {
       key: "a6",
       label: (
         <NavLink
@@ -203,39 +261,25 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-  ];
+  ].filter(Boolean);
 
-  const miniEditorItems = [
+  const miniMenuItems = [
     {
       // type: "group", //? comment this to convert to dropdown
       label: "Search",
       children: searchItems,
     },
     { type: "divider" },
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      allDocTypes,
+      "editor"
+    ) && {
       // type: "group",
       label: "Add",
       children: addItems,
     },
-    {
-      key: "logout",
-      label: (
-        <p
-          onClick={handleLogout}
-          className={NavbarStyles.smallLogout}
-          danger="true"
-        >
-          Logout
-        </p>
-      ),
-    },
-  ];
-  const miniViewerItems = [
-    {
-      // type: "group", //? comment this to convert to dropdown
-      label: "Search",
-      children: searchItems,
-    },
+    { type: "divider" },
     {
       key: "logout",
       label: (
@@ -277,14 +321,8 @@ const Navbar = () => {
             <Menu
               theme="light"
               mode="inline"
-              defaultSelectedKeys={["4"]}
-              items={
-                auth.user.role == "admin"
-                  ? miniEditorItems
-                  : auth.user.role == "editor"
-                  ? miniEditorItems
-                  : miniViewerItems
-              }
+              // defaultSelectedKeys={["4"]}
+              items={miniMenuItems}
             />
           </Drawer>
         </>
@@ -305,7 +343,11 @@ const Navbar = () => {
             </p>
           </CustomDropdown>
 
-          {(auth.user.role == "admin" || auth.user.role == "editor") && (
+          {checkPermission(
+            jwtDecode(auth.user.accesstoken).perms,
+            allDocTypes,
+            "editor"
+          ) && (
             <CustomDropdown menu={addItems}>
               <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
                 Add
@@ -316,7 +358,7 @@ const Navbar = () => {
           {/* 
             //! antd dropdown causes page links to freeze, replaced with custom dropdown. 
             //! Don't delete antd dropdown code.  
-            //! Test before migrating to new antd version     
+            //! Test before confirming migration to new antd version     
             //! Current version antd v5.5.3     
           */}
 

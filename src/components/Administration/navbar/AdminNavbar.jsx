@@ -14,7 +14,6 @@ import CustomDropdown from "../../CustomDropdown/CustomDropdown";
 
 const Navbar = () => {
   const auth = useAuth();
-  // console.log(auth);
 
   const navLinkStyles = ({ isActive }) => {
     return {
@@ -84,14 +83,16 @@ const Navbar = () => {
           reloadDocument
           end
         >
-          Audit Log
+          Audit Logs
         </NavLink>
       ),
     },
+    { type: "divider" },
     {
       label: "Accounts",
       children: accountItems,
     },
+    { type: "divider" },
     {
       key: "logout",
       label: (
@@ -130,12 +131,7 @@ const Navbar = () => {
             onClose={onClose}
             open={open}
           >
-            <Menu
-              theme="light"
-              mode="inline"
-              // defaultSelectedKeys={["4"]}
-              items={auth.user.role == "admin" ? miniAdminItems : {}}
-            />
+            <Menu theme="light" mode="inline" items={miniAdminItems} />
           </Drawer>
         </>
       </nav>
@@ -149,24 +145,20 @@ const Navbar = () => {
         </div>
 
         <div className={NavbarStyles.navLinkParent}>
-          {auth.user.role == "admin" && (
-            <NavLink
-              className={NavbarStyles.navLink}
-              style={navLinkStyles}
-              to="/administration/AuditLog"
-              reloadDocument
-              end
-            >
-              Audit Log
-            </NavLink>
-          )}
-          {auth.user.role == "admin" && (
-            <CustomDropdown menu={accountItems}>
-              <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-                Admin
-              </p>
-            </CustomDropdown>
-          )}
+          <NavLink
+            className={NavbarStyles.navLink}
+            style={navLinkStyles}
+            to="/administration/AuditLog"
+            reloadDocument
+            end
+          >
+            Audit Logs
+          </NavLink>
+          <CustomDropdown menu={accountItems}>
+            <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
+              Admin
+            </p>
+          </CustomDropdown>
           <img
             src={Logout}
             className={NavbarStyles.logout}
