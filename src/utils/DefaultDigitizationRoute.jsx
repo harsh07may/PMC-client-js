@@ -8,4 +8,4 @@ const DefaultDigitizationRoute = () => {
   return getDefaultDigitizationRoute(jwt(auth.user.accesstoken).perms);
 };
 
-export default DefaultDigitizationRoute;
+export { DefaultDigitizationRoute };

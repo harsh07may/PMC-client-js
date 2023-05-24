@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +8,7 @@ import { useAuth } from "../../utils/auth";
 //TODO login needs css module file! backgroound needs margin and padding = 0
 import "./Login.css";
 import logo from "../../assets/pmc_logo.png";
+import { getEnv } from "../../utils/getEnv";
 
 export default function Login() {
   const auth = useAuth();
@@ -26,7 +24,7 @@ export default function Login() {
   const onFinish = (values) => {
     axios({
       method: "post",
-      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/login`,
+      url: `${getEnv("VITE_API_STRING")}/api/v1/user/login`,
       data: values,
       withCredentials: true,
     })

@@ -9,13 +9,22 @@ import { useAuth } from "../../utils/auth";
 
 import styles from "./AppGallery.module.css";
 
-// import documentLogo from "../assets/document.svg";
 import documentLogo from "../../assets/document2.svg";
 import userLogo from "../../assets/user.svg";
 import compassLogo from "../../assets/compass.svg";
 import calenderLogo from "../../assets/calender.svg";
+import { checkPermission } from "../../utils/fns";
+import jwtDecode from "jwt-decode";
 
 export default function AppGallery() {
+  const allDocTypes = [
+    "municipality_property_records",
+    "birth_records",
+    "construction_license_records",
+    "death_records",
+    "house_tax_records",
+    "trade_license_records",
+  ];
   const auth = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -39,22 +48,26 @@ export default function AppGallery() {
         </div>
 
         <div className={styles.gallery}>
-          <Row className={styles.antRow} gutter={[50, 50]}>
-            <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
-              {/* <Link to="/digitization"> */}
-              <Card
-                className={styles.expandCard}
-                onClick={() => navigate("/digitization")}
-                hoverable
-                cover={<img src={documentLogo} className={styles.cardLogo} />}
-              >
-                <Meta
-                  title="File Digitization"
-                  description="Digitize your files"
-                />
-              </Card>
-              {/* </Link> */}
-            </Col>
+          <Row className={styles.antRow} gutter={[50, 50]} justify={"center"}>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              allDocTypes,
+              "viewer"
+            ) && (
+              <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
+                <Card
+                  className={styles.expandCard}
+                  onClick={() => navigate("/digitization")}
+                  hoverable
+                  cover={<img src={documentLogo} className={styles.cardLogo} />}
+                >
+                  <Meta
+                    title="File Digitization"
+                    description="Digitize your files"
+                  />
+                </Card>
+              </Col>
+            )}
             <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
               <Card
                 className={styles.expandCard}
@@ -81,19 +94,25 @@ export default function AppGallery() {
                 />
               </Card>
             </Col>
-            <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
-              <Card
-                onClick={() => navigate("/administration")}
-                className={styles.expandCard}
-                hoverable
-                cover={<img src={userLogo} className={styles.cardLogo} />}
-              >
-                <Meta
-                  title="Administration"
-                  description="Manage user accounts"
-                />
-              </Card>
-            </Col>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["admin"],
+              true
+            ) && (
+              <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
+                <Card
+                  onClick={() => navigate("/administration")}
+                  className={styles.expandCard}
+                  hoverable
+                  cover={<img src={userLogo} className={styles.cardLogo} />}
+                >
+                  <Meta
+                    title="Administration"
+                    description="Manage user accounts"
+                  />
+                </Card>
+              </Col>
+            )}
           </Row>
         </div>
       </div>

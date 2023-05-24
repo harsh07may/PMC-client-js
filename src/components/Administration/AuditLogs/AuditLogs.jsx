@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import qs from "qs";
@@ -14,6 +11,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 import styles from "./AuditLogs.module.css";
+import { getEnv } from "../../../utils/getEnv";
 
 const digitizationColumns = [
   {
@@ -204,44 +202,52 @@ export default function AuditLogs() {
       //* digitization tab
       axios({
         method: "get",
-        url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-digitization-audit?${qs.stringify(
+        url: `${getEnv(
+          "VITE_API_STRING"
+        )}/api/v1/admin/get-digitization-audit?${qs.stringify(
           getRandomUserParams(digitizationTableParams)
         )}`,
         headers: {
           Authorization: `Bearer ${auth.user.accesstoken}`,
         },
-      }).then((res) => {
-        setDigitizationData(res.data.rows);
-        setLoading(false);
-        setDigitizationTableParams({
-          ...digitizationTableParams,
-          pagination: {
-            ...digitizationTableParams.pagination,
-            total: res.data.total,
-          },
-        });
-      });
+      })
+        .then((res) => {
+          setDigitizationData(res.data.rows);
+          setLoading(false);
+          setDigitizationTableParams({
+            ...digitizationTableParams,
+            pagination: {
+              ...digitizationTableParams.pagination,
+              total: res.data.total,
+            },
+          });
+        })
+        .catch((err) => console.log(err));
     } else if (tab == "user") {
       //* user tab
       axios({
         method: "get",
-        url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-user-audit?${qs.stringify(
+        url: `${getEnv(
+          "VITE_API_STRING"
+        )}/api/v1/admin/get-user-audit?${qs.stringify(
           getRandomUserParams(userTableParams)
         )}`,
         headers: {
           Authorization: `Bearer ${auth.user.accesstoken}`,
         },
-      }).then((res) => {
-        setUserData(res.data.rows);
-        setLoading(false);
-        setUserTableParams({
-          ...userTableParams,
-          pagination: {
-            ...userTableParams.pagination,
-            total: res.data.total,
-          },
-        });
-      });
+      })
+        .then((res) => {
+          setUserData(res.data.rows);
+          setLoading(false);
+          setUserTableParams({
+            ...userTableParams,
+            pagination: {
+              ...userTableParams.pagination,
+              total: res.data.total,
+            },
+          });
+        })
+        .catch((err) => console.log(err));
     }
   };
 

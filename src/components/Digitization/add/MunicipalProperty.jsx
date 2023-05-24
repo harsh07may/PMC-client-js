@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
@@ -11,6 +8,7 @@ import { useAuth } from "../../../utils/auth";
 // import { FILE_UPLOAD_SIZE_LIMIT } from "../../../GLOBAL_VARS";
 
 import { formInputStyles } from "./styles/AddForm.module.css";
+import { getEnv } from "../../../utils/getEnv";
 
 const MunicipalProperty = () => {
   //States
@@ -61,16 +59,12 @@ const MunicipalProperty = () => {
     values = { ...values, file: data.file, type: "municipal_property_record" };
     setUploading(true);
     await axios
-      .post(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/upload`,
-        values,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth.user.accesstoken}`,
-          },
-        }
-      )
+      .post(`${getEnv("VITE_API_STRING")}/api/v1/digitization/upload`, values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
+      })
       .then((res) => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
@@ -166,9 +160,14 @@ const MunicipalProperty = () => {
               />
             </Form.Item>
             <Form.Item wrapperCol={{ xs: { span: 20 }, sm: { span: 14 } }}>
-              <Form.Item required name="upload" valuePropName="fileList">
+              <Form.Item
+                required
+                name="upload"
+                // valuePropName="fileList"
+              >
                 <>
                   <Upload
+                    fileList={fileList}
                     accept="application/pdf, .pdf"
                     maxCount={1}
                     onRemove={onRemove}

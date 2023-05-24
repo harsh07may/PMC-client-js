@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -18,6 +15,7 @@ const { Option, OptGroup } = Select;
 import axios from "axios";
 import { useAuth } from "../../../../utils/auth";
 import { isIntersecting } from "../../../../utils/fns";
+import { getEnv } from "../../../../utils/getEnv";
 
 const formItemLayout = {
   labelCol: {
@@ -225,17 +223,13 @@ export default function CreateAccount() {
     if (state) {
       // For edit account
       axios
-        .post(
-          `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/update-user`,
-          values,
-          {
-            headers: {
-              Authorization: `Bearer ${auth.user.accesstoken}`,
-            },
-          }
-        )
+        .post(`${getEnv("VITE_API_STRING")}/api/v1/admin/update-user`, values, {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        })
         .then((res) => {
-          if (res.status == 201) {
+          if (res.status == 200) {
             messageApi
               .open({
                 type: "success",
@@ -257,7 +251,7 @@ export default function CreateAccount() {
       console.log(values);
       //  For create account
       axios
-        .post(`${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/register`, values, {
+        .post(`${getEnv("VITE_API_STRING")}/api/v1/admin/register`, values, {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,
           },
@@ -288,20 +282,24 @@ export default function CreateAccount() {
       setDisableUsername(true);
       axios({
         method: "get",
-        url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-user?username=${state?.username}`,
+        url: `${getEnv("VITE_API_STRING")}/api/v1/admin/get-user?username=${
+          state?.username
+        }`,
         headers: {
           Authorization: `Bearer ${auth.user.accesstoken}`,
         },
-      }).then((res) => {
-        const permData = ["admin"];
-        form.setFieldsValue({
-          fullname: res.data.rows[0].fullname,
-          username: res.data.rows[0].username,
-          roles: res.data.rows[0].roles,
-          permissions: permData,
-        });
-        onChange(permData);
-      });
+      })
+        .then((res) => {
+          const permData = ["admin"];
+          form.setFieldsValue({
+            fullname: res.data.rows[0].fullname,
+            username: res.data.rows[0].username,
+            roles: res.data.rows[0].roles,
+            permissions: permData,
+          });
+          onChange(permData);
+        })
+        .catch((e) => console.log(e));
     }
   }, [state]);
 

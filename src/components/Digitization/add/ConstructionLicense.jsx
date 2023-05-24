@@ -1,12 +1,10 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../utils/auth";
 import { formInputStyles } from "./styles/AddForm.module.css";
+import { getEnv } from "../../../utils/getEnv";
 
 const AddConstuctionLicense = () => {
   //States
@@ -49,16 +47,12 @@ const AddConstuctionLicense = () => {
     };
     setUploading(true);
     await axios
-      .post(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/upload`,
-        values,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth.user.accesstoken}`,
-          },
-        }
-      )
+      .post(`${getEnv("VITE_API_STRING")}/api/v1/digitization/upload`, values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
+      })
       .then((res) => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
@@ -176,6 +170,7 @@ const AddConstuctionLicense = () => {
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
                   <Upload
+                    fileList={fileList}
                     accept="application/pdf, .pdf"
                     maxCount={1}
                     onRemove={onRemove}

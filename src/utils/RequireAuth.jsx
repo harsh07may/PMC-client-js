@@ -7,6 +7,7 @@ import { useAuth } from "./auth";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { notification } from "antd";
+import { getEnv } from "./getEnv";
 
 export default function ({ children }) {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function ({ children }) {
   const checkRefreshToken = () => {
     axios
       .post(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/refresh_token`,
+        `${getEnv("VITE_API_STRING")}/api/v1/user/refresh_token`,
         {},
         {
           credentials: "include",

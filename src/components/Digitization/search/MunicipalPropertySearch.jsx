@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -12,6 +9,7 @@ import { Table, Form, Input, Row, Col, Button, message } from "antd";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
 import { useNavigate } from "react-router-dom";
+import { getEnv } from "../../../utils/getEnv";
 
 const MunicipalPropertySearch = () => {
   const auth = useAuth();
@@ -20,7 +18,9 @@ const MunicipalPropertySearch = () => {
   const handleclick = (recordid) => {
     axios({
       method: "get",
-      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/file-download?recordid=${recordid}&type=municipal_property_record`,
+      url: `${getEnv(
+        "VITE_API_STRING"
+      )}/api/v1/digitization/file-download?recordid=${recordid}&type=municipal_property_record`,
       headers: {
         Authorization: `Bearer ${auth.user.accesstoken}`,
       },
@@ -197,7 +197,11 @@ const MunicipalPropertySearch = () => {
     await axios
 
       .get(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/search?type=${values.type}&location=${values.location}&title=${values.title}&surveyno=${values.surveyNo}`,
+        `${getEnv("VITE_API_STRING")}/api/v1/digitization/search?type=${
+          values.type
+        }&location=${values.location}&title=${values.title}&surveyno=${
+          values.surveyNo
+        }`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accesstoken}`,

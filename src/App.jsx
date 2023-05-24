@@ -4,7 +4,8 @@ import { AuthProvider } from "./utils/auth";
 import RequireAuth from "./utils/RequireAuth";
 import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
 import AccessHandler from "./utils/AccessHandler";
-import DefaultDigitizationRoute from "./utils/defaultDigitizationRoute";
+import { DefaultDigitizationRoute } from "./utils/DefaultDigitizationRoute";
+import TestPage from "./pages/TestPage";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
@@ -73,6 +74,14 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="*" element={<NotFound />} />
+          <Route
+            path="/test"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <TestPage />
+              </Suspense>
+            }
+          />
           <Route
             path="/"
             element={

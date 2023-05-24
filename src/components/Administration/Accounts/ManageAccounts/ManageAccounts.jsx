@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import qs from "qs";
@@ -29,6 +26,7 @@ dayjs.extend(customParseFormat);
 
 import styles from "./manageAccounts.module.css";
 import CreateAccount from "../CreateAccount/CreateAccount";
+import { getEnv } from "../../../../utils/getEnv";
 // fullname
 // username
 // role
@@ -55,23 +53,23 @@ const userColumns = [
       );
     },
   },
-  {
-    title: "Role",
-    dataIndex: "role",
-    key: "role",
-    render: (_, { roles }) => {
-      let color = {
-        admin: "red",
-        editor: "geekblue",
-        viewer: "green",
-      }[roles];
-      return (
-        <Tag color={color} key={roles}>
-          {roles.toUpperCase()}
-        </Tag>
-      );
-    },
-  },
+  // {
+  //   title: "Role",
+  //   dataIndex: "role",
+  //   key: "role",
+  //   render: (_, { roles }) => {
+  //     let color = {
+  //       admin: "red",
+  //       editor: "geekblue",
+  //       viewer: "green",
+  //     }[roles];
+  //     return (
+  //       <Tag color={color} key={roles}>
+  //         {roles.toUpperCase()}
+  //       </Tag>
+  //     );
+  //   },
+  // },
   // {
   //   title: "Designation",
   //   dataIndex: "designation",
@@ -156,7 +154,7 @@ export default function ManageAccounts() {
 
     axios({
       method: "get",
-      url: `${PROTOCOL}://${HOST}:${PORT}/api/v1/admin/get-users?${qs.stringify(
+      url: `${getEnv("VITE_API_STRING")}/api/v1/admin/get-users?${qs.stringify(
         getRandomUserParams(userTableParams)
       )}`,
       headers: {

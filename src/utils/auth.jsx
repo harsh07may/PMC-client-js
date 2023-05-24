@@ -4,6 +4,7 @@ const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import { useState, createContext, useContext } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
+import { getEnv } from "./getEnv";
 
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     axios
       .post(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/user/logout`,
+        `${getEnv("VITE_API_STRING")}/api/v1/user/logout`,
         {},
         {
           credentials: "include",

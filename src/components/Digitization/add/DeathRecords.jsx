@@ -1,6 +1,3 @@
-const PORT = import.meta.env.VITE_PORT;
-const HOST = import.meta.env.VITE_HOST;
-const PROTOCOL = import.meta.env.VITE_PROTOCOL;
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -19,6 +16,7 @@ import { UploadOutlined } from "@ant-design/icons";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { getEnv } from "../../../utils/getEnv";
 dayjs.extend(customParseFormat);
 
 const DeathRecords = () => {
@@ -63,16 +61,12 @@ const DeathRecords = () => {
     setUploading(true);
 
     await axios
-      .post(
-        `${PROTOCOL}://${HOST}:${PORT}/api/v1/digitization/upload`,
-        values,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth.user.accesstoken}`,
-          },
-        }
-      )
+      .post(`${getEnv("VITE_API_STRING")}/api/v1/digitization/upload`, values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
+      })
       .then((res) => {
         if (res.status == 200) {
           message.success("File Uploaded Successfully", 1.5);
@@ -141,6 +135,7 @@ const DeathRecords = () => {
               <Form.Item required name="upload" valuePropName="fileList">
                 <>
                   <Upload
+                    fileList={fileList}
                     accept="application/pdf, .pdf"
                     maxCount={1}
                     onRemove={onRemove}

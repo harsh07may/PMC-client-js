@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite build && vite preview --host 0.0.0.0 --port 5173"
   },
   "dependencies": {
     "antd": "5.3.3",
@@ -17,13 +18,13 @@
     "rc-menu": "^9.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.9.0"
+    "react-router-dom": "^6.9.0",
+    "qs": "^6.11.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.2.0",
-    "qs": "^6.11.1",
     "vite": "^3.2.3"
   }
 }
