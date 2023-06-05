@@ -6,6 +6,9 @@ import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
 import AccessHandler from "./utils/AccessHandler";
 import { DefaultDigitizationRoute } from "./utils/DefaultDigitizationRoute";
 import TestPage from "./pages/TestPage";
+import NewApplication from "./components/AppTracking/NewApplication/NewApplication";
+import TrackApplication from "./components/AppTracking/TrackApplication/TrackAppication";
+import ApplicationInbox from "./components/AppTracking/ApplicationInbox/ApplicationInbox";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const AppGallery = React.lazy(() => import("./pages/AppGallery/AppGallery"));
@@ -18,6 +21,9 @@ const AdministrationNavbar = React.lazy(() =>
 );
 const LeaveManagementNavbar = React.lazy(() =>
   import("./components/LeaveManagement/navbar/LeaveManagementNavbar")
+);
+const FileTrackingNavbar = React.lazy(() =>
+  import("./components/AppTracking/navbar/FileTrackingNavbar")
 );
 const BirthRecords = React.lazy(() =>
   import("./components/Digitization/add/BirthRecords")
@@ -100,6 +106,7 @@ function App() {
               </RequireAuth>
             }
           />
+          //* DIGITIZATION ROUTE
           <Route
             path="/digitization/*"
             element={
@@ -338,7 +345,7 @@ function App() {
           </Route>
           //* LEAVE MANAGEMENT ROUTES
           <Route
-            path="/leave/*"
+            path="/leavemanagement/*"
             element={
               <RequireAuth>
                 <Suspense fallback={<LoadingSpinner />}>
@@ -365,6 +372,59 @@ function App() {
                 <Suspense fallback={<LoadingSpinner />}>
                   {/* <ManageAccounts /> */}
                   <p>dashboard</p>
+                </Suspense>
+              }
+            />
+          </Route>
+          //* APP TRACKING ROUTES
+          <Route
+            path="/apptracking/*"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <FileTrackingNavbar></FileTrackingNavbar>
+                </Suspense>
+              </RequireAuth>
+            }
+          >
+            //* FALLBACK ROUTE
+            <Route index element={<Navigate to="test" />} />
+            <Route path="*" element={<Navigate to="test" />} />
+            <Route
+              path="test"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  {/* <AuditLogs /> */}
+                  <p>test</p>
+                </Suspense>
+              }
+            />
+            <Route
+              path="inbox"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  {/* <ManageAccounts /> */}
+                  <ApplicationInbox />
+                </Suspense>
+              }
+            />
+            <Route
+              path="file/new"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  {/* <ManageAccounts /> */}
+                  {/* <p>new file (global inward)</p> */}
+                  <NewApplication />
+                </Suspense>
+              }
+            />
+            <Route
+              path="file/tracking"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  {/* <ManageAccounts /> */}
+                  {/* <p>file tracking</p> */}
+                  <TrackApplication />
                 </Suspense>
               }
             />

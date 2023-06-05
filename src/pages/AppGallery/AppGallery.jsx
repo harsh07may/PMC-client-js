@@ -84,7 +84,7 @@ export default function AppGallery() {
             <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
               <Card
                 className={styles.expandCard}
-                onClick={() => console.log("3")}
+                onClick={() => navigate("/apptracking")}
                 hoverable
                 cover={<img src={compassLogo} className={styles.cardLogo} />}
               >
