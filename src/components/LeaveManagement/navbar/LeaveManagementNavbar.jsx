@@ -202,7 +202,12 @@ const Navbar = () => {
     <>
       <nav className={NavbarStyles.smallNavbar}>
         <Link to="/AppGallery">
-          <img src={Logo} alt="logo" className={NavbarStyles.smallLogo} />
+          <img
+            src={Logo}
+            alt="logo"
+            className={NavbarStyles.smallLogo}
+            title="Go to home"
+          />
         </Link>
         <p className={NavbarStyles.smallHeadingText}>PMC</p>
         <>
@@ -241,7 +246,12 @@ const Navbar = () => {
       <nav className={NavbarStyles.bigNavbar}>
         <div className={NavbarStyles.navItems}>
           <Link to="/AppGallery">
-            <img src={Logo} alt="logo" className={NavbarStyles.logo} />
+            <img
+              src={Logo}
+              alt="logo"
+              className={NavbarStyles.logo}
+              title="Go to home"
+            />
           </Link>
           <h2 className={NavbarStyles.headingText}>Ponda Municipal Council</h2>
         </div>
@@ -259,6 +269,7 @@ const Navbar = () => {
             src={Logout}
             className={NavbarStyles.logout}
             onClick={handleLogout}
+            title="Logout"
           />
         </div>
       </nav>

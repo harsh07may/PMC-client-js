@@ -147,6 +147,7 @@ const userColumns = [
     title: "Timestamp",
     dataIndex: "timestamp",
     key: "timestamp",
+    align: "center",
     render: (_, { timestamp }) => {
       return dayjs(timestamp, "DD-MM-YYYY HH:mm:ss A").format(
         "MMM D, YYYY h:mm A"
