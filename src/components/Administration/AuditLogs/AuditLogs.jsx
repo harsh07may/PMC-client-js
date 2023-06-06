@@ -39,6 +39,24 @@ const digitizationColumns = [
         </Tag>
       );
     },
+    //? Requires server side filtering. This only filters entries in each page.
+    // filters: [
+    //   {
+    //     text: "Search",
+    //     value: "Search",
+    //   },
+    //   {
+    //     text: "Download",
+    //     value: "Download",
+    //   },
+    //   {
+    //     text: "Upload",
+    //     value: "Upload",
+    //   },
+    // ],
+    // filterMode: "tree",
+    // filterSearch: true,
+    // onFilter: (value, record) => record.action === value,
   },
   {
     title: "Performed by",

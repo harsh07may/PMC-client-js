@@ -95,6 +95,18 @@ const permissionGroups = [
       { value: "trade_license_records/viewer", label: "TL Viewer" },
     ],
   },
+  {
+    groupName: "Application Tracking",
+    options: [
+      { value: "application_tracking/central", label: "Central Inward" },
+      { value: "application_tracking/treasury", label: "Treasury Section" },
+      { value: "application_tracking/technical", label: "Technical Section" },
+      {
+        value: "application_tracking/administration",
+        label: "Administration Section",
+      },
+    ],
+  },
 ];
 
 const formatPerms = (perms) => {
@@ -106,10 +118,11 @@ const formatPerms = (perms) => {
     house_tax_records: "deny",
     construction_license_records: "deny",
     trade_license_records: "deny",
+    application_tracking: "deny",
   };
 
-  if (perms.includes("admin"))
-    return {
+  if (perms.includes("admin")) {
+    const result2 = {
       admin: true,
       municipality_property_records: "editor",
       birth_records: "editor",
@@ -117,11 +130,20 @@ const formatPerms = (perms) => {
       house_tax_records: "editor",
       construction_license_records: "editor",
       trade_license_records: "editor",
+      application_tracking: "deny",
     };
+
+    perms.forEach((element) => {
+      if (element.split("/")[0] === "application_tracking") {
+        result2[element.split("/")[0]] = element.split("/")[1];
+      }
+    });
+
+    return result2;
+  }
 
   perms.forEach((element) => {
     if (element !== "admin") {
-      console.log(element);
       result[element.split("/")[0]] = element.split("/")[1];
     }
   });
@@ -170,6 +192,27 @@ export default function CreateAccount() {
         }
       });
 
+    const newAdminInwardData = (selected) =>
+      datas.map((data) => {
+        return {
+          groupName: data.groupName,
+          options: data.options.map((option) => {
+            let inwardValue = "never";
+            selected.forEach((element) => {
+              if (element.split("/")[0] === "application_tracking")
+                inwardValue = element;
+            });
+            //* 1. get the vale that from  tracking group
+            //* 2. not disabled (false) if is admin or is value
+            return {
+              value: option.value,
+              label: option.label,
+              disabled: !isIntersecting([option.value], ["admin", inwardValue]),
+            };
+          }),
+        };
+      });
+
     const newAdminData = () =>
       datas.map((data) => {
         return {
@@ -178,14 +221,36 @@ export default function CreateAccount() {
             return {
               value: each.value,
               label: each.label,
-              disabled: !isIntersecting([each.value], "admin"),
+              disabled: !isIntersecting(
+                [each.value],
+                [
+                  "admin",
+                  "application_tracking/central",
+                  "application_tracking/treasury",
+                  "application_tracking/technical",
+                  "application_tracking/administration",
+                ]
+              ),
             };
           }),
         };
       });
 
     if (option.length > 0) {
-      if (isIntersecting(["admin"], option)) {
+      if (
+        isIntersecting(
+          [
+            "application_tracking/central",
+            "application_tracking/treasury",
+            "application_tracking/technical",
+            "application_tracking/administration",
+          ],
+          option
+        ) &&
+        isIntersecting(["admin"], option)
+      ) {
+        setDatas(newAdminInwardData(option));
+      } else if (isIntersecting(["admin"], option)) {
         setDatas(newAdminData());
       } else {
         setDatas(newData());
@@ -248,7 +313,6 @@ export default function CreateAccount() {
           console.log(error);
         });
     } else {
-      console.log(values);
       //  For create account
       axios
         .post(`${getEnv("VITE_API_STRING")}/api/v1/admin/register`, values, {
@@ -257,7 +321,6 @@ export default function CreateAccount() {
           },
         })
         .then((res) => {
-          console.log(res);
           if (res.status == 201) {
             message.success("Account Registered Successfully!", 1.5);
             form.resetFields();
@@ -290,11 +353,15 @@ export default function CreateAccount() {
         },
       })
         .then((res) => {
-          const permData = ["admin"];
+          const permData = [
+            "admin",
+            "birth_records/viewer",
+            "application_tracking/central",
+          ];
           form.setFieldsValue({
-            fullname: res.data.rows[0].fullname,
-            username: res.data.rows[0].username,
-            roles: res.data.rows[0].roles,
+            fullname: res.data.fullname,
+            username: res.data.username,
+            roles: res.data.roles,
             permissions: permData,
           });
           onChange(permData);

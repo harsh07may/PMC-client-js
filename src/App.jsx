@@ -388,22 +388,12 @@ function App() {
             }
           >
             //* FALLBACK ROUTE
-            <Route index element={<Navigate to="test" />} />
-            <Route path="*" element={<Navigate to="test" />} />
-            <Route
-              path="test"
-              element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  {/* <AuditLogs /> */}
-                  <p>test</p>
-                </Suspense>
-              }
-            />
+            <Route index element={<Navigate to="inbox" />} />
+            <Route path="*" element={<Navigate to="inbox" />} />
             <Route
               path="inbox"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  {/* <ManageAccounts /> */}
                   <ApplicationInbox />
                 </Suspense>
               }
@@ -412,8 +402,6 @@ function App() {
               path="file/new"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  {/* <ManageAccounts /> */}
-                  {/* <p>new file (global inward)</p> */}
                   <NewApplication />
                 </Suspense>
               }
@@ -422,8 +410,6 @@ function App() {
               path="file/tracking"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  {/* <ManageAccounts /> */}
-                  {/* <p>file tracking</p> */}
                   <TrackApplication />
                 </Suspense>
               }
