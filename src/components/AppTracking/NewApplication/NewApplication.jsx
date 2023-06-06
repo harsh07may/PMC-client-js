@@ -123,7 +123,7 @@ const NewApplication = () => {
                   //   disabled={fileList.length === 0}
                   loading={uploading}
                 >
-                  {uploading ? "Creating" : "Submit"}
+                  {uploading ? "Creating" : "Create"}
                 </Button>
               </Form.Item>
             </Row>

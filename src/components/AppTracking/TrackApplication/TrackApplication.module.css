@@ -1,0 +1,47 @@
+:root {
+  --input-blue-placeholder: #3b82f6;
+}
+
+.formInputStyles::placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-moz-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-ms-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-webkit-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+
+.formInputStyles {
+  border-radius: 0.25rem;
+  border-width: 2px;
+  border-color: black;
+}
+
+.formSelectStyles :global .ant-select-selector {
+  border-radius: 0.25rem !important;
+  border-width: 2px !important;
+  border-color: black !important;
+}
+
+.formSelectStyles :global .ant-select-selector:hover {
+  border-color: #3b82f6 !important;
+}
+
+/* .formSelectStyles {
+  :first-child {
+    border-radius: 0.25rem;
+    border-width: 20px;
+    border-color: black;
+  }
+} */
+
+.formSelectStyles::placeholder {
+  color: red;
+}
+.formSelectStyles :global .ant-select-selection-placeholder {
+  color: var(--input-blue-placeholder);
+}

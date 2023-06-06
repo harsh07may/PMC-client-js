@@ -7,7 +7,7 @@ import AccessHandler from "./utils/AccessHandler";
 import { DefaultDigitizationRoute } from "./utils/DefaultDigitizationRoute";
 import TestPage from "./pages/TestPage";
 import NewApplication from "./components/AppTracking/NewApplication/NewApplication";
-import TrackApplication from "./components/AppTracking/TrackApplication/TrackAppication";
+import TrackApplication from "./components/AppTracking/TrackApplication/TrackApplication";
 import ApplicationInbox from "./components/AppTracking/ApplicationInbox/ApplicationInbox";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
