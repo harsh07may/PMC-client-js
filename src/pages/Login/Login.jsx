@@ -44,7 +44,7 @@ export default function Login() {
           <div className="logo-container">
             <img className="login-logo" src={logo} alt="logo" />
             <h3 className="logo-items">PONDA MUNICIPAL COUNCIL</h3>
-            <h4 className="logo-items">DIGITIZATION APPLICATION</h4>
+            <h4 className="logo-items">E-OFFICE APPLICATION</h4>
           </div>
           <Form
             className="login-form"

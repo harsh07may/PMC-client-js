@@ -353,11 +353,33 @@ export default function CreateAccount() {
         },
       })
         .then((res) => {
-          const permData = [
-            "admin",
-            "birth_records/viewer",
-            "application_tracking/central",
-          ];
+          let permData = [];
+          const permData2 = res.data.perms;
+          // const permData2 = {
+          //   admin: true,
+          //   municipality_property_records: "editor",
+          //   birth_records: "editor",
+          //   death_records: "editor",
+          //   construction_license_records: "editor",
+          //   house_tax_records: "editor",
+          //   trade_license_records: "editor",
+          //   application_tracking: "deny",
+          // };
+          if (permData2.admin === true) {
+            permData.push("admin");
+            if (permData2.application_tracking != "deny") {
+              permData.push(
+                `application_tracking/${permData2.application_tracking}`
+              );
+            }
+          } else {
+            Object.keys(permData2).forEach((key) => {
+              if (key != "deny") {
+                permData.push(`${key}/${permData2[key]}`);
+                console.log(key, permData2[key]);
+              }
+            });
+          }
           form.setFieldsValue({
             fullname: res.data.fullname,
             username: res.data.username,
