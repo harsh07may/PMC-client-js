@@ -4,18 +4,21 @@ import qs from "qs";
 import {
   List,
   Table,
-  Tag,
-  Tooltip,
   Input,
   Typography,
   Tabs,
   Button,
   message,
+  Select,
   Form,
+  Badge,
+  Row,
+  Col,
+  Popconfirm,
 } from "antd";
 const { Title, Text } = Typography;
 const { TextArea } = Input;
-
+import jwt from "jwt-decode";
 import { useAuth } from "../../../utils/auth";
 
 import dayjs from "dayjs";
@@ -47,8 +50,8 @@ const ApplicationInbox = () => {
       key: "sentAt",
       align: "center",
       width: "15%",
-      render: (_, { sentAt }) => {
-        return dayjs(sentAt, "DD-MM-YYYY HH:mm:ss A").format(
+      render: (_, { transfer_time }) => {
+        return dayjs(transfer_time, "DD-MM-YYYY HH:mm:ss A").format(
           "MMM D, YYYY h:mm A"
         );
       },
@@ -59,13 +62,10 @@ const ApplicationInbox = () => {
       key: "sender",
       width: "15%",
       align: "center",
+      render: (value) => {
+        return value.trim().charAt(0).toUpperCase() + value.trim().slice(1);
+      },
     },
-    // {
-    //   title: "Receiver",
-    //   dataIndex: "receiver",
-    //   key: "receiver",
-    //   width: "15%",
-    // },
     {
       title: "Action",
       width: "15%",
@@ -129,10 +129,21 @@ const ApplicationInbox = () => {
     },
     {
       title: "Sender",
-      dataIndex: "sender",
+      dataIndex: "sent_by",
       key: "sender",
       width: "15%",
       align: "center",
+      render: (sent_by) => {
+        if (sent_by === "technical") {
+          return <p>Technical Section</p>;
+        } else if (sent_by === "administration") {
+          return <p>Administration Section</p>;
+        } else if (sent_by === "central") {
+          return <p>Central Inward</p>;
+        } else if (sent_by === "treasury") {
+          return <p>Treasury Section</p>;
+        }
+      },
     },
     {
       title: "Sent At",
@@ -146,12 +157,21 @@ const ApplicationInbox = () => {
         );
       },
     },
-    // {
-    //   title: "Receiver",
-    //   dataIndex: "receiver",
-    //   key: "receiver",
-    //   width: "15%",
-    // },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: "15%",
+      render: (status) => {
+        if (status === "unseen") {
+          return <Badge status="processing" text="Unseen" />;
+        } else if (status === "rejected") {
+          return <Badge status="error" text="Rejected" />;
+        } else {
+          return <Badge status="default" text="Holding" />;
+        }
+      },
+    },
     // {
     //   title: "Action",
     //   width: "15%",
@@ -187,6 +207,9 @@ const ApplicationInbox = () => {
     // },
   ];
 
+  //states for receiver list
+  const [receiverList, setReceiverList] = useState({});
+
   const [notes, setNotes] = useState("");
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   //? To make only 1 row expand at a time.
@@ -201,11 +224,10 @@ const ApplicationInbox = () => {
   const renderExpandedRow = (record) => {
     return (
       <Tabs
-        onChange={(activeKey) => console.log(activeKey)}
-        destroyInactiveTabPane={true}
+        // onChange={(activeKey) => console.log(activeKey)}
+        // destroyInactiveTabPane={true}
         centered={true}
-        defaultActiveKey="pending"
-        // type="card"
+        defaultActiveKey="Notes"
         size="small"
         items={[
           {
@@ -239,7 +261,7 @@ const ApplicationInbox = () => {
                     }}
                   >
                     <Button type="primary" htmlType="submit">
-                      Submit
+                      Save
                     </Button>
                   </Form.Item>
                 </Form>
@@ -249,8 +271,139 @@ const ApplicationInbox = () => {
           {
             label: `Transfer`,
             key: "transfer",
-            children: <p>B</p>,
+            children: (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <Row align="middle" justify="center">
+                  <Col xs={22} sm={10} md={10} lg={5}>
+                    <Form onFinish={(receiver) => console.log(receiver)}>
+                      <Form.Item
+                        // wrapperCol={{
+                        //   offset: 12,
+                        //   span: 4,
+                        // }}
+                        name="receiver"
+                        initialValue={
+                          record.sending_to ? record.sending_to : []
+                        }
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select a receiver!",
+                          },
+                        ]}
+                      >
+                        <Select
+                          disabled={record.status == "unseen" ? true : false}
+                          placeholder="Send To"
+                          style={{ width: "100%" }}
+                          // onChange={onChange}
+                          options={receiverList}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        style={{ marginTop: 10 }}
+                        wrapperCol={{
+                          xm: { span: 20, offset: 10 },
+                          sm: { span: 20, offset: 10 },
+                          md: { span: 16, offset: 10 },
+                        }}
+                      >
+                        {record.status == "unseen" ? (
+                          <Button
+                            type="primary"
+                            onClick={
+                              () => console.log(record) //TODOfunction to send req to recall file, needs to accept error response and send notification and reload
+                            }
+                          >
+                            Recall
+                          </Button>
+                        ) : (
+                          <Button type="primary" htmlType="submit">
+                            Send
+                          </Button>
+                        )}
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              </div>
+            ),
           },
+          jwt(auth.user.accesstoken).perms["application_tracking"] == "central"
+            ? {
+                label: `Outward`,
+                key: "outward",
+                children: (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Row align="middle" justify="center">
+                      <Popconfirm
+                        title="Mark as Outward"
+                        description="Are you sure you want to mark this application as outwarded?"
+                        onConfirm={
+                          () =>
+                            console.log(
+                              jwt(auth.user.accesstoken).perms[
+                                "application_tracking"
+                              ]
+                            ) //TODO function to send req to mark file as outwarded, needs to send notification and reload
+                        }
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button danger>Mark as Outwarded</Button>
+                      </Popconfirm>
+                    </Row>
+                  </div>
+                ),
+              }
+            : "",
+          jwt(auth.user.accesstoken).perms["application_tracking"] ==
+            "central" && record.sent_by === "none"
+            ? {
+                label: `Delete`,
+                key: "delete",
+                children: (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Row align="middle" justify="center">
+                      <Popconfirm
+                        title="Delete"
+                        description="Are you sure you want to delete this application?"
+                        onConfirm={
+                          () =>
+                            console.log(
+                              jwt(auth.user.accesstoken).perms[
+                                "application_tracking"
+                              ]
+                            ) //TODO function to send req to delete app, needs to send notification and reload
+                        }
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button danger>Delete</Button>
+                      </Popconfirm>
+                    </Row>
+                  </div>
+                ),
+              }
+            : "",
         ]}
       />
     );
@@ -284,7 +437,7 @@ const ApplicationInbox = () => {
     const values = { notes, ref_id: ref_id };
     await axios
       .post(
-        `${getEnv("VITE_API_STRING")}/api/v1/application/updateNotes`,
+        `${getEnv("VITE_API_STRING")}/api/v1/application/updateApplicationNote`,
         values,
         {
           headers: {
@@ -309,30 +462,34 @@ const ApplicationInbox = () => {
   };
   const changePendingStatus = async (record, newStatus) => {
     setLoading(true);
-    const values = { status: newStatus, trail_id: record.trail_id };
+    const values = {
+      status: newStatus,
+      trail_id: record.trail_id,
+      ref_id: record.ref_id,
+    };
     console.log(values);
 
-    await axios
-      .post(
-        `${getEnv("VITE_API_STRING")}/api/v1/application/updateStatus`,
-        values,
-        {
-          headers: {
-            Authorization: `Bearer ${auth.user.accesstoken}`,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.status == 200) {
-          message.success(`Successfully ${newStatus}`, 1.5);
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        message.error(`Application was not ${newStatus}`, 1.5);
-        setLoading(false);
-        console.log(error);
-      });
+    // await axios
+    //   .post(
+    //     `${getEnv("VITE_API_STRING")}/api/v1/application/updateStatus`,
+    //     values,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${auth.user.accesstoken}`,
+    //       },
+    //     }
+    //   )
+    //   .then((res) => {
+    //     if (res.status == 200) {
+    //       message.success(`Successfully ${newStatus}`, 1.5);
+    //       setLoading(false);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     message.error(`Application was not ${newStatus}`, 1.5);
+    //     setLoading(false);
+    //     console.log(error);
+    //   });
 
     fetchData("pending");
   };
@@ -341,126 +498,83 @@ const ApplicationInbox = () => {
 
     if (tab == "pending") {
       //* pending applications tab
-      const fakeData = [
-        {
-          trail_id: 1,
-          ref_id: "ABC/1234",
-          sentAt: "19-04-2023 06:32:55 PM",
-          sender: "Central Inward",
-          receiver: "Admin Section",
-          title: "Vaibhav doesn't work",
-        },
-        {
-          trail_id: 1,
-          ref_id: "ABC/1235",
-          sentAt: "19-04-2023 09:32:55 PM",
-          sender: "Central Inward",
-          receiver: "Admin Section",
-          title: "He only wants marks",
-        },
-      ];
-      setPendingData(fakeData);
-      setLoading(false);
-      setPendingTableParams({
-        ...pendingTableParams,
-        pagination: {
-          ...pendingTableParams.pagination,
-          total: 1,
-        },
-      });
 
-      // axios({
-      //   method: "get",
-      //   url: `${getEnv(
-      //     "VITE_API_STRING"
-      //   )}/api/v1/admin/get-digitization-audit?${qs.stringify(
-      //     getRandomUserParams(pendingTableParams)
-      //   )}`,
-      //   headers: {
-      //     Authorization: `Bearer ${auth.user.accesstoken}`,
-      //   },
-      // })
-      //   .then((res) => {
-      //     setPendingData(res.data.rows);
-      //     setLoading(false);
-      //     setPendingTableParams({
-      //       ...pendingTableParams,
-      //       pagination: {
-      //         ...pendingTableParams.pagination,
-      //         total: res.data.total,
-      //       },
-      //     });
-      //   })
-      //   .catch((err) => console.log(err));
+      axios({
+        method: "get",
+        url: `${getEnv("VITE_API_STRING")}/api/v1/application/getPending`,
+        // ?${qs.stringify(
+        //   getRandomUserParams(pendingTableParams)
+        // )}`,
+        headers: {
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
+      })
+        .then((res) => {
+          console.log("pending", [res.data]);
+          setPendingData(res.data);
+          setLoading(false);
+          setPendingTableParams({
+            ...pendingTableParams,
+            pagination: {
+              ...pendingTableParams.pagination,
+              total: 1,
+            },
+          });
+        })
+        .catch((err) => console.log(err));
     } else if (tab == "holding") {
       //* holding applications tab
-      let notes = {};
-      const fakeData = [
+      const ignore = jwt(auth.user.accesstoken).perms["application_tracking"];
+      const receivers = [
+        { value: "central", label: "Central Inward" },
+        { value: "treasury", label: "Treasury Section" },
+        { value: "technical", label: "Technical Section" },
         {
-          trail_id: 1,
-          ref_id: "ABC/1234",
-          createdAt: "19-04-2023 06:32:55 PM",
-          sender: "Central Inward",
-          receiver: "Admin Section",
-          title: "Vaibhav doesn't work",
-          notes: "u farted?",
-        },
-        {
-          trail_id: 2,
-          ref_id: "ABC/1235",
-          createdAt: "19-04-2023 09:32:55 PM",
-          sender: "Central Inward",
-          receiver: "Admin Section",
-          title: "He only wants marks",
-          notes: "it's not mine",
+          value: "administration",
+          label: "Administration Section",
         },
       ];
-      // setNotes(
-      //   fakeData.map((record) => {
-      //     return {
-      //       [record.ref_id]: "b",
-      //     };
-      //   })
-      // );
-      setHoldingData(fakeData);
-      setLoading(false);
-      setHoldingTableParams({
-        ...holdingTableParams,
-        pagination: {
-          ...holdingTableParams.pagination,
-          total: 1,
-        },
-      });
 
-      // axios({
-      //   method: "get",
-      //   url: `${getEnv(
-      //     "VITE_API_STRING"
-      //   )}/api/v1/admin/get-user-audit?${qs.stringify(
-      //     getRandomUserParams(holdingTableParams)
-      //   )}`,
-      //   headers: {
-      //     Authorization: `Bearer ${auth.user.accesstoken}`,
-      //   },
-      // })
-      //   .then((res) => {
-      //     setHoldingData(res.data.rows);
-      //     setLoading(false);
-      //     setHoldingTableParams({
-      //       ...holdingTableParams,
-      //       pagination: {
-      //         ...holdingTableParams.pagination,
-      //         total: res.data.total,
-      //       },
-      //     });
-      //   })
-      //   .catch((err) => console.log(err));
+      setReceiverList(
+        receivers.map((receiver) => {
+          return {
+            value: receiver.value,
+            label: receiver.label,
+            disabled: receiver.value === ignore,
+          };
+        })
+      );
+
+      axios({
+        method: "get",
+        url: `${getEnv("VITE_API_STRING")}/api/v1/application/getHoldingFiles`,
+        // ?${qs.stringify(
+        //   getRandomUserParams(pendingTableParams)
+        // )}`,
+        headers: {
+          Authorization: `Bearer ${auth.user.accesstoken}`,
+        },
+      })
+        .then((res) => {
+          console.log("holding", [res.data]);
+          setHoldingData(res.data);
+          setLoading(false);
+          setHoldingTableParams({
+            ...holdingTableParams,
+            pagination: {
+              ...holdingTableParams.pagination,
+              total: res.data.total,
+            },
+          });
+        })
+        .catch((err) => console.log(err));
     }
   };
 
   //* useEffect called when pagination, filters or sorter is changed
   useEffect(() => {
     fetchData("pending");
+    console.log("ran pending fetchdata");
   }, [JSON.stringify(pendingTableParams)]);
 
   useEffect(() => {
