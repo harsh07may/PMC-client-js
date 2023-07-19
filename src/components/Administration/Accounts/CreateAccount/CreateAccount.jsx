@@ -51,7 +51,7 @@ const tailFormItemLayout = {
 const permissionGroups = [
   {
     groupName: "ADMIN",
-    options: [{ value: "admin", label: "ADMIN" }],
+    options: [{ value: "admin/true", label: "ADMIN" }],
   },
   {
     groupName: "Municipality Property Records",
@@ -96,6 +96,13 @@ const permissionGroups = [
     ],
   },
   {
+    groupName: "Leave Management",
+    options: [
+      { value: "leave_management/editor", label: "LM Editor" },
+      { value: "leave_management/viewer", label: "LM Viewer" },
+    ],
+  },
+  {
     groupName: "Application Tracking",
     options: [
       { value: "application_tracking/central", label: "Central Inward" },
@@ -119,34 +126,17 @@ const formatPerms = (perms) => {
     construction_license_records: "deny",
     trade_license_records: "deny",
     application_tracking: "deny",
+    leave_management: "deny",
   };
 
-  if (perms.includes("admin")) {
-    const result2 = {
-      admin: true,
-      municipality_property_records: "editor",
-      birth_records: "editor",
-      death_records: "editor",
-      house_tax_records: "editor",
-      construction_license_records: "editor",
-      trade_license_records: "editor",
-      application_tracking: "deny",
-    };
-
-    perms.forEach((element) => {
-      if (element.split("/")[0] === "application_tracking") {
-        result2[element.split("/")[0]] = element.split("/")[1];
-      }
-    });
-
-    return result2;
-  }
-
   perms.forEach((element) => {
-    if (element !== "admin") {
-      result[element.split("/")[0]] = element.split("/")[1];
-    }
+    result[element.split("/")[0]] = element.split("/")[1];
   });
+
+  // if (perms.includes("admin/true")) {
+  //   console.log(perms.includes("admin"));
+  //   result["admin"] = true;
+  // }
 
   return result;
 };
@@ -192,69 +182,77 @@ export default function CreateAccount() {
         }
       });
 
-    const newAdminInwardData = (selected) =>
-      datas.map((data) => {
-        return {
-          groupName: data.groupName,
-          options: data.options.map((option) => {
-            let inwardValue = "never";
-            selected.forEach((element) => {
-              if (element.split("/")[0] === "application_tracking")
-                inwardValue = element;
-            });
-            //* 1. get the vale that from  tracking group
-            //* 2. not disabled (false) if is admin or is value
-            return {
-              value: option.value,
-              label: option.label,
-              disabled: !isIntersecting([option.value], ["admin", inwardValue]),
-            };
-          }),
-        };
-      });
+    //? Old requirements wete that the admin role should grant a user editor access to all digitization documents.
+    //? Later they told us it should not grant any inward permissions.
+    //? We decided to make the admin role independent since it will unnecessarily introduce complexity as more modules are added.
 
-    const newAdminData = () =>
-      datas.map((data) => {
-        return {
-          groupName: data.groupName,
-          options: data.options.map((each) => {
-            return {
-              value: each.value,
-              label: each.label,
-              disabled: !isIntersecting(
-                [each.value],
-                [
-                  "admin",
-                  "application_tracking/central",
-                  "application_tracking/treasury",
-                  "application_tracking/technical",
-                  "application_tracking/administration",
-                ]
-              ),
-            };
-          }),
-        };
-      });
+    //? leave the file tracking perms (inward perms) untouched if admin was selected/deselected when a file tracking perms was selected
+    // const newAdminInwardData = (selected) =>
+    //   datas.map((data) => {
+    //     return {
+    //       groupName: data.groupName,
+    //       options: data.options.map((option) => {
+    //         let inwardValue = "never";
+    //         selected.forEach((element) => {
+    //           if (element.split("/")[0] === "application_tracking")
+    //             inwardValue = element;
+    //         });
+    //         //* 1. get the value that from file tracking group
+    //         //* 2. not disabled (false) if is admin or is value
+    //         return {
+    //           value: option.value,
+    //           label: option.label,
+    //           disabled: !isIntersecting([option.value], ["admin", inwardValue]),
+    //         };
+    //       }),
+    //     };
+    //   });
+
+    //? disable/enable digitzation roles if admin is selected/deselected.
+    //? (this would disable all selected file tracking perms, so newAdminInwardData() was required)
+    // const newAdminData = () =>
+    //   datas.map((data) => {
+    //     return {
+    //       groupName: data.groupName,
+    //       options: data.options.map((each) => {
+    //         return {
+    //           value: each.value,
+    //           label: each.label,
+    //           disabled: !isIntersecting(
+    //             [each.value],
+    //             [
+    //               "admin",
+    //               "application_tracking/central",
+    //               "application_tracking/treasury",
+    //               "application_tracking/technical",
+    //               "application_tracking/administration",
+    //             ]
+    //           ),
+    //         };
+    //       }),
+    //     };
+    //   });
 
     if (option.length > 0) {
-      if (
-        isIntersecting(
-          [
-            "application_tracking/central",
-            "application_tracking/treasury",
-            "application_tracking/technical",
-            "application_tracking/administration",
-          ],
-          option
-        ) &&
-        isIntersecting(["admin"], option)
-      ) {
-        setDatas(newAdminInwardData(option));
-      } else if (isIntersecting(["admin"], option)) {
-        setDatas(newAdminData());
-      } else {
-        setDatas(newData());
-      }
+      // if (
+      //   isIntersecting(
+      //     [
+      //       "application_tracking/central",
+      //       "application_tracking/treasury",
+      //       "application_tracking/technical",
+      //       "application_tracking/administration",
+      //     ],
+      //     option
+      //   ) &&
+      //   isIntersecting(["admin"], option)
+      // ) {
+      //   setDatas(newAdminInwardData(option));
+      // } else if (isIntersecting(["admin"], option)) {
+      //   setDatas(newAdminData());
+      // } else {
+      //   setDatas(newData());
+      // }
+      setDatas(newData());
     } else {
       setDatas(permissionGroups);
     }
@@ -274,7 +272,6 @@ export default function CreateAccount() {
       </Tag>
     );
   }
-  //!
 
   const auth = useAuth();
   const [messageApi, contextHolder] = message.useMessage();
@@ -284,7 +281,6 @@ export default function CreateAccount() {
   const onFinish = (values) => {
     const perms = formatPerms(values.permissions);
     values = { ...values, perms: perms };
-
     if (state) {
       // For edit account
       axios
@@ -294,21 +290,24 @@ export default function CreateAccount() {
           },
         })
         .then((res) => {
-          if (res.status == 200) {
-            messageApi
-              .open({
-                type: "success",
-                content: "Account Modified Successfully!",
-                duration: 1.5,
-              })
-              .then(() =>
-                navigate("../accounts/ManageAccounts", { replace: true })
-              );
-          }
+          messageApi
+            .open({
+              type: "success",
+              content: "Account Modified Successfully!",
+              duration: 1.5,
+            })
+            .then(() =>
+              navigate("../accounts/ManageAccounts", { replace: true })
+            );
         })
         .catch((error) => {
           if (error.response.status == 400) {
             message.error("Username already registered!", 1.5);
+          }
+          if (error.response?.data.error.name == "AuthenticationError") {
+            message
+              .error("You need to reload the page and try again!", 2.5)
+              .then(() => window.location.reload(true));
           }
           console.log(error);
         });
@@ -321,17 +320,20 @@ export default function CreateAccount() {
           },
         })
         .then((res) => {
-          if (res.status == 201) {
-            message.success("Account Registered Successfully!", 1.5);
-            form.resetFields();
-            setSelectedItems([]);
-            setDatas(permissionGroups);
-          }
+          message.success("Account Registered Successfully!", 1.5);
+          form.resetFields();
+          setSelectedItems([]);
+          setDatas(permissionGroups);
         })
         .catch((error) => {
-          // if (error.response.status == 400) {
-          //   message.error("Username already registered!", 1.5);
-          // }
+          if (error.response.status == 400) {
+            message.error("Username already registered!", 1.5);
+          }
+          if (error.response?.data.error.name == "AuthenticationError") {
+            message
+              .error("You need to reload the page and try again!", 2.5)
+              .then(() => window.location.reload(true));
+          }
           console.log(error);
         });
     }
@@ -365,21 +367,18 @@ export default function CreateAccount() {
           //   trade_license_records: "editor",
           //   application_tracking: "deny",
           // };
-          if (permData2.admin === true) {
-            permData.push("admin");
-            if (permData2.application_tracking != "deny") {
-              permData.push(
-                `application_tracking/${permData2.application_tracking}`
-              );
+
+          Object.keys(permData2).forEach((key) => {
+            if (
+              !isIntersecting(
+                [JSON.stringify(permData2[key])],
+                ['"deny"', "false"]
+              )
+            ) {
+              permData.push(`${key}/${permData2[key]}`);
             }
-          } else {
-            Object.keys(permData2).forEach((key) => {
-              if (key != "deny") {
-                permData.push(`${key}/${permData2[key]}`);
-                console.log(key, permData2[key]);
-              }
-            });
-          }
+          });
+
           form.setFieldsValue({
             fullname: res.data.fullname,
             username: res.data.username,
@@ -455,7 +454,7 @@ export default function CreateAccount() {
 
             <Form.Item
               name="password"
-              label="Password"
+              label={state ? "New Password" : "Password"}
               rules={[
                 {
                   required: true,
