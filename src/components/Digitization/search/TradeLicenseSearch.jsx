@@ -82,10 +82,8 @@ function TradeLicenseSearch() {
       key: "Timestamp",
       // 19-04-2023 01:00:17 PM
       // render: (_, record) => record.timestamp.split(" ")[0],
-      render: (_, record) => {
-        return dayjs(record.timestamp, "DD-MM-YYYY HH:mm:ss A").format(
-          "DD/MM/YYYY h:mm A"
-        );
+      render: (_, { timestamp }) => {
+        return dayjs(timestamp).format("hh:mm A, DD MMM YYYY ");
       },
     },
     {
