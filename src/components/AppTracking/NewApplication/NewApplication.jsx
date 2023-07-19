@@ -12,10 +12,10 @@ const NewApplication = () => {
   const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
+    // console.log(values);
     for (const key in values) {
       values[key] = values[key].trim();
     }
-
     setUploading(true);
 
     await axios
@@ -30,16 +30,21 @@ const NewApplication = () => {
         }
       )
       .then((res) => {
-        if (res.status == 200) {
-          message.success("Application Created Successfully", 1.5);
-          form.resetFields();
-          setUploading(false);
-        }
-      })
-      .catch((error) => {
-        message.error("Failed to create new application", 1.5);
+        message.success("Application Created Successfully", 1.5);
+        form.resetFields();
         setUploading(false);
-        console.log(error);
+      })
+      .catch((err) => {
+        setUploading(false);
+        console.log(err);
+        if (err.response.data?.name == "BadRequestError") {
+          message.error(`${err.response.data?.message}`, 3.5);
+        }
+        if (err.response.data.error?.name == "AuthenticationError") {
+          message
+            .error("You need to reload the page and try again!", 3.5)
+            .then(() => window.location.reload(true));
+        }
       });
   };
 
@@ -54,7 +59,7 @@ const NewApplication = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            onFinishFailed={() => console.log("failed")}
+            // onFinishFailed={() => console.log("failed")}
             form={form}
           >
             <Row gutter={24}>
@@ -72,9 +77,9 @@ const NewApplication = () => {
                         "Reference number should be at least 1 characters long!",
                     },
                     {
-                      pattern: new RegExp(/^$|^\S+/),
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
                       message:
-                        "Reference number should not start with a whitespace character!",
+                        "Reference number should not start/end with a whitespace character!",
                     },
                   ]}
                 >
@@ -87,6 +92,60 @@ const NewApplication = () => {
                 </Form.Item>
               </Col>
             </Row>
+            <Row gutter={24}>
+              <Col xs={24} md={24}>
+                <Form.Item
+                  name="inward_no"
+                  initialValue={""}
+                  rules={[
+                    {
+                      pattern: new RegExp(/^.{1,50}$/),
+                      message:
+                        "Inward number should be at least 1 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Inward number should not start/end with a whitespace character!",
+                    },
+                  ]}
+                >
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Inward No. (Not Mandatory)"
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              name="applicant"
+              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter an applicant!",
+                },
+                {
+                  pattern: new RegExp(/^.{5,250}$/),
+                  message: "Applicant should be at least 5 characters long!",
+                },
+                {
+                  pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                  message:
+                    "Applicant should not start/end with a whitespace character!",
+                },
+              ]}
+            >
+              <Input
+                autoComplete="off"
+                status=""
+                size="large"
+                placeholder="Applicant"
+                className={formInputStyles}
+              />
+            </Form.Item>
             <Form.Item
               name="title"
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
@@ -96,13 +155,13 @@ const NewApplication = () => {
                   message: "Please enter a title!",
                 },
                 {
-                  pattern: new RegExp(/^.{5,100}$/),
+                  pattern: new RegExp(/^.{5,250}$/),
                   message: "Title should be at least 5 characters long!",
                 },
                 {
-                  pattern: new RegExp(/^$|^\S+/),
+                  pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
                   message:
-                    "Title should not start with a whitespace character!",
+                    "Title should not start/end with a whitespace character!",
                 },
               ]}
             >
@@ -110,7 +169,7 @@ const NewApplication = () => {
                 autoComplete="off"
                 status=""
                 size="large"
-                placeholder="Title"
+                placeholder="Subject"
                 className={formInputStyles}
               />
             </Form.Item>
