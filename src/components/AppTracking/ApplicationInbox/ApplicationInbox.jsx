@@ -29,6 +29,18 @@ import styles from "./ApplicationInbox.module.css";
 import { getEnv } from "../../../utils/getEnv";
 
 const ApplicationInbox = () => {
+  const [form] = Form.useForm();
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    }
+  }
   const pendingColumns = [
     {
       title: "Reference No.",
@@ -51,9 +63,7 @@ const ApplicationInbox = () => {
       align: "center",
       width: "15%",
       render: (_, { transfer_time }) => {
-        return dayjs(transfer_time, "DD-MM-YYYY HH:mm:ss A").format(
-          "MMM D, YYYY h:mm A"
-        );
+        return dayjs(transfer_time).format("hh:mm A, DD MMM YYYY ");
       },
     },
     {
@@ -79,7 +89,6 @@ const ApplicationInbox = () => {
             onClick={() => {
               // handleclick(record.recordid);
               changePendingStatus(record, "accepted");
-              console.log("clicked accept");
             }}
           >
             Accept
@@ -91,7 +100,6 @@ const ApplicationInbox = () => {
             onClick={() => {
               // handleclick(record.recordid);
               changePendingStatus(record, "rejected");
-              console.log("clicked reject");
             }}
           >
             Reject
@@ -117,14 +125,12 @@ const ApplicationInbox = () => {
     },
     {
       title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "created_at",
+      key: "created_at",
       align: "center",
       width: "15%",
-      render: (_, { createdAt }) => {
-        return dayjs(createdAt, "DD-MM-YYYY HH:mm:ss A").format(
-          "MMM D, YYYY h:mm A"
-        );
+      render: (_, { created_at }) => {
+        return dayjs(created_at).format("hh:mm A, DD MMM YYYY ");
       },
     },
     {
@@ -147,14 +153,12 @@ const ApplicationInbox = () => {
     },
     {
       title: "Sent At",
-      dataIndex: "sentAt",
+      dataIndex: "sent_at",
       key: "sentAt",
       align: "center",
       width: "15%",
-      render: (_, { createdAt }) => {
-        return dayjs(createdAt, "DD-MM-YYYY HH:mm:ss A").format(
-          "MMM D, YYYY h:mm A"
-        );
+      render: (_, { sent_at }) => {
+        return dayjs(sent_at).format("hh:mm A, DD MMM YYYY ");
       },
     },
     {
@@ -172,45 +176,12 @@ const ApplicationInbox = () => {
         }
       },
     },
-    // {
-    //   title: "Action",
-    //   width: "15%",
-    //   key: "filelink",
-    //   render: (_, record) => (
-    //     <span>
-    //       <Button
-    //         size="small"
-    //         style={{ marginRight: 8 }}
-    //         type="primary"
-    //         onClick={() => {
-    //           // handleclick(record.recordid);
-    //           changePendingStatus(record, "accepted");
-    //           console.log("clicked accept");
-    //         }}
-    //       >
-    //         Accept
-    //       </Button>
-    //       <Button
-    //         type="primary"
-    //         danger
-    //         size="small"
-    //         onClick={() => {
-    //           // handleclick(record.recordid);
-    //           changePendingStatus(record, "rejected");
-    //           console.log("clicked reject");
-    //         }}
-    //       >
-    //         Reject
-    //       </Button>
-    //     </span>
-    //   ),
-    // },
   ];
 
   //states for receiver list
   const [receiverList, setReceiverList] = useState({});
 
-  const [notes, setNotes] = useState("");
+  // const [notes, setNotes] = useState("");
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   //? To make only 1 row expand at a time.
   const onTableRowExpand = (expanded, record) => {
@@ -220,6 +191,58 @@ const ApplicationInbox = () => {
     }
 
     setExpandedRowKeys(keys);
+  };
+  const [expandedPendingRowKeys, setExpandedPendingRowKeys] = useState([]);
+  //? To make only 1 row expand at a time.
+  const onPendingTableRowExpand = (expanded, record) => {
+    const keys = [];
+    if (expanded) {
+      keys.push(record.ref_id); // I have set my record.id as row key. Check the documentation for more details.
+    }
+
+    setExpandedPendingRowKeys(keys);
+  };
+  const renderPendingExpandedRow = (record) => {
+    return (
+      <Tabs
+        // onChange={(activeKey) => console.log(activeKey)}
+        // destroyInactiveTabPane={true}
+        centered={true}
+        style={{ border: "2px solid #4096ff", padding: 10, borderRadius: 6 }}
+        defaultActiveKey="Trail"
+        size="small"
+        items={[
+          {
+            label: `Notes`,
+            key: "Notes",
+            children: (
+              <TextArea
+                // disabled={true}
+                value={record.notes}
+                // onChange={(e) => console.log(e.target.value)}
+                // placeholder="Controlled autosize"
+                autoSize={{
+                  minRows: 5,
+                  maxRows: 5,
+                }}
+              />
+            ),
+          },
+        ]}
+      />
+    );
+  };
+  const handleOutwardFormSubmit = async (record) => {
+    try {
+      console.log("in outward");
+      console.log(record, form.getFieldValue("outwardNo"));
+      await form.validateFields();
+      // Perform the form submission logic here
+      OutwardApplication(record, form.getFieldValue("outwardNo"));
+    } catch (error) {
+      // Handle form validation errors
+      // console.error("Form validation failed:", error);
+    }
   };
   const renderExpandedRow = (record) => {
     return (
@@ -249,7 +272,7 @@ const ApplicationInbox = () => {
                       // onChange={(e) => console.log(e.target.value)}
                       // placeholder="Controlled autosize"
                       autoSize={{
-                        minRows: 3,
+                        minRows: 5,
                         maxRows: 5,
                       }}
                     />
@@ -281,7 +304,11 @@ const ApplicationInbox = () => {
               >
                 <Row align="middle" justify="center">
                   <Col xs={22} sm={10} md={10} lg={5}>
-                    <Form onFinish={(receiver) => console.log(receiver)}>
+                    <Form
+                      onFinish={(receiver) =>
+                        transferApplication(record, receiver)
+                      }
+                    >
                       <Form.Item
                         // wrapperCol={{
                         //   offset: 12,
@@ -318,7 +345,8 @@ const ApplicationInbox = () => {
                           <Button
                             type="primary"
                             onClick={
-                              () => console.log(record) //TODOfunction to send req to recall file, needs to accept error response and send notification and reload
+                              () => RecallApplication(record)
+                              //TODOfunction to send req to recall file, needs to accept error response and send notification and reload
                             }
                           >
                             Recall
@@ -348,23 +376,75 @@ const ApplicationInbox = () => {
                     }}
                   >
                     <Row align="middle" justify="center">
+                      <Col xs={22} sm={10} md={10} lg={5}>
+                        <Form
+                          form={form}
+                          // onFinish={(receiver) => console.log(record, receiver)}
+                        >
+                          <Form.Item
+                            // wrapperCol={{
+                            //   offset: 12,
+                            //   span: 4,
+                            // }}
+                            name="outwardNo"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter an applicant!",
+                              },
+                              {
+                                pattern: new RegExp(/^.{5,250}$/),
+                                message:
+                                  "Applicant should be at least 5 characters long!",
+                              },
+                              {
+                                pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                                message:
+                                  "Applicant should not start/end with a whitespace character!",
+                              },
+                            ]}
+                          >
+                            <Input
+                              autoComplete="off"
+                              status=""
+                              // size="large"
+                              placeholder="Outward Number"
+                              className={styles}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            wrapperCol={{ span: 24 }}
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Popconfirm
+                              placement="bottom"
+                              title="Mark as Outward"
+                              description="Are you sure you want to mark this application as outwarded?"
+                              onConfirm={() => handleOutwardFormSubmit(record)}
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <Button type="primary">Mark as Outwarded</Button>
+                              {/* <Button danger>Mark as Outwarded</Button> */}
+                            </Popconfirm>
+                          </Form.Item>
+                        </Form>
+                      </Col>
+                    </Row>
+                    {/* <Row align="middle" justify="center">
                       <Popconfirm
                         title="Mark as Outward"
                         description="Are you sure you want to mark this application as outwarded?"
-                        onConfirm={
-                          () =>
-                            console.log(
-                              jwt(auth.user.accesstoken).perms[
-                                "application_tracking"
-                              ]
-                            ) //TODO function to send req to mark file as outwarded, needs to send notification and reload
-                        }
+                        onConfirm={() => OutwardApplication(record)}
                         okText="Yes"
                         cancelText="No"
                       >
                         <Button danger>Mark as Outwarded</Button>
                       </Popconfirm>
-                    </Row>
+                    </Row> */}
                   </div>
                 ),
               }
@@ -387,12 +467,8 @@ const ApplicationInbox = () => {
                         title="Delete"
                         description="Are you sure you want to delete this application?"
                         onConfirm={
-                          () =>
-                            console.log(
-                              jwt(auth.user.accesstoken).perms[
-                                "application_tracking"
-                              ]
-                            ) //TODO function to send req to delete app, needs to send notification and reload
+                          () => DeleteApplication(record)
+                          //TODO function to send req to delete app, needs to send notification and reload
                         }
                         okText="Yes"
                         cancelText="No"
@@ -433,8 +509,71 @@ const ApplicationInbox = () => {
     },
   });
 
+  const transferApplication = async ({ ref_id }, { receiver }) => {
+    const values = { receiver, ref_id };
+    console.log(values);
+    await axios
+      .post(
+        `${getEnv("VITE_API_STRING")}/api/v1/application/transferApplication`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        message.success(`Successfully send Transfer Request`, 1.5);
+        setLoading(false);
+      })
+      .catch((err) => {
+        // message.error(`Failed to send transfer Request`, 1.5);
+        setLoading(false);
+        console.log(err);
+        if (err.response.data.error?.name == "AuthenticationError") {
+          message
+            .error("You need to reload the page and try again!", 3.5)
+            .then(() => window.location.reload(true));
+        } else if (err.response.data.error?.name == "BadRequestError") {
+          message.error(`${err.response.data.error?.message}`, 3.5);
+        } else if (err.response.data.error?.name == "AccessDeniedError") {
+          message.error(`${err.response.data.error?.message}`, 3.5);
+        }
+      });
+
+    fetchData("holding");
+  };
+
+  const RecallApplication = async ({ trail_id }) => {
+    const values = { trail_id, status: "recall" };
+    console.log(values);
+    await axios
+      .post(
+        `${getEnv("VITE_API_STRING")}/api/v1/application/updateStatus`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          message.success(`Successfully Recalled`, 1.5);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        message.error(`Failed to Recall`, 1.5);
+        setLoading(false);
+        console.log(error);
+      });
+
+    fetchData("holding");
+  };
+
   const UpdateNotes = async ({ notes }, ref_id) => {
-    const values = { notes, ref_id: ref_id };
+    const values = { notes, ref_id };
     await axios
       .post(
         `${getEnv("VITE_API_STRING")}/api/v1/application/updateApplicationNote`,
@@ -460,6 +599,66 @@ const ApplicationInbox = () => {
     //? inefficient call to make
     // fetchData("holding");
   };
+
+  const DeleteApplication = async ({ ref_id }) => {
+    const values = { ref_id };
+    await axios
+      .post(
+        `${getEnv("VITE_API_STRING")}/api/v1/application/deleteApplication`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          message.success(`Successfully deleted Application`, 1.5);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        checkError(err);
+        console.log(error);
+        // message.error(`Failed to delete Application`, 1.5);
+        setLoading(false);
+        // console.log(error);
+      });
+
+    fetchData("holding");
+  };
+
+  const OutwardApplication = async ({ ref_id }, outward_no) => {
+    const values = { ref_id, outward_no };
+    console.log(values);
+    await axios
+      .post(
+        `${getEnv("VITE_API_STRING")}/api/v1/application/outwardApplication`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          message.success(`Successfully outwarded Application`, 1.5);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        checkError(err);
+        // console.log(error);
+        // message.error(`Failed to outward Application`, 1.5);
+        setLoading(false);
+        console.log(error);
+      });
+
+    fetchData("holding");
+  };
+
   const changePendingStatus = async (record, newStatus) => {
     setLoading(true);
     const values = {
@@ -467,29 +666,39 @@ const ApplicationInbox = () => {
       trail_id: record.trail_id,
       ref_id: record.ref_id,
     };
-    console.log(values);
 
-    // await axios
-    //   .post(
-    //     `${getEnv("VITE_API_STRING")}/api/v1/application/updateStatus`,
-    //     values,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${auth.user.accesstoken}`,
-    //       },
-    //     }
-    //   )
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       message.success(`Successfully ${newStatus}`, 1.5);
-    //       setLoading(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     message.error(`Application was not ${newStatus}`, 1.5);
-    //     setLoading(false);
-    //     console.log(error);
-    //   });
+    await axios
+      .post(
+        `${getEnv("VITE_API_STRING")}/api/v1/application/updateStatus`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.status == 200) {
+          message.success(`Successfully ${newStatus}`, 1.5);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        checkError(err);
+        // if (err.response.data.error?.name == "AuthenticationError") {
+        //   message
+        //     .error("You need to reload the page and try again!", 3.5)
+        //     .then(() => window.location.reload(true));
+        // } else if (err.response.data.error?.name == "BadRequestError") {
+        //   message.error(`${err.response.data.error?.message}`, 3.5);
+        // } else if (err.response.data.error?.name == "AccessDeniedError") {
+        //   message.error(`${err.response.data.error?.message}`, 3.5);
+        // }
+        // message.error(`Application was not ${newStatus}`, 1.5);
+      });
 
     fetchData("pending");
   };
@@ -521,7 +730,7 @@ const ApplicationInbox = () => {
             },
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => checkError(err));
     } else if (tab == "holding") {
       //* holding applications tab
       const ignore = jwt(auth.user.accesstoken).perms["application_tracking"];
@@ -567,7 +776,20 @@ const ApplicationInbox = () => {
             },
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          checkError(err);
+          // if (err.response.status == 404) {
+          //   // call message
+          //   message.error("No Applications found", 2.5);
+          //   setLoading(false);
+          // }
+          // if (err.response.data.error?.name == "AuthenticationError") {
+          //   message
+          //     .error("You need to reload the page and try again!", 3.5)
+          //     .then(() => window.location.reload(true));
+          // }
+        });
     }
   };
 
@@ -646,7 +868,14 @@ const ApplicationInbox = () => {
                   pagination={pendingTableParams.pagination}
                   loading={loading}
                   onChange={handlePendingTableChange}
-                ></Table>
+                  expandable={{
+                    expandRowByClick: true,
+                    expandedRowRender: renderPendingExpandedRow,
+                    expandedRowKeys: expandedPendingRowKeys,
+                    onExpand: onPendingTableRowExpand,
+                    // rowExpandable: (record) => record.hasChildren == true,
+                  }}
+                />
               ),
             },
             {
@@ -667,7 +896,7 @@ const ApplicationInbox = () => {
                     // rowExpandable: (record) => record.hasChildren == true,
                   }}
                   onChange={handleHoldingTableChange}
-                ></Table>
+                />
               ),
             },
           ]}
