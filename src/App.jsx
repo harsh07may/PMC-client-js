@@ -70,6 +70,10 @@ const CreateAccount = React.lazy(() =>
 const ManageAccounts = React.lazy(() =>
   import("./components/Administration/Accounts/ManageAccounts/ManageAccounts")
 );
+const LeaveCalendar = React.lazy(() =>
+  import("./components/LeaveManagement/Calendar/LeaveCalendar")
+);
+
 const NotFound = () => {
   return <h1>Page Not found</h1>;
 };
@@ -80,14 +84,14 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="*" element={<NotFound />} />
-          <Route
+          {/* <Route
             path="/test"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <TestPage />
               </Suspense>
             }
-          />
+          /> */}
           <Route
             path="/"
             element={
@@ -299,7 +303,7 @@ function App() {
             path="/administration/*"
             element={
               <RequireAuth>
-                <AccessHandler resource={["admin"]} accessLevel={"admin"}>
+                <AccessHandler resource={["admin"]} accessLevel={true}>
                   <Suspense fallback={<LoadingSpinner />}>
                     <AdministrationNavbar />
                   </Suspense>
@@ -345,45 +349,50 @@ function App() {
           </Route>
           //* LEAVE MANAGEMENT ROUTES
           <Route
-            path="/leavemanagement/*"
+            path="/leaveManagement/*"
             element={
               <RequireAuth>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <LeaveManagementNavbar />
-                </Suspense>
+                <AccessHandler
+                  resource={["leave_management"]}
+                  accessLevel={"viewer"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <LeaveManagementNavbar />
+                  </Suspense>
+                </AccessHandler>
               </RequireAuth>
             }
           >
             //* FALLBACK ROUTE
-            <Route index element={<Navigate to="test" />} />
-            <Route path="*" element={<Navigate to="test" />} />
+            <Route index element={<Navigate to="LeaveCalender" />} />
+            <Route path="*" element={<Navigate to="LeaveCalender" />} />
             <Route
-              path="test"
+              path="LeaveCalender"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  {/* <AuditLogs /> */}
-                  <p>test</p>
-                </Suspense>
-              }
-            />
-            <Route
-              path="dashboard"
-              element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  {/* <ManageAccounts /> */}
-                  <p>dashboard</p>
+                  <LeaveCalendar />
                 </Suspense>
               }
             />
           </Route>
           //* APP TRACKING ROUTES
           <Route
-            path="/apptracking/*"
+            path="/appTracking/*"
             element={
               <RequireAuth>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <FileTrackingNavbar></FileTrackingNavbar>
-                </Suspense>
+                <AccessHandler
+                  resource={["application_tracking"]}
+                  accessLevel={[
+                    "technical",
+                    "central",
+                    "treasury",
+                    "administration",
+                  ]}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <FileTrackingNavbar />
+                  </Suspense>
+                </AccessHandler>
               </RequireAuth>
             }
           >
@@ -401,9 +410,14 @@ function App() {
             <Route
               path="file/new"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <NewApplication />
-                </Suspense>
+                <AccessHandler
+                  resource={["application_tracking"]}
+                  accessLevel={"central"}
+                >
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <NewApplication />
+                  </Suspense>
+                </AccessHandler>
               }
             />
             <Route

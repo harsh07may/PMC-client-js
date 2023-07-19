@@ -57,6 +57,14 @@
   transition: all 0.5s ease;
 }
 
+.logoutButton:hover {
+  transform: translate3D(0px, 1px, 0) scale(1.03); /* move up slightly and zoom in */
+  /* box-shadow: 8px 28px 50px rgba(39, 44, 49, 0.07),
+    1px 6px 12px rgba(39, 44, 49, 0.04); */
+  transition: all 0.4s ease; /* zoom in */
+  /* cursor: pointer;  */
+}
+
 .gallery .expandCard:hover {
   transform: translate3D(0, -1px, 0) scale(1.03); /* move up slightly and zoom in */
   box-shadow: 8px 28px 50px rgba(39, 44, 49, 0.07),

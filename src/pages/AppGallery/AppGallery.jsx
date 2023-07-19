@@ -14,7 +14,7 @@ import userLogo from "../../assets/user.svg";
 import compassLogo from "../../assets/compass.svg";
 import calenderLogo from "../../assets/calender.svg";
 import { checkPermission } from "../../utils/fns";
-import jwtDecode from "jwt-decode";
+import jwt from "jwt-decode";
 
 export default function AppGallery() {
   const allDocTypes = [
@@ -37,9 +37,15 @@ export default function AppGallery() {
         <Button
           onClick={handleLogout}
           type="primary"
-          danger
+          // danger
           icon={<PoweroffOutlined />}
-          style={{ position: "absolute", right: 10, top: 10 }}
+          className={styles.logoutButton}
+          style={{
+            position: "absolute",
+            backgroundColor: "#FF2400",
+            right: 10,
+            top: 10,
+          }}
         >
           Logout
         </Button>
@@ -50,7 +56,7 @@ export default function AppGallery() {
         <div className={styles.gallery}>
           <Row className={styles.antRow} gutter={[50, 50]} justify={"center"}>
             {checkPermission(
-              jwtDecode(auth.user.accesstoken).perms,
+              jwt(auth.user.accesstoken).perms,
               allDocTypes,
               "viewer"
             ) && (
@@ -68,34 +74,46 @@ export default function AppGallery() {
                 </Card>
               </Col>
             )}
-            <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
-              <Card
-                className={styles.expandCard}
-                onClick={() => navigate("/leavemanagement")}
-                hoverable
-                cover={<img src={calenderLogo} className={styles.cardLogo} />}
-              >
-                <Meta
-                  title="Leave Management"
-                  description="Manage your leaves"
-                />
-              </Card>
-            </Col>
-            <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
-              <Card
-                className={styles.expandCard}
-                onClick={() => navigate("/apptracking")}
-                hoverable
-                cover={<img src={compassLogo} className={styles.cardLogo} />}
-              >
-                <Meta
-                  title="File Tracking"
-                  description="Track your files in-office"
-                />
-              </Card>
-            </Col>
             {checkPermission(
-              jwtDecode(auth.user.accesstoken).perms,
+              jwt(auth.user.accesstoken).perms,
+              ["leave_management"],
+              "viewer"
+            ) && (
+              <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
+                <Card
+                  className={styles.expandCard}
+                  onClick={() => navigate("/leaveManagement")}
+                  hoverable
+                  cover={<img src={calenderLogo} className={styles.cardLogo} />}
+                >
+                  <Meta
+                    title="Leave Management"
+                    description="Manage your leaves"
+                  />
+                </Card>
+              </Col>
+            )}
+            {checkPermission(
+              jwt(auth.user.accesstoken).perms,
+              ["application_tracking"],
+              ["technical", "central", "treasury", "administration"]
+            ) && (
+              <Col xs={24} lg={{ span: 12, order: 4 }} xl={{ span: 6 }}>
+                <Card
+                  className={styles.expandCard}
+                  onClick={() => navigate("/appTracking")}
+                  hoverable
+                  cover={<img src={compassLogo} className={styles.cardLogo} />}
+                >
+                  <Meta
+                    title="File Tracking"
+                    description="Track your files in-office"
+                  />
+                </Card>
+              </Col>
+            )}
+            {checkPermission(
+              jwt(auth.user.accesstoken).perms,
               ["admin"],
               true
             ) && (

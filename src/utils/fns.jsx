@@ -10,11 +10,17 @@ function isIntersecting(arrA, arrB) {
 }
 
 function checkPermission(perms, resource, accessLevel) {
+  console.log(perms);
   for (let i = 0; i < resource.length; i++) {
     // console.log(perms[resource[i]], resource[i], accessLevel);
-    if (perms["admin"] === true || perms[resource[i]] === accessLevel) {
+    if (perms[resource[i]] === accessLevel) {
       return true;
     } else if (perms[resource[i]] === "editor" && accessLevel === "viewer") {
+      return true;
+    } else if (
+      Array.isArray(accessLevel) &&
+      accessLevel.includes(perms[resource[i]])
+    ) {
       return true;
     }
   }
@@ -41,16 +47,56 @@ function getDefaultDigitizationRoute(perms) {
     trade_license_records: "search/TradeLicenseRecord",
   };
 
-  if (perms["admin"] === true) {
-    return <Navigate to="search/MunicipalPropertyRecord" />;
-  }
-  for (const key in perms) {
-    if (key === "admin") continue;
-
+  for (const key in routes) {
     if (perms[key] !== "deny") {
       return <Navigate to={routes[key]} />;
     }
   }
 }
 
-export { isIntersecting, checkPermission, getDefaultDigitizationRoute };
+function getRandomElement(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function getColorForString(inputString) {
+  const stringLength = inputString.length;
+  const hexColors = [
+    "#FF0000",
+    "#00FF00",
+    "#0000FF",
+    "#FFA500",
+    "#800080",
+    "#FFC0CB",
+    "#00FFFF",
+    "#FFD700",
+    "#7FFF00",
+    "#008080",
+    "#8B008B",
+    "#00FF7F",
+    "#FF4500",
+    "#9932CC",
+    "#FF69B4",
+    "#40E0D0",
+    "#FF8C00",
+    "#8A2BE2",
+    "#FF00FF",
+  ];
+
+  const colorIndex = stringLength % hexColors.length;
+  return hexColors[colorIndex];
+}
+
+function capitalizeEveryWord(str) {
+  return str.replace(/\b\w/g, function (match) {
+    return match.toUpperCase();
+  });
+}
+
+export {
+  capitalizeEveryWord,
+  isIntersecting,
+  checkPermission,
+  getDefaultDigitizationRoute,
+  getRandomElement,
+  getColorForString,
+};
