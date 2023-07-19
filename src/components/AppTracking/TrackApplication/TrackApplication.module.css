@@ -45,3 +45,8 @@
 .formSelectStyles :global .ant-select-selection-placeholder {
   color: var(--input-blue-placeholder);
 }
+
+/* :global .ant-table-expanded-row-level-1 {
+  /* background-color: #3b82f6; */
+/* border: 5px solid #87b0f1; */
+/* } */

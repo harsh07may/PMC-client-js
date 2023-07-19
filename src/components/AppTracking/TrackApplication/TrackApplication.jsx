@@ -1,21 +1,55 @@
 import React, { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import axios from "axios";
 import dayjs from "dayjs";
+import qs from "qs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { SearchOutlined } from "@ant-design/icons";
 import style from "./TrackApplication.module.css";
-import { Table, Form, Input, Row, Col, Button, message, Select } from "antd";
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  ExclamationCircleOutlined,
+  MinusCircleOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
+import {
+  Table,
+  Form,
+  Input,
+  Row,
+  Tabs,
+  Col,
+  Button,
+  message,
+  Select,
+  Badge,
+  Tag,
+} from "antd";
+const { TextArea } = Input;
 import { useAuth } from "../../../utils/auth";
-import fileDownload from "js-file-download";
 import { useNavigate } from "react-router-dom";
 import { getEnv } from "../../../utils/getEnv";
+import { capitalizeEveryWord } from "../../../utils/fns";
 
 const { Option, OptGroup } = Select;
 const TrackApplication = () => {
+  const [form] = Form.useForm();
   const auth = useAuth();
   const navigate = useNavigate();
 
+  //? To make only 1 row expand at a time.
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const onTableRowExpand = (expanded, record) => {
+    const keys = [];
+    if (expanded) {
+      keys.push(record.ref_id); // I have set my record.id as row key. Check the documentation for more details.
+    }
+
+    setExpandedRowKeys(keys);
+  };
   // const handleclick = (recordid) => {
   //   axios({
   //     method: "get",
@@ -39,221 +73,380 @@ const TrackApplication = () => {
   // };
 
   const sections = [
-    { label: "All", value: "all" },
+    { label: "All", value: "" },
     { label: "Treasury", value: "treasury" },
     { label: "Technical", value: "technical" },
     { label: "Administration", value: "administration" },
-    { label: "Central Inward", value: "central_inward" },
+    { label: "Central Inward", value: "central" },
   ];
 
   const columns = [
     {
       title: "Reference No.",
-      dataIndex: "refno",
+      dataIndex: "ref_id",
       key: "refno",
       align: "center",
-      width: "20%",
+      width: "10%",
     },
     {
-      title: "Title",
+      title: "Inward No.",
+      dataIndex: "inward_no",
+      key: "inwardno",
+      align: "center",
+      width: "10%",
+    },
+    {
+      title: "Outward No.",
+      dataIndex: "outward_no",
+      key: "outwardno",
+      align: "center",
+      width: "10%",
+    },
+    {
+      title: "Applicant Name",
+      dataIndex: "applicant_name",
+      key: "applicant_name",
+      align: "center",
+      width: "30%",
+    },
+    {
+      title: "Subject",
       dataIndex: "title",
       key: "title",
       align: "center",
-      width: "40%",
+      width: "30%",
     },
     {
       title: "Created At",
-      dataIndex: "createdAt",
+      dataIndex: "created_at",
       key: "createdAt",
       align: "center",
       width: "20%",
-      // 19-04-2023 01:00:17 PM
-      // render: (_, record) => record.timestamp.split(" ")[0],
-      render: (_, record) => {
-        return dayjs(record.timestamp, "DD-MM-YYYY HH:mm:ss A").format(
-          "DD/MM/YYYY h:mm A"
-        );
+      render: (_, { created_at }) => {
+        return dayjs(created_at).format("hh:mm A, DD MMM YYYY ");
       },
     },
-    {
-      title: "Holder",
-      dataIndex: "holder",
-      key: "holder",
-      width: "20%",
-      align: "center",
-    },
+    //? removed to add space for applicant name column
     // {
-    //   title: "Sender",
-    //   dataIndex: "sender",
-    //   key: "sender",
-    //   width: "15%",
+    //   title: "Holder",
+    //   dataIndex: "holder",
+    //   key: "holder",
+    //   width: "20%",
+    //   align: "center",
+    //   render: (_, { holder }) => {
+    //     return capitalizeEveryWord(holder);
+    //   },
     // },
     // {
-    //   title: "Receiver",
-    //   dataIndex: "receiver",
-    //   key: "receiver",
+    //   title: "Status",
+    //   dataIndex: "outwarded",
+    //   key: "outwarded",
+    //   align: "center",
     //   width: "15%",
-    // },
-    // {
-    //   title: "Action",
-    //   width: "15%",
-    //   key: "filelink",
-    //   render: (_, record) =>
-    //     record.hasChildren ? (
-    //       <></>
-    //     ) : (
-    //       <Button
-    //         size="small"
-    //         onClick={() => {
-    //           handleclick(record.recordid);
-    //         }}
-    //       >
-    //         Download
-    //       </Button>
-    //     ),
+    //   filters: [
+    //     { text: "Outwarded", value: true },
+    //     { text: "Processing", value: false },
+    //   ],
+    //   filterMode: "tree",
+    //   // onFilter: (value, record) => record.outwarded === value,
+    //   render: (outwarded) => {
+    //     if (outwarded === true) {
+    //       return <Badge status="success" text="Outwarded" />;
+    //     } else {
+    //       return <Badge status="processing" text="Processing" />;
+    //     }
+    //   },
     // },
   ];
 
-  const expandedColumns = [
+  const expandedRowColumns = [
     {
-      title: "Timestamp",
-      dataIndex: "timestamp",
-      key: "Timestamp",
-      // 19-04-2023 01:00:17 PM
-      // render: (_, record) => record.timestamp.split(" ")[0],
-      render: (_, record) => {
-        return dayjs(record.timestamp, "DD-MM-YYYY HH:mm:ss A").format(
-          "DD/MM/YYYY h:mm A"
-        );
+      title: "Transfer",
+      dataIndex: "transfer_no",
+      key: "transfer_no",
+      width: "15%",
+      align: "center",
+      sorter: (a, b) => a.transfer_no - b.transfer_no,
+      sortDirections: ["ascend", "descend"],
+      defaultSortOrder: "ascend",
+    },
+    {
+      title: "Transfer Time",
+      dataIndex: "transfer_time",
+      key: "transfer_time",
+      align: "center",
+      width: "30%",
+      render: (_, { transfer_time }) => {
+        return dayjs(transfer_time).format("hh:mm A, DD MMM YYYY ");
       },
     },
     {
       title: "Sender",
       dataIndex: "sender",
       key: "sender",
-      width: "15%",
+      align: "center",
+      width: "20%",
+      render: (_, { sender }) => {
+        return capitalizeEveryWord(sender);
+      },
     },
     {
       title: "Receiver",
       dataIndex: "receiver",
       key: "receiver",
-      width: "15%",
+      align: "center",
+      width: "20%",
+      render: (_, { receiver }) => {
+        return capitalizeEveryWord(receiver);
+      },
     },
-    // {
-    //   title: "Action",
-    //   dataIndex: "operation2",
-    //   key: "operation2",
-    //   render: (_, record) => (
-    //     <Button
-    //       size="small"
-    //       onClick={() => {
-    //         handleclick(record.recordid);
-    //       }}
-    //     >
-    //       Download
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      width: "15%",
+      filters: [
+        { text: "Unseen", value: "unseen" },
+        { text: "Accepted", value: "accepted" },
+        { text: "Rejected", value: "rejected" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (status, record) => {
+        if (status === "unseen") {
+          return (
+            <Tag icon={<ClockCircleOutlined />} color="default">
+              unseen
+            </Tag>
+          );
+        } else if (status === "rejected") {
+          return (
+            <Tag icon={<CloseCircleOutlined />} color="error">
+              rejected
+            </Tag>
+          );
+        } else {
+          return (
+            <Tag icon={<CheckCircleOutlined />} color="success">
+              accepted
+            </Tag>
+          );
+        }
+      },
+    },
   ];
 
   const renderExpandedRow = (record) => {
     return (
-      <Table
-        className="expandedRow"
-        columns={expandedColumns}
-        rowKey={(record) => record.recordid}
-        dataSource={record.kids}
-        pagination={false}
+      <Tabs
+        // onChange={(activeKey) => console.log(activeKey)}
+        // destroyInactiveTabPane={true}
+        centered={true}
+        style={{ border: "2px solid #4096ff", padding: 10, borderRadius: 6 }}
+        defaultActiveKey="Trail"
+        size="small"
+        items={[
+          {
+            label: `Trail`,
+            key: "Trail",
+            children: (
+              <Table
+                className="expandedRow"
+                columns={expandedRowColumns}
+                rowKey={(record) => record.trail_id}
+                dataSource={record.trail}
+                pagination={false}
+              />
+            ),
+          },
+          {
+            label: `Notes`,
+            key: "Notes",
+            children: (
+              <TextArea
+                // disabled={true}
+                value={record.notes}
+                // onChange={(e) => console.log(e.target.value)}
+                // placeholder="Controlled autosize"
+                autoSize={{
+                  minRows: 5,
+                  maxRows: 5,
+                }}
+              />
+            ),
+          },
+        ]}
       />
     );
   };
 
   //States
   const [searching, setSearching] = useState(false);
-  const [data, setData] = useState(null);
   const [tableData, setTableData] = useState([]);
 
-  //* Make a UE call after data state updates to format the data for the Table.
+  //API Calls
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      current: 1,
+      showSizeChanger: false,
+    },
+  });
+  //? used to activate the useeffect. tableparams changes when total result count changes
+  //? causing unnecessary recalls
+  const [fake_tableParams, setFake_TableParams] = useState({
+    pagination: {
+      current: 1,
+      showSizeChanger: false,
+    },
+  });
+
   useEffect(() => {
-    if (data !== null) {
-      handleDataChange();
-    }
-  }, [data]);
+    fetchData();
+  }, [JSON.stringify(fake_tableParams)]);
 
-  //functions
-  const handleDataChange = async () => {
-    const hashFn = (e) => {
-      return e["licenseno"] + e["surveyno"] + e["location"] + e["title"];
+  const handleTableChange = (pagination, filters, sorter) => {
+    // console.log(filters, sorter);
+    setTableParams({
+      pagination,
+      filters,
+      ...sorter,
+    });
+    setFake_TableParams({
+      pagination,
+      filters,
+      ...sorter,
+    });
+  };
+  const getQueryString = (pageParams, values, first_page) => {
+    return {
+      outwarded: pageParams.filters?.outwarded
+        ? ![0, 2].includes(pageParams.filters?.outwarded?.length)
+          ? pageParams.filters?.outwarded[0]
+          : ""
+        : "",
+      page: first_page ? 1 : pageParams.pagination?.current,
+      refNo: values.refNo ?? "",
+      inwardNo: values.inwardNo ?? "",
+      outwardNo: values.outwardNo ?? "",
+      applicantName: values.applicantName ?? "",
+      title: values.title ?? "",
+      holder: values.holder ?? "",
+      sender: values.sender ?? "",
+      receiver: values.receiver ?? "",
     };
-
-    const groupArray = (arr, groupFn) => {
-      const groups = {};
-
-      for (const ele of arr) {
-        const hash = groupFn(ele);
-
-        if (!groups[hash]) {
-          groups[hash] = [];
-        }
-
-        groups[hash].push(ele);
-      }
-      return groups;
-    };
-
-    const organizeArray = (obj) => {
-      const outputArr = [];
-
-      for (const ele in obj) {
-        if (obj[ele].length == 1) {
-          const temp = obj[ele][0];
-          temp.hasChildren = false;
-          outputArr.push(temp);
-        } else {
-          const tempObj = {};
-
-          tempObj.licenseno = obj[ele][0]["licenseno"];
-          tempObj.surveyno = obj[ele][0]["surveyno"];
-          tempObj.title = obj[ele][0]["title"];
-          tempObj.location = obj[ele][0]["location"];
-          tempObj.hasChildren = true;
-          tempObj.kids = obj[ele];
-          tempObj.recordid =
-            obj[ele][0]["licenseno"] +
-            obj[ele][0]["surveyno"] +
-            obj[ele][0]["title"] +
-            obj[ele][0]["location"] +
-            "a";
-
-          outputArr.push(tempObj);
-        }
-      }
-      return outputArr;
-    };
-    const unsorted = groupArray(data, hashFn);
-    const fixedData = organizeArray(unsorted);
-    setTableData(fixedData);
   };
 
-  //API Calls
+  const fetchData = async () => {
+    setSearching(true);
+    // console.log(getQueryString(tableParams, form.getFieldsValue(true), false));
+    await axios
+      .get(
+        `${getEnv(
+          "VITE_API_STRING"
+        )}/api/v1/application/searchApplication?${qs.stringify(
+          getQueryString(tableParams, form.getFieldsValue(true), false)
+        )}`,
+        // ref_id=${values.refNo}&title=${
+        //   values.title
+        // }&holder=${values.holder}&sender=${values.sender}&receiver=${
+        //   values.receiver
+        // }&outwarded=`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res.data);
+        setTableData(res.data.data);
+        setSearching(false);
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: res.data.total,
+          },
+        });
+      })
+      .catch((err) => {
+        setSearching(false);
+        setTableData([]);
+        if (err.response.data.error?.name == "AuthenticationError") {
+          // message.error("Please reload the page", 3.5);
+          // navigate(0, { replace: true });
+          message
+            .error("You need to reload the page and try again!", 3.5)
+            .then(() => window.location.reload(true));
+        } else {
+          message.error("No applications found", 2);
+        }
+      });
+  };
   const onFinish = async (values) => {
-    // values = { ...values, type: "construction_license" };
+    // for (const key in values) {
+    //   if (typeof values[key] === "undefined" || values[key].length == 0) {
+    //     values[key] = "";
+    //   }
+    // }
+    // ? set page number to 1
+    setSearching(true);
+    // console.log(getQueryString(tableParams, form.getFieldsValue(true)), true);
+    await axios
+      .get(
+        `${getEnv(
+          "VITE_API_STRING"
+        )}/api/v1/application/searchApplication?${qs.stringify(
+          getQueryString(tableParams, form.getFieldsValue(true), true)
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        setTableData(res.data.data);
+        setSearching(false);
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            current: 1,
+            total: res.data.total,
+          },
+        });
+      })
+      .catch((err) => {
+        setSearching(false);
+        setTableData([]);
+        if (err.response.data.error?.name == "AuthenticationError") {
+          // message.error("Please reload the page", 3.5);
+          // navigate(0, { replace: true });
+          message
+            .error("You need to reload the page and try again!", 3.5)
+            .then(() => window.location.reload(true));
+        } else {
+          message.error("No applications found", 2);
+        }
+      });
 
-    for (const key in values) {
-      if (typeof values[key] === "undefined") {
-        values[key] = "";
-      }
-    }
-
+    // fetchData();
+    // console.log(getQueryString(tableParams, form.getFieldsValue(true)));
     // setSearching(true);
 
     // await axios
     //   .get(
-    //     `${getEnv("VITE_API_STRING")}/api/v1/apptracking/track?type=${
-    //       values.type
-    //     }&surveyNo=${values.surveyNo}&title=${values.title}&licenseNo=${
-    //       values.licenseNo
-    //     }&location=${values.location}`,
+    //     `${getEnv(
+    //       "VITE_API_STRING"
+    //     )}/api/v1/application/searchApplication?${qs.stringify(
+    //       getQueryString(tableParams, form.getFieldsValue(true))
+    //     )}`,
+    //     // ref_id=${values.refNo}&title=${
+    //     //   values.title
+    //     // }&holder=${values.holder}&sender=${values.sender}&receiver=${
+    //     //   values.receiver
+    //     // }&outwarded=`,
     //     {
     //       headers: {
     //         Authorization: `Bearer ${auth.user.accesstoken}`,
@@ -261,18 +454,29 @@ const TrackApplication = () => {
     //     }
     //   )
     //   .then((res) => {
-    //     setData(res.data);
+    //     console.log(res.data);
+    //     setTableData(res.data.data);
     //     setSearching(false);
+    //     setTableParams({
+    //       ...tableParams,
+    //       pagination: {
+    //         ...tableParams.pagination,
+    //         total: res.data.total,
+    //       },
+    //     });
     //   })
-    //   .catch((axiosError) => {
+    //   .catch((err) => {
     //     setData(null);
     //     setSearching(false);
 
-    //     if (axiosError.response.data.error?.name == "AuthenticationError") {
+    //     if (err.response.data.error?.name == "AuthenticationError") {
     //       // message.error("Please reload the page", 3.5);
-    //       navigate(0, { replace: true });
+    //       // navigate(0, { replace: true });
+    //       message
+    //         .error("You need to reload the page and try again!", 3.5)
+    //         .then(() => window.location.reload(true));
     //     } else {
-    //       message.error("Application not found", 2);
+    //       message.error("No applications found", 2);
     //     }
     //   });
   };
@@ -288,6 +492,7 @@ const TrackApplication = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
+            form={form}
           >
             <Row gutter={24}>
               <Col xs={24} md={12}>
@@ -304,7 +509,7 @@ const TrackApplication = () => {
                 <Form.Item
                   style={{ borderColor: "red" }}
                   name="holder"
-                  initialValue={[]}
+                  // initialValue={[]}
                 >
                   <Select
                     size="large"
@@ -312,10 +517,10 @@ const TrackApplication = () => {
                     // value={selectedItems}
                     // tagRender={tagRender}
                     // style={{ width: "100%", borderColor: "red" }}
-                    placeholder="Holder"
+                    placeholder="Holding Department"
                     // onChange={onChange}
                   >
-                    <OptGroup label={"Holder"} key={"holder"}>
+                    <OptGroup label={"Holding Department"} key={"holder"}>
                       {sections.map((option) => (
                         <Option value={option.value} key={option.value}>
                           {option.label}
@@ -331,7 +536,7 @@ const TrackApplication = () => {
                 <Form.Item
                   style={{ borderColor: "red" }}
                   name="sender"
-                  initialValue={[]}
+                  // initialValue={[]}
                 >
                   <Select
                     size="large"
@@ -339,10 +544,10 @@ const TrackApplication = () => {
                     // value={selectedItems}
                     // tagRender={tagRender}
                     // style={{ width: "100%", borderColor: "red" }}
-                    placeholder="Sender"
+                    placeholder="Sending Department"
                     // onChange={onChange}
                   >
-                    <OptGroup label={"Sender"} key={"sender"}>
+                    <OptGroup label={"Sending Department"} key={"sender"}>
                       {sections.map((option) => (
                         <Option value={option.value} key={option.value}>
                           {option.label}
@@ -356,7 +561,7 @@ const TrackApplication = () => {
                 <Form.Item
                   style={{ borderColor: "red" }}
                   name="receiver"
-                  initialValue={[]}
+                  // initialValue={[]}
                 >
                   <Select
                     size="large"
@@ -364,10 +569,10 @@ const TrackApplication = () => {
                     // value={selectedItems}
                     // tagRender={tagRender}
                     // style={{ width: "100%", borderColor: "red" }}
-                    placeholder="Receiver"
+                    placeholder="Receiving Department"
                     // onChange={onChange}
                   >
-                    <OptGroup label={"Receiver"} key={"receiver"}>
+                    <OptGroup label={"Receiving Department"} key={"receiver"}>
                       {sections.map((option) => (
                         <Option value={option.value} key={option.value}>
                           {option.label}
@@ -378,6 +583,40 @@ const TrackApplication = () => {
                 </Form.Item>
               </Col>
             </Row>
+            <Row gutter={24}>
+              <Col xs={24} md={12}>
+                <Form.Item name="inwardNo">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Inward No."
+                    className={style.formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item name="outwardNo">
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="Outward No."
+                    className={style.formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              name="applicantName"
+              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+            >
+              <Input
+                autoComplete="off"
+                status=""
+                size="large"
+                placeholder="Applicant Name"
+                className={style.formInputStyles}
+              />
+            </Form.Item>
             <Form.Item
               name="title"
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
@@ -413,11 +652,15 @@ const TrackApplication = () => {
       <Table
         loading={searching}
         columns={columns}
-        rowKey={(record) => record.recordid}
+        rowKey={(record) => record.ref_id}
+        pagination={tableParams.pagination}
+        onChange={handleTableChange}
         expandable={{
           expandRowByClick: true,
           expandedRowRender: renderExpandedRow,
-          rowExpandable: (record) => record.hasChildren == true,
+          rowExpandable: (record) => record.trail,
+          expandedRowKeys: expandedRowKeys,
+          onExpand: onTableRowExpand,
         }}
         dataSource={tableData}
       />
