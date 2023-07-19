@@ -86,3 +86,27 @@
     display: none;
   }
 }
+
+/*  */
+:root {
+  --input-blue-placeholder: #3b82f6;
+}
+
+.formInputStyles::placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-moz-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-ms-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-webkit-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+
+.formInputStyles {
+  border-radius: 0.25rem;
+  border-width: 2px;
+  border-color: black;
+}

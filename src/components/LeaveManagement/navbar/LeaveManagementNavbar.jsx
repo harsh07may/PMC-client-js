@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
-import { Button, Drawer, Menu } from "antd";
+import { Button, Drawer, Menu, DatePicker } from "antd";
+const { RangePicker } = DatePicker;
 import { MenuOutlined } from "@ant-design/icons";
+import { formInputStyles } from "./Navbar.module.css";
+import { getEnv } from "../../../utils/getEnv";
 // import { LogoutOutlined } from "@ant-design/icons";
 
 import NavbarStyles from "./Navbar.module.css";
 
 import Logo from "../../../assets/logo.png";
 import Logout from "../../../assets/logout.svg";
-
-import CustomDropdown from "../../CustomDropdown/CustomDropdown";
 
 const Navbar = () => {
   const auth = useAuth();
@@ -43,147 +44,7 @@ const Navbar = () => {
     setOpen(false);
   };
 
-  const searchItems = [
-    {
-      key: "1",
-      label: (
-        <NavLink
-          to="/digitization/search/MunicipalPropertyRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Municipal Properties
-        </NavLink>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <NavLink
-          to="/digitization/search/ConstructionLicenseRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Construction Licenses
-        </NavLink>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <NavLink
-          to="/digitization/search/HouseTaxRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          House Tax Records
-        </NavLink>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <NavLink
-          to="/digitization/search/BirthRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Birth Records
-        </NavLink>
-      ),
-    },
-  ];
-
-  const addItems = [
-    {
-      key: "a1",
-      label: (
-        <NavLink
-          to="/digitization/add/MunicipalPropertyRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Municipal Properties
-        </NavLink>
-      ),
-    },
-    {
-      key: "a2",
-      label: (
-        <NavLink
-          to="/digitization/add/ConstructionLicenseRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Construction Licenses
-        </NavLink>
-      ),
-    },
-    {
-      key: "a3",
-      label: (
-        <NavLink
-          to="/digitization/add/HouseTaxRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          House Tax Records
-        </NavLink>
-      ),
-    },
-    {
-      key: "a4",
-      label: (
-        <NavLink
-          to="/digitization/add/BirthRecord"
-          onClick={onSmallMenuClick}
-          reloadDocument
-          end
-        >
-          Birth Records
-        </NavLink>
-      ),
-    },
-  ];
-
-  const miniEditorItems = [
-    {
-      // type: "group", //? comment this to convert to dropdown
-      label: "Search",
-      children: searchItems,
-    },
-    { type: "divider" },
-    {
-      // type: "group",
-      label: "Add",
-      children: addItems,
-    },
-    {
-      key: "logout",
-      label: (
-        <p
-          onClick={handleLogout}
-          className={NavbarStyles.smallLogout}
-          danger="true"
-        >
-          Logout
-        </p>
-      ),
-    },
-  ];
-  const miniViewerItems = [
-    {
-      // type: "group", //? comment this to convert to dropdown
-      label: "Search",
-      children: searchItems,
-    },
+  const miniNavItems = [
     {
       key: "logout",
       label: (
@@ -231,13 +92,7 @@ const Navbar = () => {
               theme="light"
               mode="inline"
               defaultSelectedKeys={["4"]}
-              items={
-                auth.user.role == "admin"
-                  ? miniEditorItems
-                  : auth.user.role == "editor"
-                  ? miniEditorItems
-                  : miniViewerItems
-              }
+              items={miniNavItems}
             />
           </Drawer>
         </>
@@ -257,13 +112,13 @@ const Navbar = () => {
         </div>
 
         <div className={NavbarStyles.navLinkParent}>
-          <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-            Dashboard
-          </p>
-
-          <p style={{ navLinkStyles }} className={NavbarStyles.navLink}>
-            Calendar
-          </p>
+          {/* <p
+            style={{ navLinkStyles }}
+            className={NavbarStyles.navLink}
+            onClick={showModal}
+          >
+            Add Leave
+          </p> */}
 
           <img
             src={Logout}

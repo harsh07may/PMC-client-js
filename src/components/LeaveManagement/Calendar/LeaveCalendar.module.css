@@ -1,0 +1,55 @@
+.events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.events .antBadgeStatus {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.notesMonth {
+  font-size: 28px;
+  text-align: center;
+}
+.notesMonth section {
+  font-size: 28px;
+}
+
+:global .check .ant-picker-calendar-mode-switch {
+  display: none;
+}
+
+/* form */
+:root {
+  --input-blue-placeholder: #3b82f6;
+}
+
+:global input[placeholder="End date"]::placeholder {
+  color: var(--input-blue-placeholder) !important;
+}
+
+:global input[placeholder="Start date"]::placeholder {
+  color: var(--input-blue-placeholder) !important;
+}
+
+.formInputStyles::placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-moz-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-ms-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+.formInputStyles::-webkit-input-placeholder {
+  color: var(--input-blue-placeholder);
+}
+
+.formInputStyles {
+  border-radius: 0.25rem;
+  border-width: 2px;
+  border-color: black;
+}
