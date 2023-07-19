@@ -3,6 +3,8 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
 import { Button, Drawer, Menu } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+import jwtDecode from "jwt-decode";
+import { checkPermission } from "../../../utils/fns";
 // import { LogoutOutlined } from "@ant-design/icons";
 
 import NavbarStyles from "./Navbar.module.css";
@@ -43,10 +45,12 @@ const Navbar = () => {
     setOpen(false);
   };
 
-  const searchItems = [];
-  const addItems = [];
   const fileItems = [
-    {
+    checkPermission(
+      jwtDecode(auth.user.accesstoken).perms,
+      ["application_tracking"],
+      "central"
+    ) && {
       key: "1",
       label: (
         <NavLink
@@ -72,7 +76,7 @@ const Navbar = () => {
         </NavLink>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const inboxItems = [
     {
@@ -103,32 +107,7 @@ const Navbar = () => {
     },
   ];
 
-  const miniEditorItems = [
-    {
-      // type: "group", //? comment this to convert to dropdown
-      label: "File",
-      children: fileItems,
-    },
-    { type: "divider" },
-    {
-      // type: "group",
-      label: "Inbox",
-      children: inboxItems,
-    },
-    {
-      key: "logout",
-      label: (
-        <p
-          onClick={handleLogout}
-          className={NavbarStyles.smallLogout}
-          danger="true"
-        >
-          Logout
-        </p>
-      ),
-    },
-  ];
-  const miniViewerItems = [
+  const miniItems = [
     {
       // type: "group", //? comment this to convert to dropdown
       label: "File",
@@ -187,13 +166,7 @@ const Navbar = () => {
               theme="light"
               mode="inline"
               defaultSelectedKeys={["4"]}
-              items={
-                auth.user.role == "admin"
-                  ? miniEditorItems
-                  : auth.user.role == "editor"
-                  ? miniEditorItems
-                  : miniViewerItems
-              }
+              items={miniItems}
             />
           </Drawer>
         </>
