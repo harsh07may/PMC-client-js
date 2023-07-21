@@ -9,10 +9,19 @@ import {
   Form,
   Input,
   DatePicker,
+  Space,
   message,
 } from "antd";
+import {
+  LikeOutlined,
+  MessageOutlined,
+  StarOutlined,
+  UploadOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 const { RangePicker } = DatePicker;
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import jwt from "jwt-decode";
 import axios from "axios";
 import { getEnv } from "../../../utils/getEnv";
@@ -32,6 +41,18 @@ const LeaveCalendar = () => {
   const [leaveData, setLeaveData] = useState([]);
   const [callApi, setCallApi] = useState(0);
   const [panelDate, setPanelDate] = useState(dayjs());
+
+  function checkError(err) {
+    if (err?.response?.data?.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    }
+  }
 
   const getListData = (value) => {
     // console.log(value);
@@ -81,6 +102,7 @@ const LeaveCalendar = () => {
         setLeaveData(res.data);
       })
       .catch((error) => {
+        checkError(error);
         message.error("Failed to get Leave Records", 1.5);
         console.log(error);
       });
@@ -89,7 +111,6 @@ const LeaveCalendar = () => {
   useEffect(() => {
     // call the getLeaveData call
     getLeaveData(panelDate);
-    console.log(jwt(auth.user.accesstoken).perms);
   }, [callApi]);
 
   const dateCellRender = (value) => {
@@ -122,18 +143,46 @@ const LeaveCalendar = () => {
     getLeaveData(date);
   };
 
+  const IconText = ({ icon, text, callback, callbackParam, className }) => (
+    <Space onClick={() => callback(callbackParam)} className={className}>
+      {React.createElement(icon)}
+      {text}
+    </Space>
+    // <Button icon={<UploadOutlined />}>Click to Upload</Button>
+  );
+  const deleteLeave = async (record) => {
+    await axios
+      .delete(
+        `${getEnv("VITE_API_STRING")}/api/v1/leave/deleteLeave?id=${record.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accesstoken}`,
+          },
+        }
+      )
+      .then((res) => {
+        message.success("Successfully deleted Leave Record", 1.5);
+      })
+      .catch((error) => {
+        checkError(error);
+        message.error("Failed to delete Leave Record", 1.5);
+      });
+    setCallApi((value) => value + 1);
+    Modal.destroyAll();
+  };
+
   const onDateCellClick = (e, value, listData) => {
     // const items = listData.map((data, idx) => {
     //   console.log(data, idx);
     //   return data;
     // });
     const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
+    A dog is a type of domesticated animal.
+    Known for its loyalty and faithfulness,
+    it can be found as a welcome guest in many households across the world.
+    `;
 
-    Modal.info({
+    const modal = Modal.info({
       closable: true,
       centered: true,
       autoFocusButton: null,
@@ -141,10 +190,22 @@ const LeaveCalendar = () => {
       title: `${value.format("D MMMM, YYYY")}`,
       content: (
         <List
+          itemLayout="vertical"
           bordered
           dataSource={listData}
           renderItem={(item) => (
-            <List.Item>
+            <List.Item
+              actions={[
+                <IconText
+                  icon={DeleteOutlined}
+                  className={styles.iconText}
+                  text="Delete"
+                  key="delete-leave"
+                  callback={deleteLeave}
+                  callbackParam={item}
+                />,
+              ]}
+            >
               <List.Item.Meta
                 title={item.applicant_name}
                 description={
@@ -219,6 +280,7 @@ const LeaveCalendar = () => {
         // getLeaveData(dayjs());
       })
       .catch((error) => {
+        checkError(error);
         message.error("Failed to add Leave Record", 1.5);
         setConfirmLoading(false);
         console.log(error);
