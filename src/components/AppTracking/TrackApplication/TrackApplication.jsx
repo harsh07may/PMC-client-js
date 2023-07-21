@@ -11,9 +11,6 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
-  ExclamationCircleOutlined,
-  MinusCircleOutlined,
-  SyncOutlined,
 } from "@ant-design/icons";
 import {
   Table,
@@ -25,7 +22,6 @@ import {
   Button,
   message,
   Select,
-  Badge,
   Tag,
 } from "antd";
 const { TextArea } = Input;
@@ -89,6 +85,13 @@ const TrackApplication = () => {
       width: "10%",
     },
     {
+      title: "External Ref No.",
+      dataIndex: "ext_ref_id",
+      key: "ext_ref_id",
+      align: "center",
+      width: "10%",
+    },
+    {
       title: "Inward No.",
       dataIndex: "inward_no",
       key: "inwardno",
@@ -116,17 +119,17 @@ const TrackApplication = () => {
       align: "center",
       width: "30%",
     },
-    {
-      title: "Created At",
-      dataIndex: "created_at",
-      key: "createdAt",
-      align: "center",
-      width: "20%",
-      render: (_, { created_at }) => {
-        return dayjs(created_at).format("hh:mm A, DD MMM YYYY ");
-      },
-    },
     //? removed to add space for applicant name column
+    // {
+    //   title: "Created At",
+    //   dataIndex: "created_at",
+    //   key: "createdAt",
+    //   align: "center",
+    //   width: "20%",
+    //   render: (_, { created_at }) => {
+    //     return dayjs(created_at).format("hh:mm A, DD MMM YYYY ");
+    //   },
+    // },
     // {
     //   title: "Holder",
     //   dataIndex: "holder",
@@ -326,6 +329,7 @@ const TrackApplication = () => {
         : "",
       page: first_page ? 1 : pageParams.pagination?.current,
       refNo: values.refNo ?? "",
+      externalRefNo: values.externalRefNo ?? "",
       inwardNo: values.inwardNo ?? "",
       outwardNo: values.outwardNo ?? "",
       applicantName: values.applicantName ?? "",
@@ -606,6 +610,18 @@ const TrackApplication = () => {
               </Col>
             </Row>
             <Form.Item
+              name="externalRefNo"
+              wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+            >
+              <Input
+                autoComplete="off"
+                status=""
+                size="large"
+                placeholder="External Reference No."
+                className={style.formInputStyles}
+              />
+            </Form.Item>
+            <Form.Item
               name="applicantName"
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
             >
@@ -617,6 +633,7 @@ const TrackApplication = () => {
                 className={style.formInputStyles}
               />
             </Form.Item>
+
             <Form.Item
               name="title"
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}

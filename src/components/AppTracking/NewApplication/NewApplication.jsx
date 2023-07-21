@@ -95,6 +95,32 @@ const NewApplication = () => {
             <Row gutter={24}>
               <Col xs={24} md={24}>
                 <Form.Item
+                  name="external_ref_id"
+                  rules={[
+                    {
+                      pattern: new RegExp(/^.{1,50}$/),
+                      message:
+                        "External Reference number should be at least 1 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "External Reference number should not start/end with a whitespace character!",
+                    },
+                  ]}
+                >
+                  <Input
+                    autoComplete="off"
+                    size="large"
+                    placeholder="External Reference No."
+                    className={formInputStyles}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={24}>
+              <Col xs={24} md={24}>
+                <Form.Item
                   name="inward_no"
                   initialValue={""}
                   rules={[
