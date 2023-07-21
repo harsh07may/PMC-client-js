@@ -50,7 +50,7 @@ const ApplicationInbox = () => {
       width: "15%",
     },
     {
-      title: "Title",
+      title: "Subject",
       dataIndex: "title",
       key: "title",
       align: "center",
@@ -114,21 +114,28 @@ const ApplicationInbox = () => {
       dataIndex: "ref_id",
       key: "refno",
       // align: "center",
-      width: "15%",
+      width: "10%",
+    },
+    {
+      title: "Applicant",
+      dataIndex: "applicant_name",
+      key: "applicant_name",
+      align: "center",
+      width: "22%",
     },
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
       align: "center",
-      width: "30%",
+      width: "20%",
     },
     {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
       align: "center",
-      width: "15%",
+      width: "13%",
       render: (_, { created_at }) => {
         return dayjs(created_at).format("hh:mm A, DD MMM YYYY ");
       },
@@ -137,7 +144,7 @@ const ApplicationInbox = () => {
       title: "Sender",
       dataIndex: "sent_by",
       key: "sender",
-      width: "15%",
+      width: "13%",
       align: "center",
       render: (sent_by) => {
         if (sent_by === "technical") {
@@ -234,8 +241,8 @@ const ApplicationInbox = () => {
   };
   const handleOutwardFormSubmit = async (record) => {
     try {
-      console.log("in outward");
-      console.log(record, form.getFieldValue("outwardNo"));
+      // console.log("in outward");
+      // console.log(record, form.getFieldValue("outwardNo"));
       await form.validateFields();
       // Perform the form submission logic here
       OutwardApplication(record, form.getFieldValue("outwardNo"));
@@ -530,15 +537,7 @@ const ApplicationInbox = () => {
         // message.error(`Failed to send transfer Request`, 1.5);
         setLoading(false);
         console.log(err);
-        if (err.response.data.error?.name == "AuthenticationError") {
-          message
-            .error("You need to reload the page and try again!", 3.5)
-            .then(() => window.location.reload(true));
-        } else if (err.response.data.error?.name == "BadRequestError") {
-          message.error(`${err.response.data.error?.message}`, 3.5);
-        } else if (err.response.data.error?.name == "AccessDeniedError") {
-          message.error(`${err.response.data.error?.message}`, 3.5);
-        }
+        checkError(err);
       });
 
     fetchData("holding");
@@ -564,7 +563,8 @@ const ApplicationInbox = () => {
         }
       })
       .catch((error) => {
-        message.error(`Failed to Recall`, 1.5);
+        // message.error(`Failed to Recall`, 1.5);
+        checkError(error);
         setLoading(false);
         console.log(error);
       });
@@ -593,6 +593,7 @@ const ApplicationInbox = () => {
       .catch((error) => {
         message.error(`Failed to update Notes`, 1.5);
         setLoading(false);
+        checkError(error);
         console.log(error);
       });
 
@@ -629,9 +630,9 @@ const ApplicationInbox = () => {
     fetchData("holding");
   };
 
-  const OutwardApplication = async ({ ref_id }, outward_no) => {
-    const values = { ref_id, outward_no };
-    console.log(values);
+  const OutwardApplication = async ({ ref_id }, outwardNo) => {
+    const values = { ref_id, outwardNo };
+    // console.log(values);
     await axios
       .post(
         `${getEnv("VITE_API_STRING")}/api/v1/application/outwardApplication`,
@@ -678,14 +679,14 @@ const ApplicationInbox = () => {
         }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.status == 200) {
           message.success(`Successfully ${newStatus}`, 1.5);
           setLoading(false);
         }
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         setLoading(false);
         checkError(err);
         // if (err.response.data.error?.name == "AuthenticationError") {
@@ -796,7 +797,6 @@ const ApplicationInbox = () => {
   //* useEffect called when pagination, filters or sorter is changed
   useEffect(() => {
     fetchData("pending");
-    console.log("ran pending fetchdata");
   }, [JSON.stringify(pendingTableParams)]);
 
   useEffect(() => {
