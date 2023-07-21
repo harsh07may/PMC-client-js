@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import {
   Upload,
   Form,
@@ -10,9 +11,10 @@ import {
   message,
   DatePicker,
 } from "antd";
-import { useAuth } from "../../../utils/auth";
-import * as formInputStyles from "./styles/AddForm.module.css";
 import { UploadOutlined } from "@ant-design/icons";
+import { useAuth } from "../../../utils/auth";
+import { getIndexOfMonth } from "../../../utils/fns";
+import * as formInputStyles from "./styles/AddForm.module.css";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -21,6 +23,7 @@ dayjs.extend(customParseFormat);
 
 const BirthRecords = () => {
   const auth = useAuth();
+  let { state } = useLocation();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
 
@@ -29,6 +32,20 @@ const BirthRecords = () => {
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
+
+  useEffect(() => {
+    if (state) {
+      const month = state.month;
+      const year = state.year;
+
+      const formattedDate = dayjs().month(getIndexOfMonth(month)).year(year);
+
+      //* fill in the month and year
+      form.setFieldsValue({
+        month: formattedDate,
+      });
+    }
+  }, [state]);
 
   function onRemove() {
     setFileList([]);
@@ -53,6 +70,7 @@ const BirthRecords = () => {
   }
 
   const onFinish = async (values) => {
+    console.log(values);
     let Month = dayjs(values.month).format("MMM");
     let Year = dayjs(values.month).format("YYYY");
     let Title = values.title;

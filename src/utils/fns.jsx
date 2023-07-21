@@ -92,6 +92,27 @@ function capitalizeEveryWord(str) {
   });
 }
 
+function getIndexOfMonth(monthAbbreviation) {
+  const months = [
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec",
+  ];
+  const monthIndex = months.findIndex(
+    (month) => month === monthAbbreviation.toLowerCase()
+  );
+  return monthIndex;
+}
+
 export {
   capitalizeEveryWord,
   isIntersecting,
@@ -99,4 +120,5 @@ export {
   getDefaultDigitizationRoute,
   getRandomElement,
   getColorForString,
+  getIndexOfMonth,
 };

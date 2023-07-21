@@ -5,7 +5,8 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { SearchOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
-import { Table, Form, Input, Row, Col, Button, message } from "antd";
+import { Table, Form, Input, Row, Col, Button, message, Space } from "antd";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
 import { useNavigate } from "react-router-dom";
@@ -54,33 +55,67 @@ function BirthRecordsSearch() {
       dataIndex: "title",
       key: "title",
       align: "center",
+      width: "35%",
       render: (_, record) => (record.hasChildren ? <></> : `${record.title}`),
+    },
+    {
+      title: "Uploaded At",
+      dataIndex: "timestamp",
+      key: "Timestamp",
+      align: "center",
+      // 19-04-2023 01:00:17 PM
+      // render: (_, record) => record.timestamp.split(" ")[0],
+      render: (_, { timestamp }) => {
+        return dayjs(timestamp).format("hh:mm A, DD MMM YYYY ");
+      },
     },
     {
       title: "Action",
       key: "filelink",
       align: "center",
-      width: "40%",
       render: (_, record) =>
         record.hasChildren ? (
-          <></>
+          <>
+            <Space>
+              <Space>
+                <Link
+                  to="../add/BirthRecord"
+                  state={{ month: record.month, year: record.year }}
+                >
+                  <Button type="primary" size="small">
+                    Duplicate
+                  </Button>
+                </Link>
+              </Space>
+            </Space>
+          </>
         ) : (
-          <Button
-            size="small"
-            onClick={() => {
-              // console.log("download " + record.recordid);
-              handleclick(record.recordid);
-            }}
-          >
-            Download
-          </Button>
+          <Space>
+            <Link
+              to="../add/BirthRecord"
+              state={{ month: record.month, year: record.year }}
+            >
+              <Button type="primary" size="small">
+                Duplicate
+              </Button>
+            </Link>
+            <Button
+              size="small"
+              onClick={() => {
+                // console.log("download " + record.recordid);
+                handleclick(record.recordid);
+              }}
+            >
+              Download
+            </Button>
+          </Space>
         ),
     },
   ];
 
   const expandedColumns = [
     {
-      title: "Timestamp",
+      title: "Uploaded At",
       dataIndex: "timestamp",
       key: "Timestamp",
       align: "center",
