@@ -10,7 +10,6 @@ function isIntersecting(arrA, arrB) {
 }
 
 function checkPermission(perms, resource, accessLevel) {
-  console.log(perms);
   for (let i = 0; i < resource.length; i++) {
     // console.log(perms[resource[i]], resource[i], accessLevel);
     if (perms[resource[i]] === accessLevel) {

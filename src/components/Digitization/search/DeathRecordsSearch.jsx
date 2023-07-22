@@ -9,8 +9,9 @@ import { Table, Form, Input, Row, Col, Button, message, Space } from "antd";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
-import { useNavigate } from "react-router-dom";
 import { getEnv } from "../../../utils/getEnv";
+import jwtDecode from "jwt-decode";
+import { checkPermission } from "../../../utils/fns";
 
 function DeathRecordsSearch() {
   const auth = useAuth();
@@ -89,7 +90,11 @@ function DeathRecordsSearch() {
       render: (_, record) =>
         record.hasChildren ? (
           <>
-            <Space>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["death_records"],
+              "editor"
+            ) && (
               <Space>
                 <Link
                   to="../add/DeathRecord"
@@ -100,18 +105,24 @@ function DeathRecordsSearch() {
                   </Button>
                 </Link>
               </Space>
-            </Space>
+            )}
           </>
         ) : (
           <Space>
-            <Link
-              to="../add/DeathRecord"
-              state={{ month: record.month, year: record.year }}
-            >
-              <Button type="primary" size="small">
-                Duplicate
-              </Button>
-            </Link>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["death_records"],
+              "editor"
+            ) && (
+              <Link
+                to="../add/DeathRecord"
+                state={{ month: record.month, year: record.year }}
+              >
+                <Button type="primary" size="small">
+                  Duplicate
+                </Button>
+              </Link>
+            )}
             <Button
               size="small"
               onClick={() => {
