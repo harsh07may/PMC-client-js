@@ -99,13 +99,11 @@ const DeathRecords = () => {
         },
       })
       .then((res) => {
-        if (res.status == 200) {
-          message.success("File Uploaded Successfully", 1.5);
-          form.resetFields();
-          setFileList([]);
-          setPdfFile(null);
-          setUploading(false);
-        }
+        message.success("File Uploaded Successfully", 1.5);
+        form.resetFields();
+        setFileList([]);
+        setPdfFile(null);
+        setUploading(false);
       })
       .catch((err) => {
         checkError(err);

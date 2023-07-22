@@ -101,7 +101,7 @@ function BirthRecordsSearch() {
                   state={{ month: record.month, year: record.year }}
                 >
                   <Button type="primary" size="small">
-                    Duplicate
+                    Update
                   </Button>
                 </Link>
               </Space>
@@ -119,7 +119,7 @@ function BirthRecordsSearch() {
                 state={{ month: record.month, year: record.year }}
               >
                 <Button type="primary" size="small">
-                  Duplicate
+                  Update
                 </Button>
               </Link>
             )}

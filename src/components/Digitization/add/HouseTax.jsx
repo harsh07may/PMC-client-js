@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../utils/auth";
@@ -10,16 +11,42 @@ const HouseTax = () => {
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
+  const auth = useAuth();
+  let { state } = useLocation();
   const [data, setData] = useState({
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
+
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File Upload failed", 3.5);
+    }
+  }
 
   function onRemove(file) {
     setFileList([]);
     // console.log("on remove");
     setPdfFile(null);
   }
+
+  useEffect(() => {
+    if (state) {
+      //* fill in the houseNo and location
+      form.setFieldsValue({
+        houseNo: state.houseno,
+        location: state.location,
+      });
+    }
+  }, [state]);
 
   function beforeUpload(file) {
     setFileList([file]);
@@ -37,7 +64,6 @@ const HouseTax = () => {
     }
     return false;
   }
-  const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "house_tax_record" };
@@ -51,20 +77,16 @@ const HouseTax = () => {
         },
       })
       .then((res) => {
-        if (res.status == 200) {
-          message.success("File Uploaded Successfully", 1.5);
-          form.resetFields();
-          setFileList([]);
-          setPdfFile(null);
-          setUploading(false);
-        }
-      })
-      .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
+        message.success("File Uploaded Successfully", 1.5);
+        form.resetFields();
+        setFileList([]);
+        setPdfFile(null);
         setUploading(false);
-        console.log(error);
       })
-      .finally();
+      .catch((err) => {
+        checkError(err);
+        setUploading(false);
+      });
   };
 
   return (
@@ -83,7 +105,24 @@ const HouseTax = () => {
           >
             <Row gutter={24}>
               <Col xs={24} md={12}>
-                <Form.Item name="location" required>
+                <Form.Item
+                  name="location"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a location!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{2,250}$/),
+                      message: "Location should be at least 2 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Location should not start/end with a whitespace character!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
                     required
@@ -94,7 +133,25 @@ const HouseTax = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="houseNo" required>
+                <Form.Item
+                  name="houseNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a house no.!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{2,250}$/),
+                      message:
+                        "House Number should be at least 2 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "House Number should not start/end with a whitespace character!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
                     required
@@ -107,8 +164,22 @@ const HouseTax = () => {
             </Row>
             <Form.Item
               name="title"
-              required
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter a title!",
+                },
+                {
+                  pattern: new RegExp(/^.{2,250}$/),
+                  message: "Title should be at least 2 characters long!",
+                },
+                {
+                  pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                  message:
+                    "Title should not start/end with a whitespace character!",
+                },
+              ]}
             >
               <Input
                 autoComplete="off"

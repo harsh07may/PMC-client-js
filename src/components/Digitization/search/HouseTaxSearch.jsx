@@ -5,15 +5,29 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { SearchOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
-import { Table, Form, Input, Row, Col, Button, message } from "antd";
+import { Table, Form, Input, Row, Col, Button, message, Space } from "antd";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getEnv } from "../../../utils/getEnv";
+import jwtDecode from "jwt-decode";
+import { checkPermission } from "../../../utils/fns";
 
 function HouseTaxSearch() {
   const auth = useAuth();
-  const navigate = useNavigate();
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File not found", 2);
+    }
+  }
 
   const handleclick = (recordid) => {
     axios({
@@ -33,7 +47,7 @@ function HouseTaxSearch() {
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
-        message.error("File not found", 2);
+        checkError(err);
       });
   };
   const columns = [
@@ -54,6 +68,20 @@ function HouseTaxSearch() {
       dataIndex: "title",
       key: "title",
       align: "center",
+      width: "30%",
+      render: (_, record) => (record.hasChildren ? <></> : `${record.title}`),
+    },
+    {
+      title: "Uploaded At",
+      dataIndex: "timestamp",
+      key: "Timestamp",
+      align: "center",
+      render: (_, record) =>
+        record.hasChildren ? (
+          <></>
+        ) : (
+          dayjs(record.timestamp).format("hh:mm A, DD MMM YYYY ")
+        ),
     },
     {
       title: "Action",
@@ -61,25 +89,61 @@ function HouseTaxSearch() {
       key: "filelink",
       render: (_, record) =>
         record.hasChildren ? (
-          <></>
+          <>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["house_tax_records"],
+              "editor"
+            ) && (
+              <Space>
+                <Link
+                  to="../add/HouseTaxRecord"
+                  state={{ location: record.location, houseno: record.houseno }}
+                >
+                  <Button type="primary" size="small">
+                    Update
+                  </Button>
+                </Link>
+              </Space>
+            )}
+          </>
         ) : (
-          <Button
-            size="small"
-            onClick={() => {
-              handleclick(record.recordid);
-            }}
-          >
-            Download
-          </Button>
+          <Space>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["house_tax_records"],
+              "editor"
+            ) && (
+              <Link
+                to="../add/HouseTaxRecord"
+                state={{ location: record.location, houseno: record.houseno }}
+              >
+                <Button type="primary" size="small">
+                  Update
+                </Button>
+              </Link>
+            )}
+            <Button
+              size="small"
+              onClick={() => {
+                // console.log("download " + record.recordid);
+                handleclick(record.recordid);
+              }}
+            >
+              Download
+            </Button>
+          </Space>
         ),
     },
   ];
 
   const expandedColumns = [
     {
-      title: "Timestamp",
+      title: "Uploaded At",
       dataIndex: "timestamp",
       key: "Timestamp",
+      align: "center",
+      width: "25%",
       // 19-04-2023 01:00:17 PM
       // render: (_, record) => record.timestamp.split(" ")[0],
       render: (_, { timestamp }) => {
@@ -87,9 +151,18 @@ function HouseTaxSearch() {
       },
     },
     {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      align: "center",
+      width: "35%",
+    },
+    {
       title: "Action",
       dataIndex: "operation2",
       key: "operation2",
+      align: "center",
+      width: "30%",
       render: (_, record) => (
         <Button
           size="small"
@@ -130,7 +203,7 @@ function HouseTaxSearch() {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["location"] + e["houseno"] + e["title"];
+      return e["location"] + e["houseno"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -161,13 +234,13 @@ function HouseTaxSearch() {
 
           tempObj.location = obj[ele][0]["location"];
           tempObj.houseno = obj[ele][0]["houseno"];
-          tempObj.title = obj[ele][0]["title"];
+          // tempObj.title = obj[ele][0]["title"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
           tempObj.recordid =
             obj[ele][0]["location"] +
             obj[ele][0]["houseno"] +
-            obj[ele][0]["title"] +
+            // obj[ele][0]["title"] +
             "a";
 
           outputArr.push(tempObj);
@@ -212,12 +285,7 @@ function HouseTaxSearch() {
         setData(null);
         setSearching(false);
 
-        if (axiosError.response.data.error?.name == "AuthenticationError") {
-          // message.error("Please reload the page", 3.5);
-          navigate(0, { replace: true });
-        } else {
-          message.error("File not found", 2);
-        }
+        checkError(err);
       });
   };
 

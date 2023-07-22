@@ -61,20 +61,6 @@ const BirthRecords = () => {
     }
   }, [state]);
 
-  useEffect(() => {
-    if (state) {
-      const month = state.month;
-      const year = state.year;
-
-      const formattedDate = dayjs().month(getIndexOfMonth(month)).year(year);
-
-      //* fill in the month and year
-      form.setFieldsValue({
-        month: formattedDate,
-      });
-    }
-  }, [state]);
-
   function onRemove() {
     setFileList([]);
     setPdfFile(null);
@@ -113,13 +99,11 @@ const BirthRecords = () => {
         },
       })
       .then((res) => {
-        if (res.status == 200) {
-          message.success("File Uploaded Successfully", 1.5);
-          form.resetFields();
-          setFileList([]);
-          setPdfFile(null);
-          setUploading(false);
-        }
+        message.success("File Uploaded Successfully", 1.5);
+        form.resetFields();
+        setFileList([]);
+        setPdfFile(null);
+        setUploading(false);
       })
       .catch((err) => {
         checkError(err);
@@ -163,7 +147,16 @@ const BirthRecords = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter a title!",
+                      message: "Please enter an title!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message: "Title should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Title should not start/end with a whitespace character!",
                     },
                   ]}
                   wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
