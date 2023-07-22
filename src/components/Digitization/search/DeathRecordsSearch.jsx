@@ -5,7 +5,8 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { SearchOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
-import { Table, Form, Input, Row, Col, Button, message } from "antd";
+import { Table, Form, Input, Row, Col, Button, message, Space } from "antd";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +14,19 @@ import { getEnv } from "../../../utils/getEnv";
 
 function DeathRecordsSearch() {
   const auth = useAuth();
-  const navigate = useNavigate();
-
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File not found", 2);
+    }
+  }
   const handleclick = (recordid) => {
     axios({
       method: "get",
@@ -33,7 +45,7 @@ function DeathRecordsSearch() {
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
-        message.error("File not found", 2);
+        checkError(err);
       });
   };
   const columns = [
@@ -54,7 +66,20 @@ function DeathRecordsSearch() {
       dataIndex: "title",
       key: "title",
       align: "center",
+      width: "35%",
       render: (_, record) => (record.hasChildren ? <></> : `${record.title}`),
+    },
+    {
+      title: "Uploaded At",
+      dataIndex: "timestamp",
+      key: "Timestamp",
+      align: "center",
+      render: (_, record) =>
+        record.hasChildren ? (
+          <></>
+        ) : (
+          dayjs(record.timestamp).format("hh:mm A, DD MMM YYYY ")
+        ),
     },
     {
       title: "Action",
@@ -63,23 +88,47 @@ function DeathRecordsSearch() {
       width: "40%",
       render: (_, record) =>
         record.hasChildren ? (
-          <></>
+          <>
+            <Space>
+              <Space>
+                <Link
+                  to="../add/DeathRecord"
+                  state={{ month: record.month, year: record.year }}
+                >
+                  <Button type="primary" size="small">
+                    Duplicate
+                  </Button>
+                </Link>
+              </Space>
+            </Space>
+          </>
         ) : (
-          <Button
-            size="small"
-            onClick={() => {
-              handleclick(record.recordid);
-            }}
-          >
-            Download
-          </Button>
+          <Space>
+            <Link
+              to="../add/DeathRecord"
+              state={{ month: record.month, year: record.year }}
+            >
+              <Button type="primary" size="small">
+                Duplicate
+              </Button>
+            </Link>
+            <Button
+              size="small"
+              onClick={() => {
+                // console.log("download " + record.recordid);
+                handleclick(record.recordid);
+              }}
+            >
+              Download
+            </Button>
+          </Space>
         ),
     },
   ];
 
   const expandedColumns = [
     {
-      title: "Timestamp",
+      title: "Uploaded At",
       dataIndex: "timestamp",
       key: "Timestamp",
       align: "center",
@@ -215,16 +264,11 @@ function DeathRecordsSearch() {
         setData(res.data);
         setSearching(false);
       })
-      .catch((axiosError) => {
+      .catch((err) => {
         setData(null);
         setSearching(false);
 
-        if (axiosError.response.data.error?.name == "AuthenticationError") {
-          // message.error("Please reload the page", 3.5);
-          navigate(0, { replace: true });
-        } else {
-          message.error("File not found", 2);
-        }
+        checkError(err);
       });
   };
 

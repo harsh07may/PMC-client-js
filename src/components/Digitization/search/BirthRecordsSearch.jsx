@@ -14,7 +14,19 @@ import { getEnv } from "../../../utils/getEnv";
 
 function BirthRecordsSearch() {
   const auth = useAuth();
-  const navigate = useNavigate();
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File not found", 2);
+    }
+  }
 
   const handleclick = (recordid) => {
     axios({
@@ -34,7 +46,7 @@ function BirthRecordsSearch() {
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
-        message.error("File not found", 2);
+        checkError(err);
       });
   };
   const columns = [
@@ -63,11 +75,12 @@ function BirthRecordsSearch() {
       dataIndex: "timestamp",
       key: "Timestamp",
       align: "center",
-      // 19-04-2023 01:00:17 PM
-      // render: (_, record) => record.timestamp.split(" ")[0],
-      render: (_, { timestamp }) => {
-        return dayjs(timestamp).format("hh:mm A, DD MMM YYYY ");
-      },
+      render: (_, record) =>
+        record.hasChildren ? (
+          <></>
+        ) : (
+          dayjs(record.timestamp).format("hh:mm A, DD MMM YYYY ")
+        ),
     },
     {
       title: "Action",
@@ -237,7 +250,6 @@ function BirthRecordsSearch() {
     setSearching(true);
 
     await axios
-
       .get(
         `${getEnv("VITE_API_STRING")}/api/v1/digitization/search?type=${
           values.type
@@ -252,16 +264,11 @@ function BirthRecordsSearch() {
         setData(res.data);
         setSearching(false);
       })
-      .catch((axiosError) => {
+      .catch((err) => {
         setData(null);
         setSearching(false);
 
-        if (axiosError.response.data.error?.name == "AuthenticationError") {
-          // message.error("Please reload the page", 3.5);
-          navigate(0, { replace: true });
-        } else {
-          message.error("File not found", 2);
-        }
+        checkError(err);
       });
   };
 

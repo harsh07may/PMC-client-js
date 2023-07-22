@@ -33,6 +33,34 @@ const BirthRecords = () => {
   });
   const [pdfFile, setPdfFile] = useState(null);
 
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File Upload failed", 3.5);
+    }
+  }
+
+  useEffect(() => {
+    if (state) {
+      const month = state.month;
+      const year = state.year;
+
+      const formattedDate = dayjs().month(getIndexOfMonth(month)).year(year);
+
+      //* fill in the month and year
+      form.setFieldsValue({
+        month: formattedDate,
+      });
+    }
+  }, [state]);
+
   useEffect(() => {
     if (state) {
       const month = state.month;
@@ -70,7 +98,6 @@ const BirthRecords = () => {
   }
 
   const onFinish = async (values) => {
-    console.log(values);
     let Month = dayjs(values.month).format("MMM");
     let Year = dayjs(values.month).format("YYYY");
     let Title = values.title;
@@ -94,7 +121,10 @@ const BirthRecords = () => {
           setUploading(false);
         }
       })
-      .finally();
+      .catch((err) => {
+        checkError(err);
+        setUploading(false);
+      });
   };
 
   return (
@@ -107,7 +137,6 @@ const BirthRecords = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            onFinishFailed={() => console.log("failed")}
             form={form}
           >
             <Row>

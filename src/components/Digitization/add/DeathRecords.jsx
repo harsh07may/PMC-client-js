@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import {
   Upload,
   Form,
@@ -11,6 +12,7 @@ import {
   DatePicker,
 } from "antd";
 import { useAuth } from "../../../utils/auth";
+import { getIndexOfMonth } from "../../../utils/fns";
 import * as formInputStyles from "./styles/AddForm.module.css";
 import { UploadOutlined } from "@ant-design/icons";
 
@@ -21,6 +23,7 @@ dayjs.extend(customParseFormat);
 
 const DeathRecords = () => {
   const auth = useAuth();
+  let { state } = useLocation();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
 
@@ -29,6 +32,34 @@ const DeathRecords = () => {
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
+
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File Upload failed", 3.5);
+    }
+  }
+
+  useEffect(() => {
+    if (state) {
+      const month = state.month;
+      const year = state.year;
+
+      const formattedDate = dayjs().month(getIndexOfMonth(month)).year(year);
+
+      //* fill in the month and year
+      form.setFieldsValue({
+        month: formattedDate,
+      });
+    }
+  }, [state]);
 
   function onRemove() {
     setFileList([]);
@@ -76,7 +107,10 @@ const DeathRecords = () => {
           setUploading(false);
         }
       })
-      .finally();
+      .catch((err) => {
+        checkError(err);
+        setUploading(false);
+      });
   };
 
   return (
@@ -89,7 +123,6 @@ const DeathRecords = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            // onFinishFailed={() => console.log("failed")}
             form={form}
           >
             <Row>
@@ -117,6 +150,15 @@ const DeathRecords = () => {
                     {
                       required: true,
                       message: "Please enter a title!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message: "Title should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Title should not start/end with a whitespace character!",
                     },
                   ]}
                   wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
