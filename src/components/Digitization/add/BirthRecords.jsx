@@ -147,7 +147,7 @@ const BirthRecords = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter an title!",
+                      message: "Please enter a title!",
                     },
                     {
                       pattern: new RegExp(/^.{5,250}$/),

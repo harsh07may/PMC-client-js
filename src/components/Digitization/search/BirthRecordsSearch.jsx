@@ -15,6 +15,7 @@ import { checkPermission } from "../../../utils/fns";
 
 function BirthRecordsSearch() {
   const auth = useAuth();
+
   function checkError(err) {
     if (err.response.data.error?.name == "AuthenticationError") {
       message
@@ -126,7 +127,6 @@ function BirthRecordsSearch() {
             <Button
               size="small"
               onClick={() => {
-                // console.log("download " + record.recordid);
                 handleclick(record.recordid);
               }}
             >
@@ -143,8 +143,6 @@ function BirthRecordsSearch() {
       dataIndex: "timestamp",
       key: "Timestamp",
       align: "center",
-      // 19-04-2023 01:00:17 PM
-      // render: (_, record) => record.timestamp.split(" ")[0],
       render: (_, { timestamp }) => {
         return dayjs(timestamp).format("hh:mm A, DD MMM YYYY ");
       },

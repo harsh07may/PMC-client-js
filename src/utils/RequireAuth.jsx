@@ -22,7 +22,7 @@ export default function ({ children }) {
   const checkRefreshToken = () => {
     axios
       .post(
-        `${getEnv("VITE_API_STRING")}/api/v1/user/refresh_token`,
+        `${getEnv("VITE_API_STRING")}/api/v1/user/refresh_accessToken`,
         {},
         {
           credentials: "include",

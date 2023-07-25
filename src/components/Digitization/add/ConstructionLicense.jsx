@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../utils/auth";
@@ -11,10 +12,39 @@ const AddConstuctionLicense = () => {
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
+  let { state } = useLocation();
   const [data, setData] = useState({
     file: null,
   });
   const [pdfFile, setPdfFile] = useState(null);
+
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File Upload failed", 3.5);
+    }
+  }
+
+  useEffect(() => {
+    if (state) {
+      console.log(state);
+      const licenseNo = state.licenseNo;
+      const surveyNo = state.surveyNo;
+
+      //* fill in the form
+      form.setFieldsValue({
+        licenseNo: licenseNo,
+        surveyNo: surveyNo,
+      });
+    }
+  }, [state]);
 
   function onRemove() {
     setFileList([]);
@@ -65,13 +95,8 @@ const AddConstuctionLicense = () => {
       .catch((error) => {
         // message.error("File Uploaded Failed", 1.5);
         setUploading(false);
-        console.log(error.name);
-        if (error.name == "AuthenticationError") {
-          message.error("You are not logged in", 1.5);
-          console.log("ok");
-        }
-      })
-      .finally();
+        checkError(error);
+      });
   };
 
   return (
@@ -97,6 +122,16 @@ const AddConstuctionLicense = () => {
                       required: true,
                       message: "Please enter a license number!",
                     },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message:
+                        "License number should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "License number should not start/end with a whitespace character!",
+                    },
                   ]}
                 >
                   <Input
@@ -115,6 +150,16 @@ const AddConstuctionLicense = () => {
                       required: true,
                       message: "Please enter a survey number!",
                     },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message:
+                        "Survey number should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Survey number should not start/end with a whitespace character!",
+                    },
                   ]}
                 >
                   <Input
@@ -132,6 +177,15 @@ const AddConstuctionLicense = () => {
                     {
                       required: true,
                       message: "Please enter a location!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message: "Location should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Location should not start/end with a whitespace character!",
                     },
                   ]}
                 >
@@ -152,6 +206,15 @@ const AddConstuctionLicense = () => {
                     {
                       required: true,
                       message: "Please enter a title!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message: "Title should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Title should not start/end with a whitespace character!",
                     },
                   ]}
                   wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
