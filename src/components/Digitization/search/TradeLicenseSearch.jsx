@@ -5,15 +5,30 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { SearchOutlined } from "@ant-design/icons";
 import { formInputStyles } from "./searchForm.module.css";
-import { Table, Form, Input, Row, Col, Button, message } from "antd";
+import { Table, Form, Input, Row, Col, Button, message, Space } from "antd";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../utils/auth";
 import fileDownload from "js-file-download";
-import { useNavigate } from "react-router-dom";
 import { getEnv } from "../../../utils/getEnv";
+import jwtDecode from "jwt-decode";
+import { checkPermission } from "../../../utils/fns";
 
 function TradeLicenseSearch() {
   const auth = useAuth();
-  const navigate = useNavigate();
+
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File not found", 2);
+    }
+  }
 
   const handleclick = (recordid) => {
     axios({
@@ -33,16 +48,10 @@ function TradeLicenseSearch() {
         fileDownload(res.data, fileName);
       })
       .catch((err) => {
-        message.error("File not found", 2);
+        checkError(err);
       });
   };
   const columns = [
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "wardno",
-      width: "15%",
-    },
     {
       title: "License No.",
       dataIndex: "licenseno",
@@ -50,10 +59,31 @@ function TradeLicenseSearch() {
       width: "15%",
     },
     {
+      title: "Location",
+      dataIndex: "location",
+      key: "wardno",
+      width: "15%",
+      render: (_, record) =>
+        record.hasChildren ? <></> : `${record.location}`,
+    },
+    {
       title: "Title",
       dataIndex: "title",
       key: "title",
       align: "center",
+      render: (_, record) => (record.hasChildren ? <></> : `${record.title}`),
+    },
+    {
+      title: "Uploaded At",
+      dataIndex: "timestamp",
+      key: "Timestamp",
+      align: "center",
+      render: (_, record) =>
+        record.hasChildren ? (
+          <></>
+        ) : (
+          dayjs(record.timestamp).format("hh:mm A, DD MMM YYYY ")
+        ),
     },
     {
       title: "Action",
@@ -61,16 +91,49 @@ function TradeLicenseSearch() {
       key: "filelink",
       render: (_, record) =>
         record.hasChildren ? (
-          <></>
+          <>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["birth_records"],
+              "editor"
+            ) && (
+              <Space>
+                <Link
+                  to="../add/TradeLicenseRecord"
+                  state={{ licenseNo: record.licenseno }}
+                >
+                  <Button type="primary" size="small">
+                    Update
+                  </Button>
+                </Link>
+              </Space>
+            )}
+          </>
         ) : (
-          <Button
-            size="small"
-            onClick={() => {
-              handleclick(record.recordid);
-            }}
-          >
-            Download
-          </Button>
+          <Space>
+            {checkPermission(
+              jwtDecode(auth.user.accesstoken).perms,
+              ["trade_license_records"],
+              "editor"
+            ) && (
+              <Link
+                to="../add/TradeLicenseRecord"
+                state={{ licenseNo: record.licenseno }}
+              >
+                <Button type="primary" size="small">
+                  Update
+                </Button>
+              </Link>
+            )}
+            <Button
+              size="small"
+              onClick={() => {
+                handleclick(record.recordid);
+              }}
+            >
+              Download
+            </Button>
+          </Space>
         ),
     },
   ];
@@ -80,11 +143,22 @@ function TradeLicenseSearch() {
       title: "Timestamp",
       dataIndex: "timestamp",
       key: "Timestamp",
-      // 19-04-2023 01:00:17 PM
-      // render: (_, record) => record.timestamp.split(" ")[0],
       render: (_, { timestamp }) => {
         return dayjs(timestamp).format("hh:mm A, DD MMM YYYY ");
       },
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+      key: "wardno",
+      width: "20%",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      align: "center",
+      width: "30%",
     },
     {
       title: "Action",
@@ -130,7 +204,7 @@ function TradeLicenseSearch() {
   //functions
   const handleDataChange = async () => {
     const hashFn = (e) => {
-      return e["location"] + e["licenseno"] + e["title"];
+      return e["licenseno"];
     };
 
     const groupArray = (arr, groupFn) => {
@@ -159,16 +233,10 @@ function TradeLicenseSearch() {
         } else {
           const tempObj = {};
 
-          tempObj.location = obj[ele][0]["location"];
           tempObj.licenseno = obj[ele][0]["licenseno"];
-          tempObj.title = obj[ele][0]["title"];
           tempObj.hasChildren = true;
           tempObj.kids = obj[ele];
-          tempObj.recordid =
-            obj[ele][0]["location"] +
-            obj[ele][0]["licenseno"] +
-            obj[ele][0]["title"] +
-            "a";
+          tempObj.recordid = obj[ele][0]["licenseno"] + "axx";
 
           outputArr.push(tempObj);
         }
@@ -208,16 +276,11 @@ function TradeLicenseSearch() {
         setData(res.data);
         setSearching(false);
       })
-      .catch((axiosError) => {
+      .catch((err) => {
         setData(null);
         setSearching(false);
 
-        if (axiosError.response.data.error?.name == "AuthenticationError") {
-          // message.error("Please reload the page", 3.5);
-          navigate(0, { replace: true });
-        } else {
-          message.error("File not found", 2);
-        }
+        checkError(err);
       });
   };
 

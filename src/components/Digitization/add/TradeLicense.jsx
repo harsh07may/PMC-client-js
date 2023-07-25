@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 import { Form, Input, Row, Col, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../utils/auth";
@@ -7,6 +8,22 @@ import { formInputStyles } from "./styles/AddForm.module.css";
 import { getEnv } from "../../../utils/getEnv";
 
 const TradeLicenseTax = () => {
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("File Upload failed", 3.5);
+    }
+  }
+
+  const auth = useAuth();
+  let { state } = useLocation();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
@@ -20,6 +37,17 @@ const TradeLicenseTax = () => {
     // console.log("on remove");
     setPdfFile(null);
   }
+
+  useEffect(() => {
+    if (state) {
+      const licenseNo = state.licenseNo;
+
+      //* fill in the month and year
+      form.setFieldsValue({
+        licenseNo: licenseNo,
+      });
+    }
+  }, [state]);
 
   function beforeUpload(file) {
     setFileList([file]);
@@ -37,7 +65,6 @@ const TradeLicenseTax = () => {
     }
     return false;
   }
-  const auth = useAuth();
   //API Calls
   const onFinish = async (values) => {
     values = { ...values, file: data.file, type: "trade_license_record" };
@@ -59,12 +86,10 @@ const TradeLicenseTax = () => {
           setUploading(false);
         }
       })
-      .catch((error) => {
-        message.error("File Uploaded Failed", 1.5);
+      .catch((err) => {
+        checkError(err);
         setUploading(false);
-        console.log(error);
-      })
-      .finally();
+      });
   };
 
   return (
@@ -78,12 +103,28 @@ const TradeLicenseTax = () => {
           <Form
             style={{ marginTop: "10px", overflow: "hidden" }}
             onFinish={onFinish}
-            onFinishFailed={() => console.log("failed")}
             form={form}
           >
             <Row gutter={24}>
               <Col xs={24} md={12}>
-                <Form.Item name="location" required>
+                <Form.Item
+                  name="location"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a location!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{2,250}$/),
+                      message: "Location should be at least 2 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "Location should not start/end with a whitespace character!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
                     required
@@ -94,7 +135,25 @@ const TradeLicenseTax = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="licenseNo" required>
+                <Form.Item
+                  name="licenseNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter a license number!",
+                    },
+                    {
+                      pattern: new RegExp(/^.{5,250}$/),
+                      message:
+                        "License no. should be at least 5 characters long!",
+                    },
+                    {
+                      pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                      message:
+                        "License no. should not start/end with a whitespace character!",
+                    },
+                  ]}
+                >
                   <Input
                     autoComplete="off"
                     required
@@ -107,8 +166,22 @@ const TradeLicenseTax = () => {
             </Row>
             <Form.Item
               name="title"
-              required
               wrapperCol={{ xs: { span: 20 }, sm: { span: 24 } }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter a title!",
+                },
+                {
+                  pattern: new RegExp(/^.{5,250}$/),
+                  message: "Title should be at least 5 characters long!",
+                },
+                {
+                  pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                  message:
+                    "Title should not start/end with a whitespace character!",
+                },
+              ]}
             >
               <Input
                 autoComplete="off"
