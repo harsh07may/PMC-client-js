@@ -140,7 +140,7 @@ function TradeLicenseSearch() {
 
   const expandedColumns = [
     {
-      title: "Timestamp",
+      title: "Uploaded At",
       dataIndex: "timestamp",
       key: "Timestamp",
       render: (_, { timestamp }) => {

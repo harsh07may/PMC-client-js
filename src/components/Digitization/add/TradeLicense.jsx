@@ -34,7 +34,6 @@ const TradeLicenseTax = () => {
 
   function onRemove(file) {
     setFileList([]);
-    // console.log("on remove");
     setPdfFile(null);
   }
 
@@ -42,7 +41,6 @@ const TradeLicenseTax = () => {
     if (state) {
       const licenseNo = state.licenseNo;
 
-      //* fill in the month and year
       form.setFieldsValue({
         licenseNo: licenseNo,
       });
@@ -78,13 +76,11 @@ const TradeLicenseTax = () => {
         },
       })
       .then((res) => {
-        if (res.status == 200) {
-          message.success("File Uploaded Successfully", 1.5);
-          form.resetFields();
-          setFileList([]);
-          setPdfFile(null);
-          setUploading(false);
-        }
+        message.success("File Uploaded Successfully", 1.5);
+        form.resetFields();
+        setFileList([]);
+        setPdfFile(null);
+        setUploading(false);
       })
       .catch((err) => {
         checkError(err);
