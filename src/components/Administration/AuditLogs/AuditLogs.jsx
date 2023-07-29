@@ -143,7 +143,7 @@ export default function AuditLogs() {
       render: (_, { action }) => {
         let color = {
           Search: "geekblue",
-          Download: "red",
+          Download: "orange",
           Upload: "green",
         }[action];
         return (
@@ -165,6 +165,10 @@ export default function AuditLogs() {
         {
           text: "Upload",
           value: "Upload",
+        },
+        {
+          text: "Delete",
+          value: "Delete",
         },
       ],
       filterMode: "tree",
@@ -251,7 +255,11 @@ export default function AuditLogs() {
       ...getColumnSearchProps("description", "Description"),
       render: (_, record) => {
         // "Registered User %harsh"
-        if (record.action == "register" || record.action == "update") {
+        if (
+          record.action == "register" ||
+          record.action == "update" ||
+          record.action == "delete"
+        ) {
           let username = record.description.split("%")[1];
           return (
             <p>
@@ -285,6 +293,10 @@ export default function AuditLogs() {
           text: "Update",
           value: "update",
         },
+        {
+          text: "Delete",
+          value: "delete",
+        },
       ],
       filterMode: "tree",
       render: (_, { action }) => {
@@ -292,7 +304,8 @@ export default function AuditLogs() {
           login: "green",
           register: "geekblue",
           Register: "geekblue",
-          update: "red",
+          update: "orange",
+          delete: "red",
         }[action];
         return (
           <Tag color={color} key={action}>

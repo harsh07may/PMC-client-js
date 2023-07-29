@@ -23,7 +23,6 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 import styles from "./manageAccounts.module.css";
-import CreateAccount from "../CreateAccount/CreateAccount";
 import { getEnv } from "../../../../utils/getEnv";
 
 export default function ManageAccounts() {
@@ -41,13 +40,25 @@ export default function ManageAccounts() {
     // confirm();
     // setSearchedColumn(dataIndex);
   };
+  function checkError(err) {
+    if (err.response.data.error?.name == "AuthenticationError") {
+      message
+        .error("You need to reload the page and try again!", 3.5)
+        .then(() => window.location.reload(true));
+    } else if (err.response.data.error?.name == "BadRequestError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else if (err.response.data.error?.name == "AccessDeniedError") {
+      message.error(`${err.response.data.error?.message}`, 3.5);
+    } else {
+      message.error("Oops! Something went wrong!", 3.5);
+    }
+  }
   const getColumnSearchProps = (dataIndex, fieldName) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
       clearFilters,
-      // close,
     }) => (
       <div
         style={{
@@ -102,8 +113,6 @@ export default function ManageAccounts() {
         }}
       />
     ),
-    // onFilter: (value, record) =>
-    //   record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
@@ -147,33 +156,6 @@ export default function ManageAccounts() {
         );
       },
     },
-    // {
-    //   title: "Role",
-    //   dataIndex: "role",
-    //   key: "role",
-    //   render: (_, { roles }) => {
-    //     let color = {
-    //       admin: "red",
-    //       editor: "geekblue",
-    //       viewer: "green",
-    //     }[roles];
-    //     return (
-    //       <Tag color={color} key={roles}>
-    //         {roles.toUpperCase()}
-    //       </Tag>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "Designation",
-    //   dataIndex: "designation",
-    //   key: "designation",
-    //   render: (_, { designation }) => {
-    //     return (
-    //       <Text>{designation.replace(/\b\w/g, (x) => x.toUpperCase())}</Text>
-    //     );
-    //   },
-    // },
     {
       title: "Created At",
       dataIndex: "createdAt",
@@ -191,13 +173,6 @@ export default function ManageAccounts() {
       render: (_, record) => {
         return (
           <Space size="middle">
-            {/* <Popconfirm
-            title="Edit the user"
-            description="Are you sure you want to edit this user?"
-            okText="Yes"
-            cancelText="No"
-            onConfirm={() => {}}
-          > */}
             <Link
               to="../accounts/EditAccount"
               state={{ username: record.username }}
@@ -217,7 +192,9 @@ export default function ManageAccounts() {
                   }}
                 />
               }
-              onConfirm={() => {}}
+              onConfirm={() => {
+                deleteUser(record);
+              }}
             >
               <Button danger={true} type="link">
                 Delete
@@ -245,6 +222,28 @@ export default function ManageAccounts() {
     },
   });
 
+  const deleteUser = async (record) => {
+    setLoading(true);
+    axios({
+      method: "post",
+      url: `${getEnv("VITE_API_STRING")}/api/v1/admin/deleteUser`,
+      headers: {
+        Authorization: `Bearer ${auth.user.accesstoken}`,
+      },
+      data: {
+        username: record.username,
+        user_id: record.user_id,
+      },
+    })
+      .then((res) => {
+        message.success(`Account has been deleted!`, 3.5);
+        fetchData();
+      })
+      .catch((err) => {
+        checkError(err);
+      });
+  };
+
   const fetchData = async () => {
     setLoading(true);
     axios({
@@ -268,17 +267,7 @@ export default function ManageAccounts() {
         });
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status == 404) {
-          // call message
-          message.error("No users found", 2.5);
-          setLoading(false);
-        }
-        if (err.response.data.error?.name == "AuthenticationError") {
-          message
-            .error("You need to reload the page and try again!", 3.5)
-            .then(() => window.location.reload(true));
-        }
+        checkError(err);
       });
   };
 
