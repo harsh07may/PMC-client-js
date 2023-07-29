@@ -14,7 +14,9 @@ import userLogo from "../../assets/user.svg";
 import compassLogo from "../../assets/compass.svg";
 import calenderLogo from "../../assets/calender.svg";
 import { checkPermission } from "../../utils/fns";
+// import * as jwt from "jwt-decode";
 import jwt from "jwt-decode";
+import jwt_decode from "jwt-decode";
 
 export default function AppGallery() {
   const allDocTypes = [
@@ -52,11 +54,10 @@ export default function AppGallery() {
         <div className={styles.heading}>
           <h1>Select a Service</h1>
         </div>
-
         <div className={styles.gallery}>
           <Row className={styles.antRow} gutter={[50, 50]} justify={"center"}>
             {checkPermission(
-              jwt(auth.user.accesstoken).perms,
+              jwt_decode(auth.user.accesstoken).perms,
               allDocTypes,
               "viewer"
             ) && (

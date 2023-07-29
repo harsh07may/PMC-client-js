@@ -518,7 +518,7 @@ const ApplicationInbox = () => {
 
   const transferApplication = async ({ ref_id }, { receiver }) => {
     const values = { receiver, ref_id };
-    console.log(values);
+    // console.log(values);
     await axios
       .post(
         `${getEnv("VITE_API_STRING")}/api/v1/application/transferApplication`,
@@ -536,7 +536,7 @@ const ApplicationInbox = () => {
       .catch((err) => {
         // message.error(`Failed to send transfer Request`, 1.5);
         setLoading(false);
-        console.log(err);
+        // console.log(err);
         checkError(err);
       });
 
@@ -545,7 +545,7 @@ const ApplicationInbox = () => {
 
   const RecallApplication = async ({ trail_id }) => {
     const values = { trail_id, status: "recall" };
-    console.log(values);
+    // console.log(values);
     await axios
       .post(
         `${getEnv("VITE_API_STRING")}/api/v1/application/updateStatus`,
@@ -566,7 +566,7 @@ const ApplicationInbox = () => {
         // message.error(`Failed to Recall`, 1.5);
         checkError(error);
         setLoading(false);
-        console.log(error);
+        // console.log(error);
       });
 
     fetchData("holding");
@@ -594,7 +594,7 @@ const ApplicationInbox = () => {
         message.error(`Failed to update Notes`, 1.5);
         setLoading(false);
         checkError(error);
-        console.log(error);
+        // console.log(error);
       });
 
     //? inefficient call to make
@@ -619,9 +619,9 @@ const ApplicationInbox = () => {
           setLoading(false);
         }
       })
-      .catch((error) => {
+      .catch((err) => {
         checkError(err);
-        console.log(error);
+        // console.log(error);
         // message.error(`Failed to delete Application`, 1.5);
         setLoading(false);
         // console.log(error);
@@ -649,12 +649,12 @@ const ApplicationInbox = () => {
           setLoading(false);
         }
       })
-      .catch((error) => {
+      .catch((err) => {
         checkError(err);
         // console.log(error);
         // message.error(`Failed to outward Application`, 1.5);
         setLoading(false);
-        console.log(error);
+        // console.log(error);
       });
 
     fetchData("holding");
@@ -720,7 +720,7 @@ const ApplicationInbox = () => {
         },
       })
         .then((res) => {
-          console.log("pending", [res.data]);
+          // console.log("pending", [res.data]);
           setPendingData(res.data);
           setLoading(false);
           setPendingTableParams({
@@ -766,7 +766,7 @@ const ApplicationInbox = () => {
         },
       })
         .then((res) => {
-          console.log("holding", [res.data]);
+          // console.log("holding", [res.data]);
           setHoldingData(res.data);
           setLoading(false);
           setHoldingTableParams({
@@ -778,7 +778,7 @@ const ApplicationInbox = () => {
           });
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           checkError(err);
           // if (err.response.status == 404) {
           //   // call message

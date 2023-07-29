@@ -9,8 +9,5 @@ dict["VITE_PORT"] = VITE_PORT;
 dict["VITE_API_STRING"] = VITE_API_STRING;
 
 export const getEnv = (envVar) => {
-  // console.log(envVar);
-  // console.log(dict);
-  // console.log(dict[envVar]);
   return dict[envVar];
 };

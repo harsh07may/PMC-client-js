@@ -427,6 +427,15 @@ export default function CreateAccount() {
                   max: 30,
                   message: "Name has to be less than 30 characters!",
                 },
+                {
+                  pattern: "^[A-Za-z ]+$",
+                  message: "Name can only contain alphabets and spaces!",
+                },
+                {
+                  pattern: new RegExp(/^(?!\s)(.*\S)?(?<!\s)$/),
+                  message:
+                    "Name should not start/end with a whitespace character!",
+                },
               ]}
             >
               <Input autoComplete="off" />
@@ -435,7 +444,7 @@ export default function CreateAccount() {
             <Form.Item
               name="username"
               label="Username"
-              tooltip="A name to uniquely identify yourself"
+              tooltip="A shorter name to uniquely identify yourself."
               rules={[
                 {
                   required: true,

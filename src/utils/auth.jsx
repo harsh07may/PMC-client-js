@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const login = (accessToken) => {
-    // console.log(jwt(accessToken));
     setUser({ accesstoken: accessToken });
   };
 
@@ -33,7 +32,6 @@ export const AuthProvider = ({ children }) => {
       })
       .catch((err) => {
         openErrorNotification();
-        // console.log("Error" + err);
       });
   };
 
